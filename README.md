@@ -22,13 +22,31 @@ OpenClaw Dashboard 的简体中文增强项目。
    `node package-crx.mjs`
 2. 产物：
    `dist/openclaw-dashboard-zh-cn.crx`
-3. 若浏览器未允许直接装 `crx`，可改用下面“解压扩展程序安装”
+3. 拖拽 `openclaw-dashboard-zh-cn.crx` 到 `chrome://extensions` 或 `edge://extensions`
+4. 按提示确认安装
+
+注意：部分 Chrome / Edge 版本会直接拦截本地 `crx` 安装并提示失败，这是浏览器策略限制，不是包损坏。遇到此情况请使用下面“压缩包安装”或“解压扩展程序安装”。
 
 复用已有签名 key（保持扩展 ID 不变）：
 
 `node package-crx.mjs --key dist/openclaw-dashboard-zh-cn.pem`
 
-### 3) 解压的扩展程序安装
+### 3) 压缩包安装（推荐备用）
+
+1. 从 Releases 下载：
+   `openclaw-dashboard-zh-cn-extension.zip`
+2. 解压到固定目录（例如：`D:\Tools\openclaw-dashboard-zh-cn-extension`）
+3. 打开 `chrome://extensions` 或 `edge://extensions`
+4. 开启开发者模式
+5. 点击“加载已解压的扩展程序”
+6. 选择第 2 步解压后的目录（目录内要直接看到 `manifest.json`）
+
+提示：
+
+- 不要删除该解压目录，否则扩展会失效
+- 升级版本时，替换解压目录内容后在扩展页面点“刷新”
+
+### 4) 解压的扩展程序安装（本地构建）
 
 1. 先生成扩展文件：
    `node build-extension.mjs`
