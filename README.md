@@ -4,7 +4,7 @@
 
 # OpenClaw Dashboard Plus
 
-Multilingual userscript and browser extension tooling for OpenClaw Dashboard.
+Browser-extension-first tooling for OpenClaw Dashboard, with an optional Chinese translation userscript.
 
 English is the canonical README for this repository.
 
@@ -14,44 +14,76 @@ English is the canonical README for this repository.
 
 OpenClaw Dashboard Plus ships in two forms:
 
-- `openclaw-dashboard-plus.user.js` for userscript managers such as Tampermonkey and ScriptCat
 - A browser extension built into `dist/extension/`
+- `openclaw-dashboard-plus-zh.user.js` as an optional Chinese translation userscript for Tampermonkey, ScriptCat, and similar managers
 
-The project adds a multilingual content layer, a popup settings panel, remote metadata updates, and downloadable language packs for OpenClaw Dashboard.
+The browser extension is the primary delivery format. The userscript is kept as a lighter Chinese translation entry for environments where installing the extension is not convenient.
 
 ## Features
 
 - Separate content language and popup UI language settings
 - Remote metadata and locale updates from GitHub and Gitee
 - Browser extension popup with runtime settings, cache controls, and version info
+- Theme controls for preset, font, font size, and independent UI repair toggles
+- Remote style-module delivery for HTML, CSS, and JSON assets without shipping remote JavaScript
 - Shared project icon across documentation and browser extension assets
 - Build output that is kept under `dist/` instead of mixing generated files with source files
 
-## Project Layout
+## Usage
 
-- `openclaw-dashboard-plus.user.js`: userscript entry
-- `extension-src/`: extension source files and icon assets
-- `dist/extension/`: generated unpacked browser extension
-- `language-packs/`: repository language pack output
-- `ui-locales/`: popup UI locale files
-- `.github/workflows/build-extension.yml`: GitHub Actions build pipeline
+1. Build the extension with `node build-extension.mjs`, or download the packaged zip artifact from GitHub Actions.
+2. Load `dist/extension/` in `chrome://extensions` or `edge://extensions` with Developer mode enabled.
+3. Open your local OpenClaw panel, such as `http://127.0.0.1:18789`.
+4. In the extension popup, use:
+   - `Settings` to enable translation and define the allowed hosts and ports.
+   - `Features` to select the OpenClaw UI preset, font, font size, and toggle style override, style repair, select-style fix, or code-block styling independently.
+   - `Languages` to switch the OpenClaw content language, download remote locale packs, and clear cached bundles.
+   - `About` to refresh remote metadata and check current extension/OpenClaw compatibility info.
+5. Save runtime or theme settings after making changes. Remote theme/style assets are cached locally after download and reused until cleared.
 
 ## Build
 
+Prerequisites:
+
+- Node.js 22 is the reference runtime used by the GitHub Actions workflow.
+- PowerShell is required for `package-extension-zip.mjs`.
+- Chrome or Edge is required for `package-crx.mjs`.
+
+Commands:
+
 1. Build the unpacked browser extension:
    `node build-extension.mjs`
-2. The generated extension will be written to:
-   `dist/extension/`
-3. Package a zip archive for browser extension distribution:
+2. Package a zip archive for browser extension distribution:
    `node package-extension-zip.mjs`
-4. Optional: package a local CRX file:
+3. Optional: package a local CRX file:
    `node package-crx.mjs`
+
+Outputs:
+
+- `dist/extension/`: generated unpacked browser extension
+- `dist/openclaw-dashboard-plus-extension.zip`: packaged extension zip
+- `dist/openclaw-dashboard-plus.crx`: optional local CRX build
+
+## Feature And File Guide
+
+- `extension-src/`: extension source, popup UI, icons, and browser content patches
+- `extension-src/style-bundle.json`: manifest for remote-loadable style modules
+- `extension-src/style-modules/`: modular style payloads delivered as CSS, HTML, or JSON
+- `language-packs/`: built or synced OpenClaw content locale bundles
+- `ui-locales/`: popup UI locale strings
+- `theme-presets.json`: built-in OpenClaw theme preset definitions
+- `plugin-metadata.json`: repository metadata, compatibility, and remote source definitions
+- `build-extension.mjs`: generates `dist/extension/` and syncs packaged assets
+- `package-extension-zip.mjs`: creates the extension zip artifact in `dist/`
+- `package-crx.mjs`: optional local CRX packaging helper
+- `dist/extension/`: generated output that should be treated as build artifacts
+- `openclaw-dashboard-plus-zh.user.js`: optional Chinese translation userscript retained for userscript-based installs
 
 ## Install
 
 ### Userscript
 
-1. Open `openclaw-dashboard-plus.user.js`
+1. Open `openclaw-dashboard-plus-zh.user.js`
 2. Install it with Tampermonkey, ScriptCat, or another compatible userscript manager
 
 ### Browser Extension ZIP
@@ -78,6 +110,15 @@ The repository includes a Windows-based GitHub Actions workflow that:
 - Builds `dist/extension/`
 - Packages `dist/openclaw-dashboard-plus-extension.zip`
 - Uploads both the zip archive and unpacked extension as workflow artifacts
+
+## Pull Requests
+
+- Make source changes in `extension-src/`, locale sources, metadata files, or build scripts. Do not manually edit `dist/extension/`.
+- Keep the browser extension as the primary delivery target. Only change `openclaw-dashboard-plus-zh.user.js` when the userscript itself truly needs maintenance.
+- Remote-delivered theme assets should stay limited to HTML, CSS, and JSON payloads. Do not introduce remote JavaScript execution paths.
+- Include reproduction steps for fixes, and attach screenshots or short notes when changing popup UI or OpenClaw styling behavior.
+- Run the relevant build command before opening a PR, and mention the verification result in the PR description.
+- Update the English README first for user-facing changes. Sync localized docs when the behavior or workflow meaningfully changes.
 
 ## Screenshots
 
