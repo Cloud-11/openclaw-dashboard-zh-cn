@@ -4,9 +4,6 @@
   border-radius: calc(var(--radius-lg, 14px) + 2px);
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--bg-elevated, #161920) 98%, white 2%) 0%, var(--bg, #0e1015) 100%);
-  box-shadow:
-    0 16px 32px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
   overflow: hidden;
 }
 

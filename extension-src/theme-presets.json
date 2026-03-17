@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "builtin-0.2.0",
+  "version": "builtin-0.3.0",
   "defaultPreset": "openclaw-classic",
   "presets": [
     {
@@ -56,6 +56,60 @@
         "control-border": "rgba(103, 232, 249, 0.34)",
         "radius": "14px",
         "shadow": "0 18px 46px rgba(2, 6, 23, 0.34)"
+      }
+    },
+    {
+      "id": "apple-light",
+      "variables": {
+        "page-bg": "#f5f5f7",
+        "surface": "rgba(255, 255, 255, 0.9)",
+        "surface-2": "#ffffff",
+        "text": "#1d1d1f",
+        "muted": "#6e6e73",
+        "border": "rgba(29, 29, 31, 0.08)",
+        "accent": "#0071e3",
+        "accent-soft": "rgba(0, 113, 227, 0.14)",
+        "control-bg": "rgba(255, 255, 255, 0.96)",
+        "control-text": "#1d1d1f",
+        "control-border": "rgba(29, 29, 31, 0.12)",
+        "radius": "22px",
+        "shadow": "0 20px 44px rgba(15, 23, 42, 0.08)"
+      }
+    },
+    {
+      "id": "google-light",
+      "variables": {
+        "page-bg": "#f8fafd",
+        "surface": "#ffffff",
+        "surface-2": "#f7faff",
+        "text": "#1f1f1f",
+        "muted": "#5f6368",
+        "border": "#dde3ea",
+        "accent": "#1a73e8",
+        "accent-soft": "rgba(26, 115, 232, 0.14)",
+        "control-bg": "#f8fbff",
+        "control-text": "#1f1f1f",
+        "control-border": "#c7d5eb",
+        "radius": "16px",
+        "shadow": "0 12px 28px rgba(60, 64, 67, 0.12)"
+      }
+    },
+    {
+      "id": "microsoft-light",
+      "variables": {
+        "page-bg": "#f3f6fb",
+        "surface": "rgba(255, 255, 255, 0.94)",
+        "surface-2": "#eef3f9",
+        "text": "#1b1b1f",
+        "muted": "#61656f",
+        "border": "rgba(97, 101, 111, 0.16)",
+        "accent": "#0f6cbd",
+        "accent-soft": "rgba(15, 108, 189, 0.14)",
+        "control-bg": "#ffffff",
+        "control-text": "#1b1b1f",
+        "control-border": "rgba(15, 108, 189, 0.18)",
+        "radius": "12px",
+        "shadow": "0 16px 36px rgba(15, 23, 42, 0.1)"
       }
     }
   ]

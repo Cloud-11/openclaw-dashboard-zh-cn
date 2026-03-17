@@ -19,10 +19,6 @@
   font: inherit !important;
 }
 
-:where(a, .session-link) {
-  color: var(--accent) !important;
-}
-
 :where(input::placeholder, textarea::placeholder) {
   color: var(--muted) !important;
 }

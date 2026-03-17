@@ -288,9 +288,32 @@ button,
   left: 0;
   right: 0;
   z-index: 20;
+  max-height: 176px;
   border: 1px solid var(--line-strong);
   background: var(--surface);
   box-shadow: 0 8px 18px rgba(60, 64, 67, 0.18);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+.select-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.select-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.select-menu::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(95, 99, 104, 0.34);
+}
+
+.select-menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(95, 99, 104, 0.5);
 }
 
 .select-option {
