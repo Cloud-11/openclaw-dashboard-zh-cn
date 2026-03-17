@@ -4,7 +4,7 @@
 
 # OpenClaw Dashboard Plus
 
-Outil multilingue de script utilisateur et d'extension de navigateur pour OpenClaw Dashboard.
+Outil d'amélioration par extension de navigateur pour OpenClaw Dashboard.
 
 > Remarque : le développeur ne maîtrise pas le français. Ce document a été généré avec l'aide d'un modèle IA et peut contenir des formulations imparfaites.
 
@@ -12,64 +12,91 @@ Outil multilingue de script utilisateur et d'extension de navigateur pour OpenCl
 
 ## Aperçu
 
-Le projet existe sous deux formes :
+OpenClaw Dashboard Plus est désormais fourni uniquement comme extension de navigateur, construite dans `dist/extension/`.
 
-- `openclaw-dashboard-plus-zh.user.js` pour les gestionnaires de scripts utilisateur
-- Une extension de navigateur générée dans `dist/extension/`
+Le projet apporte :
 
-Il ajoute à OpenClaw Dashboard une couche multilingue, un panneau popup, des mises à jour de métadonnées distantes et des packs de langue téléchargeables.
+- Des réglages séparés pour la langue du contenu OpenClaw et celle de l'interface popup
+- Le chargement de métadonnées, packs de langue et ressources de style depuis GitHub ou Gitee
+- Des options de thème pour le style UI, la police, la taille de police et les correctifs visuels
+- Une chaîne unifiée d'icônes et de métadonnées pour la documentation et l'extension
 
 ## Fonctionnalités
 
-- Séparation entre la langue du contenu et la langue de l'interface popup
-- Récupération des métadonnées et des packs de langue depuis GitHub et Gitee
-- Popup d'extension pour gérer les paramètres, le cache et les versions
-- Même icône de projet dans la documentation et l'extension
+- Onglets popup `Settings`, `Features`, `Languages` et `About`
+- Actualisation distante des métadonnées, packs de langue, préréglages de thème et modules de style
+- Distribution des ressources de thème en HTML / CSS / JSON sans JavaScript distant
+- Structure modulaire séparant `extension-src/`, `language-packs/`, `ui-locales/` et `plugin-metadata.json`
 - Sorties générées regroupées dans `dist/` au lieu de mélanger source et build
 
-## Structure du projet
+## Utilisation
 
-- `openclaw-dashboard-plus-zh.user.js` : point d'entrée du script utilisateur
-- `extension-src/` : sources de l'extension et icônes
-- `dist/extension/` : extension générée non empaquetée
-- `language-packs/` : sortie des packs de langue du dépôt
-- `ui-locales/` : fichiers de langue de l'interface popup
-- `.github/workflows/build-extension.yml` : pipeline GitHub Actions
+1. Exécutez `node build-extension.mjs` ou téléchargez le ZIP généré par GitHub Actions.
+2. Ouvrez `chrome://extensions` ou `edge://extensions` et activez le mode développeur.
+3. Chargez `dist/extension/` comme extension non empaquetée.
+4. Ouvrez votre panneau OpenClaw, par exemple `http://127.0.0.1:18789`.
+5. Utilisez les onglets du popup :
+   - `Settings` : activer la traduction et définir les hôtes et ports autorisés
+   - `Features` : choisir le préréglage UI, la police, la taille et les correctifs de style
+   - `Languages` : changer la langue du contenu, mettre à jour les packs distants et vider le cache
+   - `About` : actualiser les métadonnées distantes et consulter les informations de compatibilité
+6. Enregistrez les paramètres après modification. Les ressources distantes mises en cache restent locales jusqu'à leur suppression dans le popup.
 
 ## Build
 
-1. Générer l'extension non empaquetée :
+Prérequis :
+
+- Node.js 22 est la version de référence.
+- `package-extension-zip.mjs` nécessite PowerShell.
+- `package-crx.mjs` nécessite Chrome ou Edge.
+
+Commandes :
+
+1. Construire l'extension non empaquetée :
    `node build-extension.mjs`
-2. Sortie :
-   `dist/extension/`
-3. Créer l'archive ZIP de distribution :
+2. Créer le ZIP de distribution :
    `node package-extension-zip.mjs`
-4. Optionnel : créer un CRX local :
+3. Optionnel : créer un CRX local :
    `node package-crx.mjs`
+
+Sorties :
+
+- `dist/extension/` : extension non empaquetée générée
+- `dist/openclaw-dashboard-plus-extension.zip` : ZIP de distribution
+- `dist/openclaw-dashboard-plus.crx` : CRX local optionnel
+
+## Guide Des Fichiers
+
+- `extension-src/` : sources de l'extension, popup UI, icônes, préréglages de thème et logique de contenu
+- `extension-src/content-main.js` : source du script de contenu
+- `extension-src/style-bundle.json` : manifeste des modules de style distants
+- `extension-src/style-modules/` : ressources CSS / HTML / JSON modulaires
+- `extension-src/theme-presets.json` : définition des préréglages de thème intégrés
+- `language-packs/` : packs de langue du contenu OpenClaw
+- `ui-locales/` : textes localisés du popup et libellés des préréglages
+- `plugin-metadata.json` : métadonnées canoniques pour les versions, sources distantes et langues disponibles
+- `build-extension.mjs` : construit `dist/extension/`
+- `package-extension-zip.mjs` : crée le ZIP dans `dist/`
+- `package-crx.mjs` : assistant de génération CRX local
 
 ## Installation
 
-### Script utilisateur
+### ZIP De L'Extension
 
-1. Ouvrez `openclaw-dashboard-plus-zh.user.js`
-2. Installez-le avec Tampermonkey, ScriptCat ou un gestionnaire compatible
+1. Téléchargez `openclaw-dashboard-plus-extension.zip` depuis les artefacts GitHub Actions ou les releases.
+2. Extrayez-le dans un dossier stable.
+3. Ouvrez `chrome://extensions` ou `edge://extensions`.
+4. Activez le mode développeur.
+5. Cliquez sur `Load unpacked`.
+6. Sélectionnez le dossier extrait.
 
-### ZIP de l'extension
+### Extension Locale Non Empaquetée
 
-1. Téléchargez `openclaw-dashboard-plus-extension.zip` depuis les artefacts GitHub Actions ou les releases
-2. Extrayez-le dans un dossier stable
-3. Ouvrez `chrome://extensions` ou `edge://extensions`
-4. Activez le mode développeur
-5. Cliquez sur `Load unpacked`
-6. Sélectionnez le dossier extrait
-
-### Extension non empaquetée locale
-
-1. Exécutez `node build-extension.mjs`
-2. Ouvrez `chrome://extensions` ou `edge://extensions`
-3. Activez le mode développeur
-4. Cliquez sur `Load unpacked`
-5. Sélectionnez `dist/extension/`
+1. Exécutez `node build-extension.mjs`.
+2. Ouvrez `chrome://extensions` ou `edge://extensions`.
+3. Activez le mode développeur.
+4. Cliquez sur `Load unpacked`.
+5. Sélectionnez `dist/extension/`.
 
 ## GitHub Actions
 
@@ -79,7 +106,15 @@ Le dépôt inclut un workflow GitHub Actions sous Windows qui :
 - Produit `dist/openclaw-dashboard-plus-extension.zip`
 - Téléverse le ZIP et l'extension non empaquetée comme artefacts
 
-## Captures d'écran
+## Pull Request
+
+- Modifiez `extension-src/`, les locales, les métadonnées ou les scripts de build. N'éditez pas directement `dist/extension/`.
+- Le dépôt est désormais réservé à l'extension. Ne réintroduisez pas l'ancien mode de script ni une distribution parallèle.
+- Les ressources distantes de thème doivent rester limitées à HTML / CSS / JSON, sans JavaScript distant.
+- Pour les correctifs UI ou style, ajoutez des étapes de reproduction et si utile une capture d'écran dans la PR.
+- Exécutez la commande de build pertinente avant d'ouvrir la PR et mentionnez le résultat de vérification.
+
+## Captures D'Écran
 
 ![Aperçu du popup](../../image.png)
 ![Aperçu de l'installation](../../image2.png)

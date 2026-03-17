@@ -5,10 +5,6 @@
   "presets": [
     {
       "id": "openclaw-classic",
-      "label": "OpenClaw Classic",
-      "nativeLabel": "OpenClaw 原版增强",
-      "description": "Keeps the original OpenClaw palette and only repairs spacing, controls, and visual consistency.",
-      "nativeDescription": "保留 OpenClaw 原本配色，只修补间距、控件和视觉一致性。",
       "preserveNativeColors": true,
       "variables": {
         "page-bg": "var(--bg)",
@@ -28,10 +24,6 @@
     },
     {
       "id": "plus-clean",
-      "label": "Plus Clean",
-      "nativeLabel": "Plus 清爽版",
-      "description": "A restrained dark preset with cleaner surfaces and calmer borders.",
-      "nativeDescription": "更克制的暗色预设，表面更整洁，边界更干净。",
       "variables": {
         "page-bg": "#0c1422",
         "surface": "rgba(13, 24, 39, 0.95)",
@@ -50,10 +42,6 @@
     },
     {
       "id": "plus-contrast",
-      "label": "Plus Contrast",
-      "nativeLabel": "Plus 高对比",
-      "description": "A darker, higher-contrast preset tuned for clearer hierarchy and stronger controls.",
-      "nativeDescription": "更深、更高对比的预设，强调层级、按钮和输入框可读性。",
       "variables": {
         "page-bg": "#060b16",
         "surface": "rgba(10, 17, 31, 0.96)",

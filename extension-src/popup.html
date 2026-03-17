@@ -309,13 +309,21 @@
           <div class="link-row">
             <a
               id="github-link"
-              class="link-button"
+              class="link-button link-button--repo"
               href="#"
               target="_blank"
               rel="noreferrer noopener"
-              data-i18n="github_button"
             >
-              GitHub 仓库
+              <span class="repo-link__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path
+                    d="M12 2C6.48 2 2 6.59 2 12.26c0 4.53 2.87 8.38 6.84 9.74.5.09.68-.22.68-.49 0-.24-.01-1.03-.01-1.87-2.78.62-3.37-1.21-3.37-1.21-.46-1.19-1.11-1.51-1.11-1.51-.91-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.36 1.12 2.93.85.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.83c.85 0 1.71.12 2.5.36 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.92-2.34 4.79-4.57 5.04.36.32.67.95.67 1.91 0 1.38-.01 2.49-.01 2.83 0 .27.18.59.69.49A10.28 10.28 0 0 0 22 12.26C22 6.59 17.52 2 12 2Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
+              <span data-i18n="github_button">GitHub 仓库</span>
+              <span id="github-stars" class="repo-stars" hidden>--</span>
             </a>
             <a
               id="gitee-link"
@@ -323,9 +331,8 @@
               href="#"
               target="_blank"
               rel="noreferrer noopener"
-              data-i18n="gitee_button"
             >
-              Gitee 镜像
+              <span data-i18n="gitee_button">Gitee 镜像</span>
             </a>
           </div>
 

@@ -40,6 +40,92 @@
       "default": false
     }
   ],
+  "uiLocales": [
+    {
+      "code": "zh-CN",
+      "label": "Simplified Chinese",
+      "nativeLabel": "简体中文",
+      "builtin": true,
+      "default": true
+    },
+    {
+      "code": "en",
+      "label": "English",
+      "nativeLabel": "English",
+      "builtin": true,
+      "default": false
+    },
+    {
+      "code": "zh-TW",
+      "label": "Traditional Chinese",
+      "nativeLabel": "繁體中文",
+      "builtin": false,
+      "default": false
+    },
+    {
+      "code": "ja",
+      "label": "Japanese",
+      "nativeLabel": "日本語",
+      "builtin": false,
+      "default": false
+    },
+    {
+      "code": "ko",
+      "label": "Korean",
+      "nativeLabel": "한국어",
+      "builtin": false,
+      "default": false
+    },
+    {
+      "code": "fr",
+      "label": "French",
+      "nativeLabel": "Français",
+      "builtin": false,
+      "default": false
+    },
+    {
+      "code": "es",
+      "label": "Spanish",
+      "nativeLabel": "Español",
+      "builtin": false,
+      "default": false
+    },
+    {
+      "code": "ru",
+      "label": "Russian",
+      "nativeLabel": "Русский",
+      "builtin": false,
+      "default": false
+    },
+    {
+      "code": "de",
+      "label": "German",
+      "nativeLabel": "Deutsch",
+      "builtin": false,
+      "default": false
+    },
+    {
+      "code": "vi",
+      "label": "Vietnamese",
+      "nativeLabel": "Tiếng Việt",
+      "builtin": false,
+      "default": false
+    },
+    {
+      "code": "fil",
+      "label": "Filipino",
+      "nativeLabel": "Filipino",
+      "builtin": false,
+      "default": false
+    },
+    {
+      "code": "ar",
+      "label": "Arabic",
+      "nativeLabel": "العربية",
+      "builtin": false,
+      "default": false
+    }
+  ],
   "translationBundle": {
     "defaultLocale": "zh-CN",
     "builtinVersions": {
@@ -62,7 +148,7 @@
       "metadataUrl": "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/plugin-metadata.json",
       "localeUrlTemplate": "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/language-packs/{locale}.json",
       "uiLocaleUrlTemplate": "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/ui-locales/{locale}.json",
-      "themePresetsUrl": "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/theme-presets.json",
+      "themePresetsUrl": "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/extension-src/theme-presets.json",
       "styleBundleUrl": "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/extension-src/style-bundle.json"
     },
     {
@@ -72,7 +158,7 @@
       "metadataUrl": "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/plugin-metadata.json",
       "localeUrlTemplate": "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/language-packs/{locale}.json",
       "uiLocaleUrlTemplate": "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/ui-locales/{locale}.json",
-      "themePresetsUrl": "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/theme-presets.json",
+      "themePresetsUrl": "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/extension-src/theme-presets.json",
       "styleBundleUrl": "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/extension-src/style-bundle.json"
     }
   ]

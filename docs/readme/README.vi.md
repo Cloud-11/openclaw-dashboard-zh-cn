@@ -4,86 +4,121 @@
 
 # OpenClaw Dashboard Plus
 
-Cong cu userscript va tien ich mo rong trinh duyet da ngon ngu cho OpenClaw Dashboard.
+Cong cu mo rong trinh duyet de nang cap OpenClaw Dashboard.
 
-> Luu y: nha phat trien khong thong thao tieng Viet. Tai lieu nay duoc tao bang mo hinh AI va co the co cau truc cau chua tu nhien.
+> Luu y: nha phat trien khong thong thao tieng Viet. Tai lieu nay duoc tao boi mo hinh AI va co the co cach dien dat chua tu nhien.
 
 [English](../../README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [Français](./README.fr.md) | [Español](./README.es.md) | [Русский](./README.ru.md) | [Deutsch](./README.de.md) | [Tiếng Việt](./README.vi.md) | [Filipino](./README.fil.md) | [العربية](./README.ar.md)
 
-## Tong quan
+## Tong Quan
 
-Du an duoc phan phoi duoi hai hinh thuc:
+OpenClaw Dashboard Plus hien chi duoc phan phoi duoi dang tien ich mo rong trinh duyet, duoc build vao `dist/extension/`.
 
-- `openclaw-dashboard-plus-zh.user.js` duoi dang userscript
-- Tien ich mo rong trinh duyet duoc tao trong `dist/extension/`
+Du an cung cap:
 
-No bo sung cho OpenClaw Dashboard lop da ngon ngu, bang dieu khien popup, cap nhat metadata tu xa va cac goi ngon ngu co the tai xuong.
+- Cai dat rieng cho ngon ngu noi dung OpenClaw va ngon ngu giao dien popup
+- Tai metadata, goi ngon ngu va tai nguyen style tu GitHub hoac Gitee
+- Tinh nang theme cho kieu UI, font, co chu va cac bo sua giao dien
+- Chuoi icon va metadata thong nhat giua tai lieu va tien ich
 
-## Tinh nang
+## Tinh Nang
 
-- Tach rieng ngon ngu noi dung va ngon ngu giao dien popup
-- Lay metadata va goi ngon ngu tu GitHub va Gitee
-- Popup cua tien ich mo rong de quan ly cai dat, bo nho dem va thong tin phien ban
-- Cung mot bieu tuong du an cho tai lieu va tien ich mo rong
-- Tep sinh ra duoc dua vao `dist/` thay vi tron voi ma nguon
+- Cac tab popup `Settings`, `Features`, `Languages`, `About`
+- Lam moi tu xa cho metadata, goi ngon ngu, theme preset va style module
+- Phan phoi tai nguyen theme bang HTML / CSS / JSON, khong cho phep JavaScript tu xa
+- Cau truc mo dun tach ro `extension-src/`, `language-packs/`, `ui-locales/`, `plugin-metadata.json`
+- Toan bo tep build duoc dat trong `dist/`
 
-## Cau truc du an
+## Cach Su Dung
 
-- `openclaw-dashboard-plus-zh.user.js`: diem vao cua userscript
-- `extension-src/`: ma nguon tien ich mo rong va tai nguyen bieu tuong
-- `dist/extension/`: tien ich mo rong da tao dang giai nen
-- `language-packs/`: dau ra goi ngon ngu trong kho ma nguon
-- `ui-locales/`: tep ngon ngu cho giao dien popup
-- `.github/workflows/build-extension.yml`: quy trinh GitHub Actions
+1. Chay `node build-extension.mjs` hoac tai file ZIP tu GitHub Actions.
+2. Mo `chrome://extensions` hoac `edge://extensions` va bat Developer mode.
+3. Nap `dist/extension/` duoi dang extension da giai nen.
+4. Mo bang dieu khien OpenClaw, vi du `http://127.0.0.1:18789`.
+5. Su dung cac tab trong popup:
+   - `Settings`: bat dich va dat host, port duoc phep
+   - `Features`: chon preset UI, font, co chu va cac tuy chon sua style
+   - `Languages`: doi ngon ngu noi dung, lam moi goi ngon ngu tu xa, xoa cache
+   - `About`: lam moi metadata tu xa va xem thong tin tuong thich
+6. Luu cau hinh sau khi thay doi. Cache tai nguyen tu xa se duoc giu cuc bo cho den khi ban xoa trong popup.
 
 ## Build
 
-1. Tao tien ich mo rong dang giai nen:
+Yeu cau:
+
+- Node.js 22 la runtime tham chieu.
+- `package-extension-zip.mjs` can PowerShell.
+- `package-crx.mjs` can Chrome hoac Edge.
+
+Lenh:
+
+1. Build extension da giai nen:
    `node build-extension.mjs`
-2. Dau ra:
-   `dist/extension/`
-3. Tao goi ZIP de phan phoi:
+2. Tao ZIP phat hanh:
    `node package-extension-zip.mjs`
-4. Tuy chon tao CRX cuc bo:
+3. Tuy chon: tao CRX cuc bo:
    `node package-crx.mjs`
 
-## Cai dat
+Dau ra:
 
-### Userscript
+- `dist/extension/`: extension da giai nen duoc tao ra
+- `dist/openclaw-dashboard-plus-extension.zip`: file ZIP phat hanh
+- `dist/openclaw-dashboard-plus.crx`: CRX cuc bo tuy chon
 
-1. Mo `openclaw-dashboard-plus-zh.user.js`
-2. Cai bang Tampermonkey, ScriptCat hoac trinh quan ly tuong thich
+## Huong Dan Tep
 
-### Tep ZIP cua tien ich mo rong
+- `extension-src/`: ma nguon extension, popup UI, icon, theme preset va logic noi dung
+- `extension-src/content-main.js`: nguon content script
+- `extension-src/style-bundle.json`: manifest cho style module tai tu xa
+- `extension-src/style-modules/`: tai nguyen CSS / HTML / JSON theo mo dun
+- `extension-src/theme-presets.json`: dinh nghia theme preset tich hop
+- `language-packs/`: goi ngon ngu noi dung OpenClaw
+- `ui-locales/`: chuoi popup UI va ten, mo ta preset da duoc dia phuong hoa
+- `plugin-metadata.json`: metadata chuan cho phien ban, nguon tu xa va locale kha dung
+- `build-extension.mjs`: tao `dist/extension/`
+- `package-extension-zip.mjs`: tao ZIP trong `dist/`
+- `package-crx.mjs`: ho tro tao CRX cuc bo
 
-1. Tai `openclaw-dashboard-plus-extension.zip` tu artifact GitHub Actions hoac releases
-2. Giai nen vao thu muc on dinh
-3. Mo `chrome://extensions` hoac `edge://extensions`
-4. Bat Developer mode
-5. Bam `Load unpacked`
-6. Chon thu muc da giai nen
+## Cai Dat
 
-### Tien ich mo rong giai nen cuc bo
+### ZIP Tien Ich
 
-1. Chay `node build-extension.mjs`
-2. Mo `chrome://extensions` hoac `edge://extensions`
-3. Bat Developer mode
-4. Bam `Load unpacked`
-5. Chon `dist/extension/`
+1. Tai `openclaw-dashboard-plus-extension.zip` tu GitHub Actions hoac Releases.
+2. Giai nen vao mot thu muc on dinh.
+3. Mo `chrome://extensions` hoac `edge://extensions`.
+4. Bat Developer mode.
+5. Bam `Load unpacked`.
+6. Chon thu muc da giai nen.
+
+### Tien Ich Cuc Bo Da Giai Nen
+
+1. Chay `node build-extension.mjs`.
+2. Mo `chrome://extensions` hoac `edge://extensions`.
+3. Bat Developer mode.
+4. Bam `Load unpacked`.
+5. Chon `dist/extension/`.
 
 ## GitHub Actions
 
-Kho ma nguon bao gom workflow GitHub Actions tren Windows, tu dong:
+Kho chua co workflow GitHub Actions tren Windows se tu dong:
 
 - Build `dist/extension/`
 - Tao `dist/openclaw-dashboard-plus-extension.zip`
-- Tai len artifact gom ZIP va ban giai nen
+- Tai len ZIP va extension da giai nen nhu artifact
 
-## Anh chup man hinh
+## Pull Request
 
-![Xem truoc popup](../../image.png)
-![Xem truoc cai dat](../../image2.png)
+- Hay sua `extension-src/`, locale, metadata hoac script build. Khong sua truc tiep `dist/extension/`.
+- Kho chua nay gio chi phat hanh extension. Khong dua lai kieu dong goi cu hay duong phan phoi song song.
+- Tai nguyen theme tu xa phai gioi han o HTML / CSS / JSON, khong them duong chay JavaScript.
+- Voi sua UI hoac style, hay them buoc tai hien va neu can thi kem anh trong PR.
+- Chay build lien quan truoc khi mo PR va ghi ro ket qua xac minh.
 
-## Giay phep
+## Hinh Anh
 
-Du an nay duoc phat hanh theo [MIT License](../../LICENSE).
+![Extension popup preview](../../image.png)
+![Extension install preview](../../image2.png)
+
+## Giay Phep
+
+Du an duoc phat hanh theo [MIT License](../../LICENSE).

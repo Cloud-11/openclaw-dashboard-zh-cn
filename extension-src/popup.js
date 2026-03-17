@@ -91,24 +91,13 @@ const FALLBACK_THEME_BUNDLE = {
   presets: [
     {
       id: "openclaw-classic",
-      label: "OpenClaw Classic",
-      nativeLabel: "OpenClaw 原版增强",
-      description: "Keeps the original dark dashboard feeling and smooths out surface contrast.",
-      nativeDescription: "保留原版偏深色的控制台气质，同时补齐层次和控件一致性。",
+      preserveNativeColors: true,
     },
     {
       id: "plus-clean",
-      label: "Plus Clean",
-      nativeLabel: "Plus 清爽版",
-      description: "A bright and crisp management-panel style with lighter cards and calmer borders.",
-      nativeDescription: "更偏管理台的浅色清爽风格，卡片更轻，边界更干净。",
     },
     {
       id: "plus-contrast",
-      label: "Plus Contrast",
-      nativeLabel: "Plus 高对比",
-      description: "A darker, higher-contrast preset tuned for clearer hierarchy and stronger controls.",
-      nativeDescription: "更深、更高对比的预设，强调层级、按钮和输入框可读性。",
     },
   ],
 };
@@ -125,6 +114,10 @@ const FALLBACK_METADATA = {
     { code: "zh-CN", label: "简体中文", nativeLabel: "简体中文", builtin: true, default: true },
     { code: "en", label: "English", nativeLabel: "English", builtin: true, default: false },
   ],
+  uiLocales: [
+    { code: "zh-CN", label: "Simplified Chinese", nativeLabel: "简体中文", builtin: true, default: true },
+    { code: "en", label: "English", nativeLabel: "English", builtin: true, default: false },
+  ],
   translationBundle: { defaultLocale: "zh-CN", builtinVersions: { "zh-CN": "builtin", en: "builtin" } },
   themeBundle: { defaultPreset: "openclaw-classic", builtinVersion: "builtin" },
   styleBundle: { builtinVersion: "builtin" },
@@ -136,7 +129,7 @@ const FALLBACK_METADATA = {
       metadataUrl: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/plugin-metadata.json",
       localeUrlTemplate: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/language-packs/{locale}.json",
       uiLocaleUrlTemplate: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/ui-locales/{locale}.json",
-      themePresetsUrl: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/theme-presets.json",
+      themePresetsUrl: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/extension-src/theme-presets.json",
       styleBundleUrl: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/extension-src/style-bundle.json",
     },
     {
@@ -146,7 +139,7 @@ const FALLBACK_METADATA = {
       metadataUrl: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/plugin-metadata.json",
       localeUrlTemplate: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/language-packs/{locale}.json",
       uiLocaleUrlTemplate: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/ui-locales/{locale}.json",
-      themePresetsUrl: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/theme-presets.json",
+      themePresetsUrl: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/extension-src/theme-presets.json",
       styleBundleUrl: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/extension-src/style-bundle.json",
     },
   ],
@@ -189,6 +182,7 @@ function getElements() {
     localeStatus: $("locale-status"),
     authorName: $("author-name"),
     githubLink: $("github-link"),
+    githubStars: $("github-stars"),
     giteeLink: $("gitee-link"),
     extensionVersion: $("extension-version"),
     latestVersion: $("latest-version"),
@@ -248,6 +242,32 @@ async function fetchText(url, timeoutMs = REMOTE_FETCH_TIMEOUT_MS) {
   return response.text();
 }
 
+function unique(values) {
+  return [...new Set(values.filter(Boolean))];
+}
+
+function parseGitHubRepo(repoUrl) {
+  if (!repoUrl) {
+    return null;
+  }
+  try {
+    const url = new URL(repoUrl);
+    if (!/github\.com$/i.test(url.hostname)) {
+      return null;
+    }
+    const parts = url.pathname.split("/").filter(Boolean);
+    if (parts.length < 2) {
+      return null;
+    }
+    return {
+      owner: decodeURIComponent(parts[0]),
+      name: decodeURIComponent(parts[1]).replace(/\.git$/i, ""),
+    };
+  } catch {
+    return null;
+  }
+}
+
 function storageGet(area, defaults) {
   return new Promise((resolve, reject) => {
     chrome.storage[area].get(defaults, (result) => {
@@ -301,6 +321,37 @@ function normalizeFontScale(value) {
   return String(Math.min(130, Math.max(85, Math.round(parsedValue))));
 }
 
+function normalizeLocaleEntry(entry) {
+  if (!entry || typeof entry !== "object") {
+    return null;
+  }
+  const code = typeof entry.code === "string" ? entry.code.trim() : "";
+  if (!code) {
+    return null;
+  }
+  const label = typeof entry.label === "string" && entry.label.trim() ? entry.label.trim() : code;
+  const nativeLabel = typeof entry.nativeLabel === "string" && entry.nativeLabel.trim()
+    ? entry.nativeLabel.trim()
+    : label;
+  return {
+    code,
+    label,
+    nativeLabel,
+    builtin: entry.builtin !== false,
+    default: entry.default === true,
+  };
+}
+
+function normalizeLocaleEntries(entries, fallbackEntries = []) {
+  const normalizedEntries = Array.isArray(entries)
+    ? entries.map((entry) => normalizeLocaleEntry(entry)).filter(Boolean)
+    : [];
+  if (normalizedEntries.length) {
+    return normalizedEntries;
+  }
+  return Array.isArray(fallbackEntries) ? fallbackEntries.map((entry) => ({ ...entry })) : [];
+}
+
 function normalizeThemePreset(entry) {
   if (!entry || typeof entry !== "object") {
     return null;
@@ -309,10 +360,6 @@ function normalizeThemePreset(entry) {
   if (!id) {
     return null;
   }
-  const label = typeof entry.label === "string" && entry.label.trim() ? entry.label.trim() : id;
-  const nativeLabel = typeof entry.nativeLabel === "string" && entry.nativeLabel.trim()
-    ? entry.nativeLabel.trim()
-    : label;
   const variables = entry.variables && typeof entry.variables === "object"
     ? Object.fromEntries(
         Object.entries(entry.variables)
@@ -322,13 +369,7 @@ function normalizeThemePreset(entry) {
     : {};
   return {
     id,
-    label,
-    nativeLabel,
     preserveNativeColors: entry.preserveNativeColors === true,
-    description: typeof entry.description === "string" && entry.description.trim() ? entry.description.trim() : "",
-    nativeDescription: typeof entry.nativeDescription === "string" && entry.nativeDescription.trim()
-      ? entry.nativeDescription.trim()
-      : "",
     variables,
   };
 }
@@ -485,15 +526,11 @@ function resolveThemePreset(bundle, presetId) {
 
 function normalizeMetadata(raw, version) {
   const metadata = raw && typeof raw === "object" ? raw : {};
-  const locales = Array.isArray(metadata.locales) && metadata.locales.length
-    ? metadata.locales.map((entry) => ({
-        code: String(entry.code || ""),
-        label: String(entry.label || entry.code || ""),
-        nativeLabel: String(entry.nativeLabel || entry.label || entry.code || ""),
-        builtin: entry.builtin !== false,
-        default: entry.default === true,
-      })).filter((entry) => entry.code)
-    : FALLBACK_METADATA.locales.map((entry) => ({ ...entry }));
+  const locales = normalizeLocaleEntries(metadata.locales, FALLBACK_METADATA.locales);
+  const uiLocales = normalizeLocaleEntries(
+    Array.isArray(metadata.uiLocales) && metadata.uiLocales.length ? metadata.uiLocales : locales,
+    FALLBACK_METADATA.uiLocales,
+  );
   return {
     ...FALLBACK_METADATA,
     ...metadata,
@@ -502,6 +539,7 @@ function normalizeMetadata(raw, version) {
     author: { ...FALLBACK_METADATA.author, ...(metadata.author || {}) },
     repositories: { ...FALLBACK_METADATA.repositories, ...(metadata.repositories || {}) },
     locales,
+    uiLocales,
     translationBundle: {
       ...FALLBACK_METADATA.translationBundle,
       ...(metadata.translationBundle || {}),
@@ -530,6 +568,7 @@ function mergeMetadata(base, next) {
     author: { ...(base.author || {}), ...(next.author || {}) },
     repositories: { ...(base.repositories || {}), ...(next.repositories || {}) },
     locales: Array.isArray(next.locales) && next.locales.length ? next.locales : base.locales,
+    uiLocales: Array.isArray(next.uiLocales) && next.uiLocales.length ? next.uiLocales : base.uiLocales,
     translationBundle: {
       ...(base.translationBundle || {}),
       ...(next.translationBundle || {}),
@@ -554,17 +593,21 @@ function effectiveMetadata(state) {
   return state.remoteMetadata ? mergeMetadata(state.localMetadata, state.remoteMetadata) : state.localMetadata;
 }
 
+function panelUiLocaleEntries(metadata) {
+  if (Array.isArray(metadata?.uiLocales) && metadata.uiLocales.length) {
+    return metadata.uiLocales;
+  }
+  if (Array.isArray(metadata?.locales) && metadata.locales.length) {
+    return metadata.locales;
+  }
+  return FALLBACK_METADATA.uiLocales;
+}
+
 function buildUiLocaleUrls(metadata, locale) {
   const sources = Array.isArray(metadata?.updateSources) ? metadata.updateSources : [];
   return sources.map((source) => {
     if (source?.uiLocaleUrlTemplate) {
       return String(source.uiLocaleUrlTemplate).replaceAll("{locale}", encodeURIComponent(locale));
-    }
-    if (source?.repoUrl && /github\.com/i.test(source.repoUrl)) {
-      return `https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/ui-locales/${encodeURIComponent(locale)}.json`;
-    }
-    if (source?.repoUrl && /gitee\.com/i.test(source.repoUrl)) {
-      return `https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/ui-locales/${encodeURIComponent(locale)}.json`;
     }
     return null;
   }).filter(Boolean);
@@ -577,20 +620,6 @@ function buildThemeBundleUrls(metadata) {
       return {
         url: source.themePresetsUrl,
         styleUrl: source.styleBundleUrl || "",
-        source,
-      };
-    }
-    if (source?.repoUrl && /github\.com/i.test(source.repoUrl)) {
-      return {
-        url: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/theme-presets.json",
-        styleUrl: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/extension-src/style-bundle.json",
-        source,
-      };
-    }
-    if (source?.repoUrl && /gitee\.com/i.test(source.repoUrl)) {
-      return {
-        url: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/theme-presets.json",
-        styleUrl: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/extension-src/style-bundle.json",
         source,
       };
     }
@@ -623,17 +652,28 @@ function localeOption(entry, uiLocale) {
   return localeName(entry, uiLocale);
 }
 
-function themePresetName(entry, uiLocale) {
+function themePresetKey(presetId, suffix) {
+  return `theme_preset_${presetId}_${suffix}`;
+}
+
+function themePresetName(state, entry) {
   if (!entry) {
     return "";
   }
-  return String(uiLocale || "").toLowerCase().startsWith("en")
-    ? entry.label || entry.nativeLabel || entry.id
-    : entry.nativeLabel || entry.label || entry.id;
+  return t(state, themePresetKey(entry.id, "label"), {}, entry.id);
 }
 
-function systemLocale(metadata) {
-  const supported = metadata.locales.map((entry) => entry.code);
+function themePresetDescription(state, entry) {
+  if (!entry) {
+    return "";
+  }
+  return t(state, themePresetKey(entry.id, "description"), {}, "");
+}
+
+function systemLocale(supportedCodes = panelUiLocaleEntries(FALLBACK_METADATA).map((entry) => entry.code)) {
+  const supported = Array.isArray(supportedCodes) && supportedCodes.length
+    ? supportedCodes
+    : [DEFAULT_UI_LOCALE];
   const candidates = Array.isArray(navigator.languages) && navigator.languages.length ? navigator.languages : [navigator.language || DEFAULT_UI_LOCALE];
   for (const raw of candidates) {
     const candidate = String(raw || "").trim().replace(/_/g, "-");
@@ -653,11 +693,102 @@ function panelLocaleSetting(state) {
   return state.selectedPanelLocale || state.settings.panelLocale || SYSTEM_UI_LOCALE;
 }
 
-function panelUiLocale(metadata, setting) {
+function panelUiLocale(setting, metadata = FALLBACK_METADATA) {
+  const supportedCodes = panelUiLocaleEntries(metadata).map((entry) => entry.code);
   if (setting === SYSTEM_UI_LOCALE) {
-    return systemLocale(metadata);
+    return systemLocale(supportedCodes);
   }
-  return metadata.locales.some((entry) => entry.code === setting) ? setting : DEFAULT_UI_LOCALE;
+  return supportedCodes.includes(setting) ? setting : DEFAULT_UI_LOCALE;
+}
+
+async function fetchUiLocaleStrings(locale, metadata = null) {
+  if (!locale) {
+    return null;
+  }
+  try {
+    const bundle = await fetchJson(chrome.runtime.getURL(`ui-locales/${locale}.json`), 2500);
+    return bundle?.strings && typeof bundle.strings === "object" ? bundle.strings : null;
+  } catch {
+    // try remote mirrors
+  }
+  for (const remoteUrl of buildUiLocaleUrls(metadata, locale)) {
+    try {
+      const bundle = await fetchJson(remoteUrl, 3000);
+      return bundle?.strings && typeof bundle.strings === "object" ? bundle.strings : null;
+    } catch {
+      // try next remote url
+    }
+  }
+  return null;
+}
+
+function panelUiFallbackLocales(locale) {
+  if (locale === DEFAULT_UI_LOCALE) {
+    return ["en", DEFAULT_UI_LOCALE];
+  }
+  if (String(locale || "").toLowerCase().startsWith("zh")) {
+    return ["en", DEFAULT_UI_LOCALE, locale];
+  }
+  return [DEFAULT_UI_LOCALE, "en", locale];
+}
+
+function formatCount(state, value) {
+  return new Intl.NumberFormat(state.uiLocale || DEFAULT_UI_LOCALE).format(value);
+}
+
+async function refreshGitHubRepoStats(elements, state) {
+  const metadata = effectiveMetadata(state);
+  const repoUrl = metadata.repositories?.github?.repoUrl || FALLBACK_METADATA.repositories.github.repoUrl;
+  const repo = parseGitHubRepo(repoUrl);
+
+  if (!repo) {
+    state.githubStats = {
+      repoUrl,
+      stars: null,
+      loading: false,
+      error: "invalid_repo_url",
+    };
+    renderAll(elements, state);
+    return;
+  }
+
+  if (state.githubStats?.loading && state.githubStats.repoUrl === repoUrl) {
+    return;
+  }
+
+  if (state.githubStats?.repoUrl === repoUrl && Number.isFinite(state.githubStats.stars)) {
+    return;
+  }
+
+  state.githubStats = {
+    repoUrl,
+    stars: state.githubStats?.repoUrl === repoUrl ? state.githubStats.stars : null,
+    loading: true,
+    error: null,
+  };
+  renderAll(elements, state);
+
+  try {
+    const payload = await fetchJson(
+      `https://api.github.com/repos/${encodeURIComponent(repo.owner)}/${encodeURIComponent(repo.name)}`,
+      4000,
+    );
+    state.githubStats = {
+      repoUrl,
+      stars: Number.isFinite(payload?.stargazers_count) ? payload.stargazers_count : null,
+      loading: false,
+      error: null,
+    };
+  } catch (error) {
+    state.githubStats = {
+      repoUrl,
+      stars: null,
+      loading: false,
+      error: error?.message || String(error || ""),
+    };
+  }
+
+  renderAll(elements, state);
 }
 
 function contentLocale(state, metadata) {
@@ -771,7 +902,7 @@ function ensureMessages(state, metadata) {
 function renderAll(elements, state) {
   const metadata = effectiveMetadata(state);
   const uiSetting = panelLocaleSetting(state);
-  const uiLocale = panelUiLocale(metadata, uiSetting);
+  const uiLocale = panelUiLocale(uiSetting, metadata);
   const content = contentLocale(state, metadata);
   const localeEntry = metadata.locales.find((entry) => entry.code === content);
   const cachedBundle = state.cachedBundles?.[content];
@@ -796,7 +927,7 @@ function renderAll(elements, state) {
   renderSelect(
     elements.panelSelect,
     [{ value: SYSTEM_UI_LOCALE, label: t(state, "panel_locale_system", {}, "Follow system"), note: t(state, "panel_locale_system_note", {}, "") }].concat(
-      metadata.locales.map((entry) => ({ value: entry.code, label: localeOption(entry, state.uiLocale) })),
+      panelUiLocaleEntries(metadata).map((entry) => ({ value: entry.code, label: localeOption(entry, state.uiLocale) })),
     ),
     uiSetting,
     state.openSelect === "panel",
@@ -823,10 +954,12 @@ function renderAll(elements, state) {
     elements.themePresetSelect,
     themeBundle.presets.map((entry) => ({
       value: entry.id,
-      label: themePresetName(entry, state.uiLocale),
-      note: state.cachedThemeBundle?.presets?.some((preset) => preset.id === entry.id)
-        ? t(state, "theme_option_cached", {}, entry.nativeDescription || entry.description || "Cached remote preset")
-        : entry.nativeDescription || entry.description || t(state, "theme_option_builtin", {}, "Bundled preset"),
+      label: themePresetName(state, entry),
+      note: themePresetDescription(state, entry) || (
+        state.cachedThemeBundle?.presets?.some((preset) => preset.id === entry.id)
+          ? t(state, "theme_option_cached", {}, "Cached remote preset")
+          : t(state, "theme_option_builtin", {}, "Bundled preset")
+      ),
     })),
     themePreset.id,
     state.openSelect === "themePreset",
@@ -878,6 +1011,22 @@ function renderAll(elements, state) {
   elements.authorName.textContent = metadata.author?.name || FALLBACK_METADATA.author.name;
   elements.githubLink.href = metadata.repositories?.github?.repoUrl || FALLBACK_METADATA.repositories.github.repoUrl;
   elements.giteeLink.href = metadata.repositories?.gitee?.repoUrl || FALLBACK_METADATA.repositories.gitee.repoUrl;
+  const githubRepo = parseGitHubRepo(elements.githubLink.href);
+  elements.githubStars.hidden = !githubRepo;
+  if (githubRepo) {
+    const starState = state.githubStats?.repoUrl === elements.githubLink.href ? state.githubStats : null;
+    elements.githubStars.dataset.state = starState?.loading
+      ? "loading"
+      : Number.isFinite(starState?.stars)
+        ? "ready"
+        : "unavailable";
+    elements.githubStars.textContent = starState?.loading
+      ? "..."
+      : Number.isFinite(starState?.stars)
+        ? formatCount(state, starState.stars)
+        : "--";
+    elements.githubStars.title = Number.isFinite(starState?.stars) ? `${formatCount(state, starState.stars)} stars` : "";
+  }
   elements.extensionVersion.textContent = state.localMetadata.version || "-";
   elements.latestVersion.textContent = state.remoteMetadata?.version || state.localMetadata.version || "-";
   elements.openclawVersion.textContent = metadata.compatibility?.openclaw || "-";
@@ -886,7 +1035,7 @@ function renderAll(elements, state) {
   elements.cachedVersion.textContent = cachedBundle?.version || cachedState?.version || t(state, "not_cached", {}, "Not cached");
   elements.activeSource.textContent = activeSource;
   elements.lastSync.textContent = formatDateTime(state, cachedState?.fetchedAt);
-  elements.themeCurrentPreset.textContent = themePresetName(themePreset, uiLocale) || themePreset.id;
+  elements.themeCurrentPreset.textContent = themePresetName(state, themePreset) || themePreset.id;
   elements.themeBuiltinVersion.textContent = state.builtinThemeBundle?.version || metadata.themeBundle?.builtinVersion || t(state, "not_builtin", {}, "Not built-in");
   elements.themeCachedVersion.textContent = state.cachedThemeBundle?.version || t(state, "not_cached", {}, "Not cached");
   elements.themeActiveSource.textContent = state.cachedThemeState?.sourceLabel || (state.cachedThemeBundle ? t(state, "locale_source_cached", {}, "Cached") : t(state, "locale_source_builtin", {}, "Built-in"));
@@ -913,26 +1062,20 @@ async function loadBuiltinThemeBundle() {
 }
 
 async function loadUiLocaleBundle(locale, metadata = null) {
-  for (const candidate of [locale, DEFAULT_UI_LOCALE]) {
-    if (!candidate) {
+  const requestedLocale = panelUiLocale(locale, metadata || FALLBACK_METADATA);
+  const strings = {};
+  let loadedAny = false;
+
+  for (const candidate of unique(panelUiFallbackLocales(requestedLocale))) {
+    const bundleStrings = await fetchUiLocaleStrings(candidate, metadata);
+    if (!bundleStrings) {
       continue;
     }
-    try {
-      const bundle = await fetchJson(chrome.runtime.getURL(`ui-locales/${candidate}.json`), 2500);
-      return { locale: candidate, strings: bundle?.strings || {} };
-    } catch {
-      // try next
-    }
-    for (const remoteUrl of buildUiLocaleUrls(metadata, candidate)) {
-      try {
-        const bundle = await fetchJson(remoteUrl, 3000);
-        return { locale: candidate, strings: bundle?.strings || {} };
-      } catch {
-        // try next remote url
-      }
-    }
+    Object.assign(strings, bundleStrings);
+    loadedAny = true;
   }
-  return { locale: DEFAULT_UI_LOCALE, strings: {} };
+
+  return { locale: requestedLocale, strings: loadedAny ? strings : {} };
 }
 
 async function loadSettings(defaultLocale) {
@@ -1007,13 +1150,14 @@ async function refreshRemoteMetadata(elements, state) {
     try {
       state.remoteMetadata = normalizeMetadata(await fetchJson(source.metadataUrl), null);
       const mergedMetadata = effectiveMetadata(state);
-      const resolvedUiLocale = panelUiLocale(mergedMetadata, panelLocaleSetting(state));
+      const resolvedUiLocale = panelUiLocale(panelLocaleSetting(state), mergedMetadata);
       const uiBundle = await loadUiLocaleBundle(resolvedUiLocale, mergedMetadata);
       state.uiLocale = uiBundle.locale || resolvedUiLocale;
       state.uiStrings = uiBundle.strings || {};
       state.busy.meta = false;
       setStatus(state, "meta", "meta_status_success", "success", { source: source.label || source.id || "remote" });
       renderAll(elements, state);
+      void refreshGitHubRepoStats(elements, state);
       return;
     } catch (error) {
       lastError = error;
@@ -1061,7 +1205,7 @@ async function saveThemeSettings(elements, state) {
     state.settings = { ...nextSettings };
     state.draft = { ...state.draft, ...nextSettings };
     setStatus(state, "theme", "theme_status_success", "success", {
-      preset: themePresetName(resolveThemePreset(effectiveThemeBundle(state), nextSettings.themePreset), state.uiLocale) || nextSettings.themePreset,
+      preset: themePresetName(state, resolveThemePreset(effectiveThemeBundle(state), nextSettings.themePreset)) || nextSettings.themePreset,
     });
   } catch (error) {
     setStatus(state, "theme", "theme_status_error", "error", { message: error.message });
@@ -1072,7 +1216,7 @@ async function saveThemeSettings(elements, state) {
 async function applyPanelLocale(elements, state) {
   const metadata = effectiveMetadata(state);
   const setting = panelLocaleSetting(state);
-  const resolved = panelUiLocale(metadata, setting);
+  const resolved = panelUiLocale(setting, metadata);
   try {
     await storageSet("sync", { ...state.settings, panelLocale: setting });
     const uiBundle = await loadUiLocaleBundle(resolved, metadata);
@@ -1285,7 +1429,7 @@ function bindSelects(elements, state) {
         state.draft.themePreset = value;
         state.openSelect = null;
         setStatus(state, "theme", "theme_status_selected", "info", {
-          preset: themePresetName(resolveThemePreset(effectiveThemeBundle(state), value), state.uiLocale) || value,
+          preset: themePresetName(state, resolveThemePreset(effectiveThemeBundle(state), value)) || value,
         });
         renderAll(elements, state);
       },
@@ -1349,7 +1493,7 @@ async function initializePopup() {
   const localMetadata = await loadLocalMetadata();
   const builtinThemeBundle = await loadBuiltinThemeBundle();
   const settings = await loadSettings(localMetadata.translationBundle?.defaultLocale || DEFAULT_SETTINGS.locale);
-  const resolvedUiLocale = panelUiLocale(localMetadata, settings.panelLocale || SYSTEM_UI_LOCALE);
+  const resolvedUiLocale = panelUiLocale(settings.panelLocale || SYSTEM_UI_LOCALE, localMetadata);
   const uiBundle = await loadUiLocaleBundle(resolvedUiLocale, localMetadata);
   const cache = await loadCache();
   const state = {
@@ -1371,6 +1515,7 @@ async function initializePopup() {
     activeTab: "settings",
     openSelect: null,
     busy: { meta: false, download: false, theme: false },
+    githubStats: { repoUrl: "", stars: null, loading: false, error: null },
     messages: {},
   };
 
@@ -1378,6 +1523,7 @@ async function initializePopup() {
   setStatus(state, "meta", "meta_status_checking");
   bindSelects(elements, state);
   renderAll(elements, state);
+  void refreshGitHubRepoStats(elements, state);
 
   for (const button of elements.tabButtons) {
     button.addEventListener("click", () => {

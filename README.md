@@ -4,7 +4,7 @@
 
 # OpenClaw Dashboard Plus
 
-Browser-extension-first tooling for OpenClaw Dashboard, with an optional Chinese translation userscript.
+Browser extension tooling for OpenClaw Dashboard.
 
 English is the canonical README for this repository.
 
@@ -12,34 +12,35 @@ English is the canonical README for this repository.
 
 ## Overview
 
-OpenClaw Dashboard Plus ships in two forms:
+OpenClaw Dashboard Plus ships as a browser extension built into `dist/extension/`.
 
-- A browser extension built into `dist/extension/`
-- `openclaw-dashboard-plus-zh.user.js` as an optional Chinese translation userscript for Tampermonkey, ScriptCat, and similar managers
+It adds:
 
-The browser extension is the primary delivery format. The userscript is kept as a lighter Chinese translation entry for environments where installing the extension is not convenient.
+- Separate OpenClaw content language and popup UI language settings
+- Remote metadata, locale packs, and style assets delivered from GitHub or Gitee
+- Theme controls for UI preset, font, font size, and independent repair toggles
+- Shared project branding across the docs and extension package
 
 ## Features
 
-- Separate content language and popup UI language settings
-- Remote metadata and locale updates from GitHub and Gitee
-- Browser extension popup with runtime settings, cache controls, and version info
-- Theme controls for preset, font, font size, and independent UI repair toggles
-- Remote style-module delivery for HTML, CSS, and JSON assets without shipping remote JavaScript
-- Shared project icon across documentation and browser extension assets
-- Build output that is kept under `dist/` instead of mixing generated files with source files
+- Popup tabs for settings, features, languages, and project information
+- Remote refresh for metadata, locale packs, theme presets, and style modules
+- Theme/style controls without allowing remote JavaScript execution
+- Modular source layout for popup UI, content script logic, language packs, and style bundles
+- Build output kept under `dist/` instead of mixing generated assets with source files
 
 ## Usage
 
-1. Build the extension with `node build-extension.mjs`, or download the packaged zip artifact from GitHub Actions.
-2. Load `dist/extension/` in `chrome://extensions` or `edge://extensions` with Developer mode enabled.
-3. Open your local OpenClaw panel, such as `http://127.0.0.1:18789`.
-4. In the extension popup, use:
-   - `Settings` to enable translation and define the allowed hosts and ports.
-   - `Features` to select the OpenClaw UI preset, font, font size, and toggle style override, style repair, select-style fix, or code-block styling independently.
-   - `Languages` to switch the OpenClaw content language, download remote locale packs, and clear cached bundles.
-   - `About` to refresh remote metadata and check current extension/OpenClaw compatibility info.
-5. Save runtime or theme settings after making changes. Remote theme/style assets are cached locally after download and reused until cleared.
+1. Run `node build-extension.mjs`, or download the packaged ZIP artifact from GitHub Actions.
+2. Open `chrome://extensions` or `edge://extensions` and enable Developer mode.
+3. Load `dist/extension/` as an unpacked extension.
+4. Open your OpenClaw panel, for example `http://127.0.0.1:18789`.
+5. Use the popup tabs:
+   - `Settings`: enable translation and define allowed hosts and ports
+   - `Features`: choose UI preset, font, font size, and toggle style override, style repair, select-style fix, and code-block styling
+   - `Languages`: switch content language, refresh remote locale packs, and clear caches
+   - `About`: refresh remote metadata and review repository or compatibility information
+6. Save runtime or theme settings after changes. Cached remote assets stay local until cleared from the popup.
 
 ## Build
 
@@ -53,7 +54,7 @@ Commands:
 
 1. Build the unpacked browser extension:
    `node build-extension.mjs`
-2. Package a zip archive for browser extension distribution:
+2. Package a ZIP archive for distribution:
    `node package-extension-zip.mjs`
 3. Optional: package a local CRX file:
    `node package-crx.mjs`
@@ -61,47 +62,42 @@ Commands:
 Outputs:
 
 - `dist/extension/`: generated unpacked browser extension
-- `dist/openclaw-dashboard-plus-extension.zip`: packaged extension zip
+- `dist/openclaw-dashboard-plus-extension.zip`: packaged extension ZIP
 - `dist/openclaw-dashboard-plus.crx`: optional local CRX build
 
 ## Feature And File Guide
 
-- `extension-src/`: extension source, popup UI, icons, and browser content patches
+- `extension-src/`: extension source, popup UI, icons, theme presets, and content logic
+- `extension-src/content-main.js`: source-of-truth content script for the extension build
 - `extension-src/style-bundle.json`: manifest for remote-loadable style modules
-- `extension-src/style-modules/`: modular style payloads delivered as CSS, HTML, or JSON
-- `language-packs/`: built or synced OpenClaw content locale bundles
-- `ui-locales/`: popup UI locale strings
-- `theme-presets.json`: built-in OpenClaw theme preset definitions
-- `plugin-metadata.json`: repository metadata, compatibility, and remote source definitions
+- `extension-src/style-modules/`: modular CSS, HTML, and JSON style assets
+- `extension-src/theme-presets.json`: built-in OpenClaw theme preset structure and variables
+- `language-packs/`: OpenClaw content locale bundles
+- `ui-locales/`: popup UI locale strings, including localized theme preset labels and descriptions
+- `plugin-metadata.json`: canonical metadata for versions, remote sources, locale availability, and UI locale support
 - `build-extension.mjs`: generates `dist/extension/` and syncs packaged assets
-- `package-extension-zip.mjs`: creates the extension zip artifact in `dist/`
+- `package-extension-zip.mjs`: creates the extension ZIP artifact in `dist/`
 - `package-crx.mjs`: optional local CRX packaging helper
 - `dist/extension/`: generated output that should be treated as build artifacts
-- `openclaw-dashboard-plus-zh.user.js`: optional Chinese translation userscript retained for userscript-based installs
 
 ## Install
 
-### Userscript
-
-1. Open `openclaw-dashboard-plus-zh.user.js`
-2. Install it with Tampermonkey, ScriptCat, or another compatible userscript manager
-
 ### Browser Extension ZIP
 
-1. Download `openclaw-dashboard-plus-extension.zip` from GitHub Actions artifacts or releases
-2. Extract it to a stable folder
-3. Open `chrome://extensions` or `edge://extensions`
-4. Enable Developer mode
-5. Click `Load unpacked`
-6. Select the extracted folder
+1. Download `openclaw-dashboard-plus-extension.zip` from GitHub Actions artifacts or releases.
+2. Extract it to a stable folder.
+3. Open `chrome://extensions` or `edge://extensions`.
+4. Enable Developer mode.
+5. Click `Load unpacked`.
+6. Select the extracted folder.
 
 ### Local Unpacked Extension
 
-1. Run `node build-extension.mjs`
-2. Open `chrome://extensions` or `edge://extensions`
-3. Enable Developer mode
-4. Click `Load unpacked`
-5. Select `dist/extension/`
+1. Run `node build-extension.mjs`.
+2. Open `chrome://extensions` or `edge://extensions`.
+3. Enable Developer mode.
+4. Click `Load unpacked`.
+5. Select `dist/extension/`.
 
 ## GitHub Actions
 
@@ -109,16 +105,16 @@ The repository includes a Windows-based GitHub Actions workflow that:
 
 - Builds `dist/extension/`
 - Packages `dist/openclaw-dashboard-plus-extension.zip`
-- Uploads both the zip archive and unpacked extension as workflow artifacts
+- Uploads both the ZIP archive and unpacked extension as workflow artifacts
 
 ## Pull Requests
 
 - Make source changes in `extension-src/`, locale sources, metadata files, or build scripts. Do not manually edit `dist/extension/`.
-- Keep the browser extension as the primary delivery target. Only change `openclaw-dashboard-plus-zh.user.js` when the userscript itself truly needs maintenance.
-- Remote-delivered theme assets should stay limited to HTML, CSS, and JSON payloads. Do not introduce remote JavaScript execution paths.
+- Keep the repository extension-only. Do not reintroduce legacy script packaging or parallel delivery paths.
+- Remote-delivered theme assets must stay limited to HTML, CSS, and JSON payloads. Do not add remote JavaScript execution paths.
 - Include reproduction steps for fixes, and attach screenshots or short notes when changing popup UI or OpenClaw styling behavior.
 - Run the relevant build command before opening a PR, and mention the verification result in the PR description.
-- Update the English README first for user-facing changes. Sync localized docs when the behavior or workflow meaningfully changes.
+- Update the English README first for user-facing changes, then sync localized docs when behavior changes meaningfully.
 
 ## Screenshots
 

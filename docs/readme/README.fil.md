@@ -1,88 +1,123 @@
 <p align="center">
-  <img src="../../icon.png" alt="Icon ng OpenClaw Dashboard Plus" width="160">
+  <img src="../../icon.png" alt="OpenClaw Dashboard Plus icon" width="160">
 </p>
 
 # OpenClaw Dashboard Plus
 
-Multilingual na userscript at browser extension tool para sa OpenClaw Dashboard.
+Browser extension tool para sa OpenClaw Dashboard.
 
-> Paalala: Hindi bihasa ang developer sa Filipino. Ang dokumentong ito ay ginawa gamit ang AI model at maaaring may mga salitang hindi natural ang tunog.
+> Paalala: hindi bihasa ang developer sa Filipino. Ginawa ang dokumentong ito gamit ang AI model at maaaring may hindi natural na pananalita.
 
 [English](../../README.md) | [简体中文](./README.zh-CN.md) | [繁體中文](./README.zh-TW.md) | [日本語](./README.ja.md) | [한국어](./README.ko.md) | [Français](./README.fr.md) | [Español](./README.es.md) | [Русский](./README.ru.md) | [Deutsch](./README.de.md) | [Tiếng Việt](./README.vi.md) | [Filipino](./README.fil.md) | [العربية](./README.ar.md)
 
-## Buod
+## Pangkalahatan
 
-May dalawang anyo ang proyektong ito:
+Ang OpenClaw Dashboard Plus ay browser extension na lamang at bino-build sa `dist/extension/`.
 
-- `openclaw-dashboard-plus-zh.user.js` bilang userscript
-- Browser extension na bina-build sa `dist/extension/`
+Nagdadala ito ng:
 
-Nagdadagdag ito ng multilingual na content layer, popup settings panel, remote metadata updates, at downloadable language packs para sa OpenClaw Dashboard.
+- Hiwalay na setting para sa wika ng nilalaman ng OpenClaw at wika ng popup UI
+- Pagkuha ng metadata, language pack, at style asset mula sa GitHub o Gitee
+- Theme controls para sa UI style, font, laki ng font, at visual repairs
+- Iisang icon at metadata chain para sa dokumentasyon at extension
 
 ## Mga Tampok
 
-- Magkahiwalay ang content language at popup UI language
-- Kumukuha ng metadata at language packs mula sa GitHub at Gitee
-- Popup ng extension para sa runtime settings, cache controls, at version info
-- Iisang project icon para sa dokumentasyon at extension
-- Ang generated output ay nasa `dist/` imbes na nakahalo sa source files
+- Popup tabs na `Settings`, `Features`, `Languages`, at `About`
+- Remote refresh para sa metadata, language packs, theme presets, at style modules
+- Theme assets na HTML / CSS / JSON lang, walang remote JavaScript
+- Modular na layout gamit ang `extension-src/`, `language-packs/`, `ui-locales/`, at `plugin-metadata.json`
+- Lahat ng build output ay nasa `dist/`
 
-## Ayos ng Repository
+## Paggamit
 
-- `openclaw-dashboard-plus-zh.user.js`: entry ng userscript
-- `extension-src/`: source files at icon assets ng extension
-- `dist/extension/`: generated unpacked extension
-- `language-packs/`: output ng language packs sa repository
-- `ui-locales/`: locale files para sa popup UI
-- `.github/workflows/build-extension.yml`: GitHub Actions pipeline
+1. Patakbuhin ang `node build-extension.mjs` o i-download ang ZIP artifact mula sa GitHub Actions.
+2. Buksan ang `chrome://extensions` o `edge://extensions` at i-on ang Developer mode.
+3. I-load ang `dist/extension/` bilang unpacked extension.
+4. Buksan ang OpenClaw panel, halimbawa `http://127.0.0.1:18789`.
+5. Gamitin ang mga tab sa popup:
+   - `Settings`: paganahin ang translation at itakda ang pinapayagang host at port
+   - `Features`: pumili ng UI preset, font, laki, at style repair toggles
+   - `Languages`: palitan ang content language, i-refresh ang remote packs, at linisin ang cache
+   - `About`: i-refresh ang remote metadata at tingnan ang compatibility info
+6. I-save ang settings pagkatapos ng pagbabago. Mananatiling lokal ang cached remote assets hanggang burahin sa popup.
 
 ## Build
 
+Mga kailangan:
+
+- Node.js 22 ang reference runtime.
+- Kailangan ng `package-extension-zip.mjs` ang PowerShell.
+- Kailangan ng `package-crx.mjs` ang Chrome o Edge.
+
+Mga utos:
+
 1. I-build ang unpacked extension:
    `node build-extension.mjs`
-2. Output:
-   `dist/extension/`
-3. Gumawa ng ZIP para sa distribusyon:
+2. Gumawa ng ZIP para sa distribution:
    `node package-extension-zip.mjs`
-4. Opsyonal na gumawa ng lokal na CRX:
+3. Opsyonal: gumawa ng lokal na CRX:
    `node package-crx.mjs`
 
-## Pag-install
+Mga output:
 
-### Userscript
+- `dist/extension/`: generated unpacked extension
+- `dist/openclaw-dashboard-plus-extension.zip`: distribution ZIP
+- `dist/openclaw-dashboard-plus.crx`: opsyonal na lokal na CRX
 
-1. Buksan ang `openclaw-dashboard-plus-zh.user.js`
-2. I-install gamit ang Tampermonkey, ScriptCat, o ibang compatible manager
+## Gabay Sa Mga File
 
-### ZIP ng Browser Extension
+- `extension-src/`: source ng extension, popup UI, icons, theme presets, at content logic
+- `extension-src/content-main.js`: source ng content script
+- `extension-src/style-bundle.json`: manifest ng remote-loadable style modules
+- `extension-src/style-modules/`: modular na CSS / HTML / JSON assets
+- `extension-src/theme-presets.json`: built-in theme preset definitions
+- `language-packs/`: OpenClaw content language packs
+- `ui-locales/`: popup UI strings at localized preset labels
+- `plugin-metadata.json`: canonical metadata para sa versions, remote sources, at available locales
+- `build-extension.mjs`: bumubuo ng `dist/extension/`
+- `package-extension-zip.mjs`: gumagawa ng ZIP sa `dist/`
+- `package-crx.mjs`: helper para sa lokal na CRX
 
-1. I-download ang `openclaw-dashboard-plus-extension.zip` mula sa GitHub Actions artifacts o releases
-2. I-extract ito sa isang permanenteng folder
-3. Buksan ang `chrome://extensions` o `edge://extensions`
-4. I-enable ang Developer mode
-5. I-click ang `Load unpacked`
-6. Piliin ang na-extract na folder
+## Install
 
-### Lokal na Unpacked Extension
+### Extension ZIP
 
-1. Patakbuhin ang `node build-extension.mjs`
-2. Buksan ang `chrome://extensions` o `edge://extensions`
-3. I-enable ang Developer mode
-4. I-click ang `Load unpacked`
-5. Piliin ang `dist/extension/`
+1. I-download ang `openclaw-dashboard-plus-extension.zip` mula sa GitHub Actions artifacts o Releases.
+2. I-extract ito sa stable na folder.
+3. Buksan ang `chrome://extensions` o `edge://extensions`.
+4. I-on ang Developer mode.
+5. I-click ang `Load unpacked`.
+6. Piliin ang extracted folder.
+
+### Lokal Na Unpacked Extension
+
+1. Patakbuhin ang `node build-extension.mjs`.
+2. Buksan ang `chrome://extensions` o `edge://extensions`.
+3. I-on ang Developer mode.
+4. I-click ang `Load unpacked`.
+5. Piliin ang `dist/extension/`.
 
 ## GitHub Actions
 
-May kasamang Windows-based GitHub Actions workflow ang repository na awtomatikong:
+May Windows-based GitHub Actions workflow ang repository na awtomatikong:
 
 - Nagbu-build ng `dist/extension/`
 - Gumagawa ng `dist/openclaw-dashboard-plus-extension.zip`
 - Nag-a-upload ng ZIP at unpacked extension bilang artifacts
 
-## Mga Screenshot
+## Pull Request
 
-![Preview ng popup](../../image.png)
-![Preview ng pag-install](../../image2.png)
+- Magbago sa `extension-src/`, locales, metadata, o build scripts. Huwag direktang i-edit ang `dist/extension/`.
+- Extension-only na ang repository. Huwag ibalik ang lumang script packaging o parallel delivery path.
+- Ang remote theme assets ay dapat manatiling HTML / CSS / JSON lang, walang remote JavaScript execution.
+- Para sa UI o style fixes, magdagdag ng reproduction steps at screenshots kung makakatulong.
+- Patakbuhin ang kaukulang build bago magbukas ng PR at ilagay ang verification result.
+
+## Mga Larawan
+
+![Extension popup preview](../../image.png)
+![Extension install preview](../../image2.png)
 
 ## Lisensya
 

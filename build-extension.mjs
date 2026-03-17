@@ -3,18 +3,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
-const userscriptPath = path.join(currentDir, "openclaw-dashboard-plus-zh.user.js");
 const pluginMetadataPath = path.join(currentDir, "plugin-metadata.json");
-const themePresetsPath = path.join(currentDir, "theme-presets.json");
 const localePacksDir = path.join(currentDir, "language-packs");
 const uiLocalesDir = path.join(currentDir, "ui-locales");
-const legacyTranslationOverridesPath = path.join(currentDir, "translation-overrides.json");
 const extensionSourceDir = path.join(currentDir, "extension-src");
+const extensionContentSourcePath = path.join(extensionSourceDir, "content-main.js");
+const themePresetsPath = path.join(extensionSourceDir, "theme-presets.json");
 const extensionStyleBundlePath = path.join(extensionSourceDir, "style-bundle.json");
-const extensionContentPatchPaths = [
-  path.join(extensionSourceDir, "content-style-bundle-patch.js"),
-  path.join(extensionSourceDir, "content-extension-patch.js"),
-];
 const distDir = path.join(currentDir, "dist");
 const extensionOutputDir = path.join(distDir, "extension");
 const extensionLocalePacksDir = path.join(extensionOutputDir, "language-packs");
@@ -24,14 +19,6 @@ const contentPath = path.join(extensionOutputDir, "content.js");
 const manifestPath = path.join(extensionOutputDir, "manifest.json");
 const extensionPluginMetadataPath = path.join(extensionOutputDir, "plugin-metadata.json");
 const extensionThemePresetsPath = path.join(extensionOutputDir, "theme-presets.json");
-
-function readUserscriptVersion(source) {
-  const match = source.match(/@version\s+([^\s]+)/);
-  if (!match) {
-    throw new Error("Unable to determine userscript version from metadata header.");
-  }
-  return match[1];
-}
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -62,97 +49,24 @@ function copyJsonDirectory(sourceDir, targetDir) {
   }
 }
 
+function readJsonDirectory(sourceDir) {
+  if (!fs.existsSync(sourceDir)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    fs.readdirSync(sourceDir, { withFileTypes: true })
+      .filter((entry) => entry.isFile() && path.extname(entry.name) === ".json")
+      .map((entry) => [
+        path.basename(entry.name, ".json"),
+        readJson(path.join(sourceDir, entry.name)),
+      ]),
+  );
+}
+
 function emptyDir(dirPath) {
   fs.rmSync(dirPath, { recursive: true, force: true });
   fs.mkdirSync(dirPath, { recursive: true });
-}
-
-function extractBalancedBlock(source, anchor, openChar, closeChar) {
-  const anchorIndex = source.indexOf(anchor);
-  if (anchorIndex === -1) {
-    throw new Error(`Unable to find anchor: ${anchor}`);
-  }
-  const startIndex = source.indexOf(openChar, anchorIndex + anchor.length);
-  if (startIndex === -1) {
-    throw new Error(`Unable to find opening ${openChar} after anchor: ${anchor}`);
-  }
-
-  let depth = 0;
-  let quote = null;
-  let escaping = false;
-
-  for (let index = startIndex; index < source.length; index += 1) {
-    const char = source[index];
-    if (quote) {
-      if (escaping) {
-        escaping = false;
-        continue;
-      }
-      if (char === "\\") {
-        escaping = true;
-        continue;
-      }
-      if (char === quote) {
-        quote = null;
-      }
-      continue;
-    }
-
-    if (char === '"' || char === "'" || char === "`") {
-      quote = char;
-      continue;
-    }
-
-    if (char === openChar) {
-      depth += 1;
-      continue;
-    }
-
-    if (char === closeChar) {
-      depth -= 1;
-      if (depth === 0) {
-        return source.slice(startIndex, index + 1);
-      }
-    }
-  }
-
-  throw new Error(`Unbalanced block for anchor: ${anchor}`);
-}
-
-function evaluateLiteral(literal) {
-  return Function(`"use strict"; return (${literal});`)();
-}
-
-function extractLocaleBundle(userscriptSource, version) {
-  const exactTranslations = evaluateLiteral(
-    extractBalancedBlock(userscriptSource, "const EXACT_TRANSLATIONS = new Map(", "{", "}"),
-  );
-  const configHelpTranslations = evaluateLiteral(
-    extractBalancedBlock(userscriptSource, "const CONFIG_HELP_TRANSLATIONS = new Map(", "{", "}"),
-  );
-  const configLabelReplacements = evaluateLiteral(
-    extractBalancedBlock(userscriptSource, "let CONFIG_LABEL_REPLACEMENTS = ", "[", "]"),
-  );
-
-  return {
-    schemaVersion: 1,
-    locale: "zh-CN",
-    version: `builtin-${version}`,
-    exactTranslations,
-    configHelpTranslations,
-    configLabelReplacements,
-  };
-}
-
-function createEmptyLocaleBundle(locale, version) {
-  return {
-    schemaVersion: 1,
-    locale,
-    version: `builtin-${version}`,
-    exactTranslations: {},
-    configHelpTranslations: {},
-    configLabelReplacements: [],
-  };
 }
 
 const manifest = {
@@ -162,7 +76,7 @@ const manifest = {
   version: "0.0.0",
   homepage_url: "https://github.com/Cloud-11/openclaw-dashboard-plus",
   permissions: ["storage"],
-  host_permissions: ["https://raw.githubusercontent.com/*", "https://gitee.com/*"],
+  host_permissions: ["https://raw.githubusercontent.com/*", "https://gitee.com/*", "https://api.github.com/*"],
   icons: {
     16: "icons/icon-16.png",
     32: "icons/icon-32.png",
@@ -201,18 +115,6 @@ const manifest = {
     },
   ],
 };
-
-function stripUserscriptMetadata(source) {
-  const headerPattern = /\/\/ ==UserScript==[\s\S]*?\/\/ ==\/UserScript==\s*/;
-  return source.replace(headerPattern, "");
-}
-
-function stripInlineThemeCss(source) {
-  return source
-    .replace(/const DEFAULT_THEME_REPAIR_CSS = `[\s\S]*?`;/, 'const DEFAULT_THEME_REPAIR_CSS = ``;')
-    .replace(/const DEFAULT_THEME_SELECT_CSS = `[\s\S]*?`;/, 'const DEFAULT_THEME_SELECT_CSS = ``;')
-    .replace(/const DEFAULT_THEME_OVERRIDE_CSS = `[\s\S]*?`;/, 'const DEFAULT_THEME_OVERRIDE_CSS = ``;');
-}
 
 function hydrateStyleBundle(styleBundlePath) {
   const styleBundle = fs.existsSync(styleBundlePath)
@@ -256,40 +158,17 @@ function hydrateStyleBundle(styleBundlePath) {
   };
 }
 
-function createExtensionContentSource(userscriptSource, hydratedStyleBundle) {
-  const baseSource = stripInlineThemeCss(stripUserscriptMetadata(userscriptSource))
+function createExtensionContentSource(contentSource, hydratedStyleBundle) {
+  return contentSource
     .replace(
-      /const EXACT_TRANSLATIONS = new Map\(\s*Object\.entries\(\{[\s\S]*?\}\),\s*\);/,
-      "const EXACT_TRANSLATIONS = new Map();",
+      /const BUILTIN_STYLE_BUNDLE_DATA = [\s\S]*?;\r?\n/,
+      `const BUILTIN_STYLE_BUNDLE_DATA = ${JSON.stringify(hydratedStyleBundle)};\n`,
     )
-    .replace(
-      /const CONFIG_HELP_TRANSLATIONS = new Map\(\s*Object\.entries\(\{[\s\S]*?\}\),\s*\);/,
-      "const CONFIG_HELP_TRANSLATIONS = new Map();",
-    )
-    .replace(/let CONFIG_LABEL_REPLACEMENTS = \[[\s\S]*?\n  \];/, "let CONFIG_LABEL_REPLACEMENTS = [];")
     .trimStart();
-
-  const patchSources = extensionContentPatchPaths
-    .filter((patchPath) => fs.existsSync(patchPath))
-    .map((patchPath) => readText(patchPath).trim())
-    .map((source) => source.replace('"__OCDP_BUILTIN_STYLE_BUNDLE__"', JSON.stringify(hydratedStyleBundle)))
-    .filter(Boolean);
-
-  if (!patchSources.length) {
-    return baseSource;
-  }
-
-  return `${baseSource}\n\n${patchSources.join("\n\n")}\n`;
 }
 
-function writeLocalePacks(localeBundles) {
-  emptyDir(localePacksDir);
-  emptyDir(extensionLocalePacksDir);
-
-  for (const [locale, bundle] of Object.entries(localeBundles)) {
-    writeJson(path.join(localePacksDir, `${locale}.json`), bundle);
-    writeJson(path.join(extensionLocalePacksDir, `${locale}.json`), bundle);
-  }
+function writeLocalePacks() {
+  copyJsonDirectory(localePacksDir, extensionLocalePacksDir);
 }
 
 function writeUiLocales() {
@@ -305,53 +184,53 @@ function copyExtensionSource() {
 }
 
 function writeExtensionFiles() {
-  const userscriptSource = readText(userscriptPath);
-  const userscriptVersion = readUserscriptVersion(userscriptSource);
   const pluginMetadata = readJson(pluginMetadataPath);
+  const extensionVersion = typeof pluginMetadata.version === "string" && pluginMetadata.version.trim()
+    ? pluginMetadata.version.trim()
+    : manifest.version;
   const themePresets = readJson(themePresetsPath);
   const styleBundle = fs.existsSync(extensionStyleBundlePath)
     ? readJson(extensionStyleBundlePath)
-    : { version: `builtin-${userscriptVersion}` };
+    : { version: `builtin-${extensionVersion}` };
   const hydratedStyleBundle = hydrateStyleBundle(extensionStyleBundlePath);
-  const zhCnBundle = extractLocaleBundle(userscriptSource, userscriptVersion);
-  const localeBundles = {
-    "zh-CN": zhCnBundle,
-    en: createEmptyLocaleBundle("en", userscriptVersion),
-  };
-  const contentSource = createExtensionContentSource(userscriptSource, hydratedStyleBundle);
+  const localeBundles = readJsonDirectory(localePacksDir);
+  const builtinLocaleVersions = Object.fromEntries(
+    Object.entries(localeBundles).map(([locale, bundle]) => [locale, bundle?.version || `builtin-${extensionVersion}`]),
+  );
+  const contentSource = createExtensionContentSource(readText(extensionContentSourcePath), hydratedStyleBundle);
 
   const nextPluginMetadata = {
     ...pluginMetadata,
-    version: userscriptVersion,
+    version: extensionVersion,
     translationBundle: {
       ...(pluginMetadata.translationBundle ?? {}),
-      defaultLocale: "zh-CN",
-      builtinVersions: Object.fromEntries(
-        Object.entries(localeBundles).map(([locale, bundle]) => [locale, bundle.version]),
-      ),
+      defaultLocale: pluginMetadata.translationBundle?.defaultLocale || "zh-CN",
+      builtinVersions: {
+        ...(pluginMetadata.translationBundle?.builtinVersions ?? {}),
+        ...builtinLocaleVersions,
+      },
     },
     themeBundle: {
       ...(pluginMetadata.themeBundle ?? {}),
       defaultPreset: themePresets.defaultPreset || pluginMetadata.themeBundle?.defaultPreset || "openclaw-classic",
-      builtinVersion: themePresets.version || pluginMetadata.themeBundle?.builtinVersion || `builtin-${userscriptVersion}`,
+      builtinVersion: themePresets.version || pluginMetadata.themeBundle?.builtinVersion || `builtin-${extensionVersion}`,
     },
     styleBundle: {
       ...(pluginMetadata.styleBundle ?? {}),
-      builtinVersion: styleBundle.version || pluginMetadata.styleBundle?.builtinVersion || `builtin-${userscriptVersion}`,
+      builtinVersion: styleBundle.version || pluginMetadata.styleBundle?.builtinVersion || `builtin-${extensionVersion}`,
     },
   };
 
   const extensionManifest = {
     ...manifest,
-    version: userscriptVersion,
+    version: extensionVersion,
     homepage_url: nextPluginMetadata.repositories?.github?.repoUrl || manifest.homepage_url,
   };
 
   copyExtensionSource();
-  fs.rmSync(legacyTranslationOverridesPath, { force: true });
   fs.rmSync(extensionLegacyTranslationOverridesPath, { force: true });
-  writeJson(pluginMetadataPath, nextPluginMetadata);
-  writeLocalePacks(localeBundles);
+  fs.rmSync(path.join(extensionOutputDir, "content-main.js"), { force: true });
+  writeLocalePacks();
   writeUiLocales();
 
   fs.writeFileSync(
