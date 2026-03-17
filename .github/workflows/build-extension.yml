@@ -74,6 +74,15 @@ jobs:
           git tag $env:RELEASE_TAG
           git push origin $env:RELEASE_TAG
 
+      - name: Publish GitHub release
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: OpenClaw Dashboard Plus ${{ steps.version.outputs.tag }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
+          files: dist/openclaw-dashboard-plus-extension.zip
+
   release:
     needs: package
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
