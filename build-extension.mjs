@@ -9,6 +9,7 @@ const uiLocalesDir = path.join(currentDir, "ui-locales");
 const extensionSourceDir = path.join(currentDir, "extension-src");
 const extensionContentSourcePath = path.join(extensionSourceDir, "content-main.js");
 const themePresetsPath = path.join(extensionSourceDir, "theme-presets.json");
+const uiStylePresetsPath = path.join(extensionSourceDir, "ui-style-presets.json");
 const extensionStyleBundlePath = path.join(extensionSourceDir, "style-bundle.json");
 const distDir = path.join(currentDir, "dist");
 const extensionOutputDir = path.join(distDir, "extension");
@@ -19,6 +20,7 @@ const contentPath = path.join(extensionOutputDir, "content.js");
 const manifestPath = path.join(extensionOutputDir, "manifest.json");
 const extensionPluginMetadataPath = path.join(extensionOutputDir, "plugin-metadata.json");
 const extensionThemePresetsPath = path.join(extensionOutputDir, "theme-presets.json");
+const extensionUiStylePresetsPath = path.join(extensionOutputDir, "ui-style-presets.json");
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -110,6 +112,10 @@ const manifest = {
       matches: ["http://*/*", "https://*/*"],
     },
     {
+      resources: ["ui-style-presets.json"],
+      matches: ["http://*/*", "https://*/*"],
+    },
+    {
       resources: ["style-bundle.json", "style-modules/*"],
       matches: ["http://*/*", "https://*/*"],
     },
@@ -189,6 +195,7 @@ function writeExtensionFiles() {
     ? pluginMetadata.version.trim()
     : manifest.version;
   const themePresets = readJson(themePresetsPath);
+  const uiStylePresets = readJson(uiStylePresetsPath);
   const styleBundle = fs.existsSync(extensionStyleBundlePath)
     ? readJson(extensionStyleBundlePath)
     : { version: `builtin-${extensionVersion}` };
@@ -215,6 +222,11 @@ function writeExtensionFiles() {
       defaultPreset: themePresets.defaultPreset || pluginMetadata.themeBundle?.defaultPreset || "openclaw-classic",
       builtinVersion: themePresets.version || pluginMetadata.themeBundle?.builtinVersion || `builtin-${extensionVersion}`,
     },
+    uiStyleBundle: {
+      ...(pluginMetadata.uiStyleBundle ?? {}),
+      defaultPreset: uiStylePresets.defaultPreset || pluginMetadata.uiStyleBundle?.defaultPreset || "openclaw-default",
+      builtinVersion: uiStylePresets.version || pluginMetadata.uiStyleBundle?.builtinVersion || `builtin-${extensionVersion}`,
+    },
     styleBundle: {
       ...(pluginMetadata.styleBundle ?? {}),
       builtinVersion: styleBundle.version || pluginMetadata.styleBundle?.builtinVersion || `builtin-${extensionVersion}`,
@@ -240,6 +252,7 @@ function writeExtensionFiles() {
   );
   writeJson(extensionPluginMetadataPath, nextPluginMetadata);
   writeJson(extensionThemePresetsPath, themePresets);
+  writeJson(extensionUiStylePresetsPath, uiStylePresets);
   writeJson(manifestPath, extensionManifest);
 }
 

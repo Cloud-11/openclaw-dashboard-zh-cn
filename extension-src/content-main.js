@@ -342,17 +342,22 @@
     }
   }
 
-  const BUILTIN_THEME_PRESET_BUNDLE = Object.freeze({
+  const LEGACY_THEME_PRESET_ALIASES = Object.freeze({
+    "apple-light": "soft-light",
+    "google-light": "clear-light",
+    "microsoft-light": "mist-light",
+  });
+  const FALLBACK_THEME_PRESET_BUNDLE = Object.freeze({
     schemaVersion: 1,
-    version: "builtin-0.2.0",
+    version: "builtin-0.3.0",
     defaultPreset: "openclaw-classic",
     presets: [
       {
         id: "openclaw-classic",
         label: "OpenClaw Classic",
         nativeLabel: "OpenClaw 原版增强",
-        description: "Keeps the original OpenClaw palette and only repairs spacing, controls, and visual consistency.",
-        nativeDescription: "保留 OpenClaw 原本配色，只修补间距、控件和视觉一致性。",
+        description: "Keeps the original OpenClaw palette and only layers structural repairs on top.",
+        nativeDescription: "保留 OpenClaw 原本配色，只在其上叠加结构性修补。",
         preserveNativeColors: true,
         variables: {
           "page-bg": "var(--bg)",
@@ -366,16 +371,15 @@
           "control-bg": "var(--input)",
           "control-text": "var(--text)",
           "control-border": "var(--border-strong)",
-          radius: "var(--radius-md)",
-          shadow: "var(--shadow-md)",
+          "page-overlay": "transparent",
         },
       },
       {
         id: "plus-clean",
         label: "Plus Clean",
         nativeLabel: "Plus 清爽版",
-        description: "A restrained dark preset with cleaner surfaces and calmer borders.",
-        nativeDescription: "更克制的暗色预设，表面更整洁，边界更干净。",
+        description: "A restrained dark palette with cleaner neutrals and calmer contrast.",
+        nativeDescription: "更克制的暗色配色，中性色更干净、对比更柔和。",
         variables: {
           "page-bg": "#0c1422",
           surface: "rgba(13, 24, 39, 0.95)",
@@ -388,16 +392,15 @@
           "control-bg": "#152338",
           "control-text": "#edf5ff",
           "control-border": "rgba(125, 159, 211, 0.28)",
-          radius: "14px",
-          shadow: "0 14px 30px rgba(3, 11, 23, 0.28)",
+          "page-overlay": "rgba(125, 211, 252, 0.14)",
         },
       },
       {
         id: "plus-contrast",
         label: "Plus Contrast",
         nativeLabel: "Plus 高对比",
-        description: "A darker, higher-contrast preset tuned for clearer hierarchy and stronger controls.",
-        nativeDescription: "更深、更高对比的预设，强调层级、按钮和输入框可读性。",
+        description: "A darker, higher-contrast palette tuned for stronger separation and emphasis.",
+        nativeDescription: "更深、更高对比的配色，强调层级分离和重点信息。",
         variables: {
           "page-bg": "#060b16",
           surface: "rgba(10, 17, 31, 0.96)",
@@ -410,12 +413,175 @@
           "control-bg": "#101a2b",
           "control-text": "#f8fbff",
           "control-border": "rgba(103, 232, 249, 0.34)",
-          radius: "14px",
-          shadow: "0 18px 46px rgba(2, 6, 23, 0.34)",
+          "page-overlay": "rgba(56, 189, 248, 0.18)",
+        },
+      },
+      {
+        id: "soft-light",
+        label: "Soft Light",
+        nativeLabel: "柔光亮色",
+        description: "A gentle light palette with warm neutrals and soft blue accents.",
+        nativeDescription: "柔和的亮色配色，暖中性色搭配克制的蓝色强调。",
+        variables: {
+          "page-bg": "#f6f3ee",
+          surface: "rgba(255, 252, 248, 0.94)",
+          "surface-2": "#fffaf5",
+          text: "#2d241f",
+          muted: "#7e6f66",
+          border: "rgba(67, 47, 34, 0.12)",
+          accent: "#5a7be7",
+          "accent-soft": "rgba(90, 123, 231, 0.14)",
+          "control-bg": "rgba(255, 255, 255, 0.96)",
+          "control-text": "#2d241f",
+          "control-border": "rgba(67, 47, 34, 0.16)",
+          "page-overlay": "rgba(90, 123, 231, 0.10)",
+        },
+      },
+      {
+        id: "clear-light",
+        label: "Clear Light",
+        nativeLabel: "清透亮色",
+        description: "A cleaner light palette with crisp surfaces and brighter accents.",
+        nativeDescription: "更清透的亮色配色，表面更清爽，强调色更明快。",
+        variables: {
+          "page-bg": "#f7fbff",
+          surface: "#ffffff",
+          "surface-2": "#f3f8ff",
+          text: "#1f2937",
+          muted: "#66758b",
+          border: "#dbe5f1",
+          accent: "#2d6cdf",
+          "accent-soft": "rgba(45, 108, 223, 0.14)",
+          "control-bg": "#f8fbff",
+          "control-text": "#1f2937",
+          "control-border": "#c9d8ea",
+          "page-overlay": "rgba(45, 108, 223, 0.10)",
+        },
+      },
+      {
+        id: "mist-light",
+        label: "Mist Light",
+        nativeLabel: "雾感亮色",
+        description: "A cool, calm light palette with softer contrast and muted surfaces.",
+        nativeDescription: "偏冷静的亮色配色，对比更柔和，表面层次更安静。",
+        variables: {
+          "page-bg": "#f2f5fb",
+          surface: "rgba(255, 255, 255, 0.95)",
+          "surface-2": "#edf2f8",
+          text: "#1d2430",
+          muted: "#657182",
+          border: "rgba(82, 94, 117, 0.16)",
+          accent: "#2f6fb5",
+          "accent-soft": "rgba(47, 111, 181, 0.14)",
+          "control-bg": "#ffffff",
+          "control-text": "#1d2430",
+          "control-border": "rgba(47, 111, 181, 0.18)",
+          "page-overlay": "rgba(47, 111, 181, 0.09)",
         },
       },
     ],
   });
+  const FALLBACK_UI_STYLE_BUNDLE = Object.freeze({
+    schemaVersion: 1,
+    version: "builtin-0.3.0",
+    defaultPreset: "openclaw-default",
+    presets: [
+      {
+        id: "openclaw-default",
+        label: "OpenClaw Default",
+        nativeLabel: "OpenClaw 默认",
+        description: "Keeps the original OpenClaw control geometry and depth while letting repairs reuse the same shape language.",
+        nativeDescription: "保留 OpenClaw 原本的控件几何和层次，同时让修补样式沿用同一套形态语言。",
+        variables: {
+          "radius-sm": "10px",
+          "radius-md": "12px",
+          "radius-lg": "16px",
+          "radius-xl": "20px",
+          "shadow-sm": "0 8px 18px rgba(2, 8, 23, 0.16)",
+          "shadow-md": "0 14px 28px rgba(2, 8, 23, 0.22)",
+          "shadow-lg": "0 22px 44px rgba(2, 8, 23, 0.28)",
+          "shadow-xl": "0 30px 56px rgba(2, 8, 23, 0.34)",
+          "control-height": "40px",
+          "control-padding-x": "14px",
+          "button-padding-x": "16px",
+          "card-padding": "16px",
+          "section-gap": "14px",
+          "surface-border-width": "1px",
+        },
+      },
+      {
+        id: "material",
+        label: "Material Design",
+        nativeLabel: "Material Design",
+        description: "Balanced density, clear outlines, modest radii, and layered elevation.",
+        nativeDescription: "密度均衡、描边清晰、圆角适中，层级依靠明确的海拔感来表达。",
+        variables: {
+          "radius-sm": "6px",
+          "radius-md": "10px",
+          "radius-lg": "14px",
+          "radius-xl": "18px",
+          "shadow-sm": "0 2px 6px rgba(15, 23, 42, 0.14)",
+          "shadow-md": "0 8px 20px rgba(15, 23, 42, 0.18)",
+          "shadow-lg": "0 16px 32px rgba(15, 23, 42, 0.22)",
+          "shadow-xl": "0 24px 48px rgba(15, 23, 42, 0.24)",
+          "control-height": "44px",
+          "control-padding-x": "16px",
+          "button-padding-x": "18px",
+          "card-padding": "18px",
+          "section-gap": "16px",
+          "surface-border-width": "1px",
+        },
+      },
+      {
+        id: "flat",
+        label: "Flat Design",
+        nativeLabel: "Flat Design",
+        description: "Sharper corners, lighter depth, and a cleaner, more direct block layout.",
+        nativeDescription: "边角更利落、层次更轻，整体更偏直接干净的块面感。",
+        variables: {
+          "radius-sm": "2px",
+          "radius-md": "4px",
+          "radius-lg": "6px",
+          "radius-xl": "8px",
+          "shadow-sm": "0 0 0 rgba(0, 0, 0, 0)",
+          "shadow-md": "0 0 0 rgba(0, 0, 0, 0)",
+          "shadow-lg": "0 0 0 rgba(0, 0, 0, 0)",
+          "shadow-xl": "0 0 0 rgba(0, 0, 0, 0)",
+          "control-height": "36px",
+          "control-padding-x": "12px",
+          "button-padding-x": "14px",
+          "card-padding": "14px",
+          "section-gap": "10px",
+          "surface-border-width": "1px",
+        },
+      },
+      {
+        id: "soft-rounded",
+        label: "Soft Rounded",
+        nativeLabel: "柔和圆角",
+        description: "Friendlier proportions with larger radii, softer cards, and roomier surfaces.",
+        nativeDescription: "比例更柔和，圆角更大，卡片与表面更宽松，整体更轻松。",
+        variables: {
+          "radius-sm": "14px",
+          "radius-md": "18px",
+          "radius-lg": "24px",
+          "radius-xl": "30px",
+          "shadow-sm": "0 8px 18px rgba(15, 23, 42, 0.10)",
+          "shadow-md": "0 16px 30px rgba(15, 23, 42, 0.14)",
+          "shadow-lg": "0 24px 42px rgba(15, 23, 42, 0.18)",
+          "shadow-xl": "0 32px 54px rgba(15, 23, 42, 0.22)",
+          "control-height": "46px",
+          "control-padding-x": "18px",
+          "button-padding-x": "22px",
+          "card-padding": "22px",
+          "section-gap": "18px",
+          "surface-border-width": "1px",
+        },
+      },
+    ],
+  });
+  const BUILTIN_THEME_PRESET_BUNDLE = FALLBACK_THEME_PRESET_BUNDLE;
+  const BUILTIN_UI_STYLE_BUNDLE = FALLBACK_UI_STYLE_BUNDLE;
   const FONT_FAMILY_MAP = Object.freeze({
     system:
       "\"Segoe UI\", \"Google Sans\", \"PingFang SC\", \"Microsoft YaHei UI\", sans-serif",
@@ -432,6 +598,10 @@
     bundle: "remoteThemePresetBundle",
     state: "remoteThemePresetState",
   });
+  const REMOTE_UI_STYLE_STORAGE_KEYS = Object.freeze({
+    bundle: "remoteThemeUiStyleBundle",
+    state: "remoteThemeUiStyleState",
+  });
   const THEME_STYLE_ELEMENT_ID = "openclaw-dashboard-plus-theme-style";
   const DEFAULT_THEME_REPAIR_CSS = ``;
   const DEFAULT_THEME_SELECT_CSS = ``;
@@ -442,11 +612,13 @@
     ports: "18789",
     locale: "zh-CN",
     themePreset: BUILTIN_THEME_PRESET_BUNDLE.defaultPreset,
+    uiStylePreset: BUILTIN_UI_STYLE_BUNDLE.defaultPreset,
     fontFamily: "system",
     fontScale: "100",
     styleOverride: true,
     styleRepair: true,
     selectStyleFix: true,
+    codeBlockStyleFix: true,
   });
 
   let runtimeSettings = { ...DEFAULT_RUNTIME_SETTINGS };
@@ -456,6 +628,10 @@
   let pendingRuntimeReload = false;
   let activeThemeBundle = BUILTIN_THEME_PRESET_BUNDLE;
   let activeThemePreset = BUILTIN_THEME_PRESET_BUNDLE.presets[0];
+  let activeUiStyleBundle = BUILTIN_UI_STYLE_BUNDLE;
+  let activeUiStylePreset = BUILTIN_UI_STYLE_BUNDLE.presets[0];
+  let builtinThemeBundlePromise = null;
+  let builtinUiStyleBundlePromise = null;
   let remoteTranslationState = {
     locale: DEFAULT_RUNTIME_SETTINGS.locale,
     activeSource: "builtin",
@@ -470,8 +646,14 @@
       BUILTIN_THEME_PRESET_BUNDLE.presets[0]?.nativeLabel ||
       BUILTIN_THEME_PRESET_BUNDLE.presets[0]?.label ||
       DEFAULT_RUNTIME_SETTINGS.themePreset,
+    uiStylePresetId: DEFAULT_RUNTIME_SETTINGS.uiStylePreset,
+    uiStylePresetLabel:
+      BUILTIN_UI_STYLE_BUNDLE.presets[0]?.nativeLabel ||
+      BUILTIN_UI_STYLE_BUNDLE.presets[0]?.label ||
+      DEFAULT_RUNTIME_SETTINGS.uiStylePreset,
     activeSource: "builtin",
     bundleVersion: BUILTIN_THEME_PRESET_BUNDLE.version,
+    uiStyleBundleVersion: BUILTIN_UI_STYLE_BUNDLE.version,
     builtinVersion: BUILTIN_THEME_PRESET_BUNDLE.version,
     lastSyncAt: null,
     error: null,
@@ -490,6 +672,16 @@
     }
     const normalizedValue = value.trim();
     return allowedValues.includes(normalizedValue) ? normalizedValue : fallbackValue;
+  }
+
+  function normalizeThemePresetId(value) {
+    const normalizedValue = typeof value === "string" ? value.trim() : "";
+    return LEGACY_THEME_PRESET_ALIASES[normalizedValue] || normalizedValue || DEFAULT_RUNTIME_SETTINGS.themePreset;
+  }
+
+  function normalizeUiStylePresetId(value) {
+    const normalizedValue = typeof value === "string" ? value.trim() : "";
+    return normalizedValue || DEFAULT_RUNTIME_SETTINGS.uiStylePreset;
   }
 
   function normalizeFontScale(value) {
@@ -519,8 +711,12 @@
           : DEFAULT_RUNTIME_SETTINGS.locale,
       themePreset:
         typeof rawSettings?.themePreset === "string" && rawSettings.themePreset.trim()
-          ? rawSettings.themePreset.trim()
+          ? normalizeThemePresetId(rawSettings.themePreset)
           : DEFAULT_RUNTIME_SETTINGS.themePreset,
+      uiStylePreset:
+        typeof rawSettings?.uiStylePreset === "string" && rawSettings.uiStylePreset.trim()
+          ? normalizeUiStylePresetId(rawSettings.uiStylePreset)
+          : DEFAULT_RUNTIME_SETTINGS.uiStylePreset,
       fontFamily: normalizeChoice(
         rawSettings?.fontFamily,
         Object.keys(FONT_FAMILY_MAP),
@@ -530,6 +726,7 @@
       styleOverride: rawSettings?.styleOverride !== false,
       styleRepair: rawSettings?.styleRepair !== false,
       selectStyleFix: rawSettings?.selectStyleFix !== false,
+      codeBlockStyleFix: rawSettings?.codeBlockStyleFix !== false,
     };
   }
 
@@ -545,7 +742,7 @@
     if (!entry || typeof entry !== "object") {
       return null;
     }
-    const id = typeof entry.id === "string" && entry.id.trim() ? entry.id.trim() : "";
+    const id = normalizeThemePresetId(entry.id);
     if (!id) {
       return null;
     }
@@ -595,7 +792,7 @@
           : fallbackVersion,
       defaultPreset:
         typeof bundle?.defaultPreset === "string" && bundle.defaultPreset.trim()
-          ? bundle.defaultPreset.trim()
+          ? normalizeThemePresetId(bundle.defaultPreset)
           : normalizedPresets[0]?.id || DEFAULT_RUNTIME_SETTINGS.themePreset,
       presets: normalizedPresets,
     };
@@ -636,10 +833,111 @@
   function resolveThemePreset(bundle, presetId) {
     const normalizedBundle = normalizeThemeBundle(bundle);
     return (
-      normalizedBundle.presets.find((preset) => preset.id === presetId) ||
+      normalizedBundle.presets.find((preset) => preset.id === normalizeThemePresetId(presetId)) ||
       normalizedBundle.presets.find((preset) => preset.id === normalizedBundle.defaultPreset) ||
       normalizedBundle.presets[0] ||
       normalizeThemePreset(BUILTIN_THEME_PRESET_BUNDLE.presets[0])
+    );
+  }
+
+  function normalizeUiStylePreset(entry) {
+    if (!entry || typeof entry !== "object") {
+      return null;
+    }
+    const id = normalizeUiStylePresetId(entry.id);
+    if (!id) {
+      return null;
+    }
+    const label =
+      typeof entry.label === "string" && entry.label.trim() ? entry.label.trim() : id;
+    const nativeLabel =
+      typeof entry.nativeLabel === "string" && entry.nativeLabel.trim()
+        ? entry.nativeLabel.trim()
+        : label;
+    const variables =
+      entry.variables && typeof entry.variables === "object"
+        ? Object.fromEntries(
+            Object.entries(entry.variables)
+              .filter(([key, value]) => typeof key === "string" && typeof value === "string")
+              .map(([key, value]) => [key.trim(), value.trim()]),
+          )
+        : {};
+    return {
+      id,
+      label,
+      nativeLabel,
+      description:
+        typeof entry.description === "string" && entry.description.trim()
+          ? entry.description.trim()
+          : "",
+      nativeDescription:
+        typeof entry.nativeDescription === "string" && entry.nativeDescription.trim()
+          ? entry.nativeDescription.trim()
+          : "",
+      variables,
+    };
+  }
+
+  function normalizeUiStyleBundle(bundle, fallbackVersion = BUILTIN_UI_STYLE_BUNDLE.version) {
+    const presets = Array.isArray(bundle?.presets)
+      ? bundle.presets.map((entry) => normalizeUiStylePreset(entry)).filter(Boolean)
+      : [];
+    const normalizedPresets = presets.length
+      ? presets
+      : BUILTIN_UI_STYLE_BUNDLE.presets.map((entry) => normalizeUiStylePreset(entry));
+    return {
+      schemaVersion: 1,
+      version:
+        typeof bundle?.version === "string" && bundle.version.trim()
+          ? bundle.version.trim()
+          : fallbackVersion,
+      defaultPreset:
+        typeof bundle?.defaultPreset === "string" && bundle.defaultPreset.trim()
+          ? normalizeUiStylePresetId(bundle.defaultPreset)
+          : normalizedPresets[0]?.id || DEFAULT_RUNTIME_SETTINGS.uiStylePreset,
+      presets: normalizedPresets,
+    };
+  }
+
+  function mergeUiStyleBundles(baseBundle, nextBundle) {
+    const mergedMap = new Map();
+    for (const preset of normalizeUiStyleBundle(baseBundle).presets) {
+      mergedMap.set(preset.id, preset);
+    }
+    for (const preset of normalizeUiStyleBundle(nextBundle).presets) {
+      const previousPreset = mergedMap.get(preset.id);
+      mergedMap.set(
+        preset.id,
+        previousPreset
+          ? {
+              ...previousPreset,
+              ...preset,
+              variables: {
+                ...(previousPreset.variables || {}),
+                ...(preset.variables || {}),
+              },
+            }
+          : preset,
+      );
+    }
+    return {
+      schemaVersion: 1,
+      version:
+        normalizeUiStyleBundle(nextBundle).version || normalizeUiStyleBundle(baseBundle).version,
+      defaultPreset:
+        normalizeUiStyleBundle(nextBundle).defaultPreset ||
+        normalizeUiStyleBundle(baseBundle).defaultPreset,
+      presets: Array.from(mergedMap.values()),
+    };
+  }
+
+  function resolveUiStylePreset(bundle, presetId) {
+    const normalizedBundle = normalizeUiStyleBundle(bundle);
+    return (
+      normalizedBundle.presets.find((preset) => preset.id === normalizeUiStylePresetId(presetId)) ||
+      normalizedBundle.presets.find((preset) => preset.id === normalizedBundle.defaultPreset) ||
+      normalizedBundle.presets[0] ||
+      normalizeUiStylePreset(BUILTIN_UI_STYLE_BUNDLE.presets[0])
     );
   }
 
@@ -669,6 +967,51 @@
 
   function getSelectedThemePreset(settings = runtimeSettings) {
     return normalizeRuntimeSettings(settings).themePreset;
+  }
+
+  function getSelectedUiStylePreset(settings = runtimeSettings) {
+    return normalizeRuntimeSettings(settings).uiStylePreset;
+  }
+
+  async function loadBundledThemePresetBundle() {
+    const bundledUrl = window.chrome?.runtime?.getURL?.("theme-presets.json");
+    if (!bundledUrl) {
+      return normalizeThemeBundle(FALLBACK_THEME_PRESET_BUNDLE);
+    }
+    try {
+      return normalizeThemeBundle(await fetchJsonWithTimeout(bundledUrl, 2500));
+    } catch {
+      return normalizeThemeBundle(FALLBACK_THEME_PRESET_BUNDLE);
+    }
+  }
+
+  async function loadBundledUiStyleBundle() {
+    const bundledUrl = window.chrome?.runtime?.getURL?.("ui-style-presets.json");
+    if (!bundledUrl) {
+      return normalizeUiStyleBundle(FALLBACK_UI_STYLE_BUNDLE);
+    }
+    try {
+      return normalizeUiStyleBundle(await fetchJsonWithTimeout(bundledUrl, 2500));
+    } catch {
+      return normalizeUiStyleBundle(FALLBACK_UI_STYLE_BUNDLE);
+    }
+  }
+
+  async function ensureBuiltinThemeResources() {
+    if (!builtinThemeBundlePromise) {
+      builtinThemeBundlePromise = loadBundledThemePresetBundle();
+    }
+    if (!builtinUiStyleBundlePromise) {
+      builtinUiStyleBundlePromise = loadBundledUiStyleBundle();
+    }
+    const [themeBundle, uiStyleBundle] = await Promise.all([
+      builtinThemeBundlePromise,
+      builtinUiStyleBundlePromise,
+    ]);
+    return {
+      themeBundle: normalizeThemeBundle(themeBundle),
+      uiStyleBundle: normalizeUiStyleBundle(uiStyleBundle),
+    };
   }
 
   function getThemeStyleElement() {
@@ -720,11 +1063,11 @@
       .trim();
   }
 
-  function buildThemeCss(settings, preset) {
+  function buildThemeCss(settings, palettePreset, uiStylePreset) {
     const fontFamily = FONT_FAMILY_MAP[settings.fontFamily] || FONT_FAMILY_MAP.system;
     const fontScale = `${normalizeFontScale(settings.fontScale)}%`;
-    const preserveNativeColors = preset?.preserveNativeColors === true;
-    const variables = {
+    const preserveNativeColors = palettePreset?.preserveNativeColors === true;
+    const paletteVariables = {
       ...(preserveNativeColors
         ? {
             "page-bg": "var(--bg)",
@@ -738,8 +1081,6 @@
             "control-bg": "var(--input)",
             "control-text": "var(--text)",
             "control-border": "var(--border-strong)",
-            radius: "var(--radius-md)",
-            shadow: "var(--shadow-md)",
             "page-overlay": "transparent",
           }
         : {
@@ -754,29 +1095,54 @@
             "control-bg": "#162235",
             "control-text": "#e5eefc",
             "control-border": "rgba(125, 159, 211, 0.3)",
-            radius: "14px",
-            shadow: "0 16px 40px rgba(2, 8, 23, 0.28)",
             "page-overlay": "rgba(96, 165, 250, 0.18)",
           }),
-      ...(preset?.variables || {}),
+      ...(palettePreset?.variables || {}),
     };
-    const pageBg = escapeCssValue(variables["page-bg"]);
-    const surface = escapeCssValue(variables.surface);
-    const surface2 = escapeCssValue(variables["surface-2"]);
-    const text = escapeCssValue(variables.text);
-    const muted = escapeCssValue(variables.muted);
-    const border = escapeCssValue(variables.border);
-    const accent = escapeCssValue(variables.accent);
-    const accentSoft = escapeCssValue(variables["accent-soft"]);
-    const controlBg = escapeCssValue(variables["control-bg"]);
-    const controlText = escapeCssValue(variables["control-text"]);
-    const controlBorder = escapeCssValue(variables["control-border"]);
-    const radius = escapeCssValue(variables.radius);
-    const shadow = escapeCssValue(variables.shadow);
+    const uiVariables = {
+      "radius-sm": "10px",
+      "radius-md": "12px",
+      "radius-lg": "16px",
+      "radius-xl": "20px",
+      "shadow-sm": "0 8px 18px rgba(2, 8, 23, 0.16)",
+      "shadow-md": "0 14px 28px rgba(2, 8, 23, 0.22)",
+      "shadow-lg": "0 22px 44px rgba(2, 8, 23, 0.28)",
+      "shadow-xl": "0 30px 56px rgba(2, 8, 23, 0.34)",
+      "control-height": "40px",
+      "control-padding-x": "14px",
+      "button-padding-x": "16px",
+      "card-padding": "16px",
+      "section-gap": "14px",
+      "surface-border-width": "1px",
+      ...(uiStylePreset?.variables || {}),
+    };
+    const variables = {
+      ...paletteVariables,
+      ...uiVariables,
+    };
+    const pageBg = escapeCssValue(paletteVariables["page-bg"]);
+    const surface = escapeCssValue(paletteVariables.surface);
+    const surface2 = escapeCssValue(paletteVariables["surface-2"]);
+    const text = escapeCssValue(paletteVariables.text);
+    const muted = escapeCssValue(paletteVariables.muted);
+    const border = escapeCssValue(paletteVariables.border);
+    const accent = escapeCssValue(paletteVariables.accent);
+    const accentSoft = escapeCssValue(paletteVariables["accent-soft"]);
+    const controlBg = escapeCssValue(paletteVariables["control-bg"]);
+    const controlText = escapeCssValue(paletteVariables["control-text"]);
+    const controlBorder = escapeCssValue(paletteVariables["control-border"]);
+    const radiusSm = escapeCssValue(uiVariables["radius-sm"]);
+    const radiusMd = escapeCssValue(uiVariables["radius-md"]);
+    const radiusLg = escapeCssValue(uiVariables["radius-lg"]);
+    const radiusXl = escapeCssValue(uiVariables["radius-xl"]);
+    const shadowSm = escapeCssValue(uiVariables["shadow-sm"]);
+    const shadowMd = escapeCssValue(uiVariables["shadow-md"]);
+    const shadowLg = escapeCssValue(uiVariables["shadow-lg"]);
+    const shadowXl = escapeCssValue(uiVariables["shadow-xl"]);
     const variableLines = Object.entries(variables)
       .map(([key, value]) => `--ocdp-${key}: ${escapeCssValue(value)};`)
       .join("\n");
-    const nativeVariableLines = preserveNativeColors ? "" : [
+    const nativeColorLines = preserveNativeColors ? [] : [
       `--bg: ${pageBg};`,
       `--bg-accent: ${surface};`,
       `--bg-elevated: ${surface};`,
@@ -814,18 +1180,21 @@
       `--secondary: ${surface2};`,
       `--secondary-foreground: ${text};`,
       `--info: ${accent};`,
+    ];
+    const nativeGeometryLines = [
       `--font-body: ${fontFamily};`,
       `--font-display: ${fontFamily};`,
-      `--shadow-sm: ${shadow};`,
-      `--shadow-md: ${shadow};`,
-      `--shadow-lg: ${shadow};`,
-      `--shadow-xl: ${shadow};`,
-      `--radius-sm: ${radius};`,
-      `--radius-md: ${radius};`,
-      `--radius-lg: ${radius};`,
-      `--radius-xl: ${radius};`,
-      `--radius: ${radius};`,
-    ].join("\n");
+      `--shadow-sm: ${shadowSm};`,
+      `--shadow-md: ${shadowMd};`,
+      `--shadow-lg: ${shadowLg};`,
+      `--shadow-xl: ${shadowXl};`,
+      `--radius-sm: ${radiusSm};`,
+      `--radius-md: ${radiusMd};`,
+      `--radius-lg: ${radiusLg};`,
+      `--radius-xl: ${radiusXl};`,
+      `--radius: ${radiusMd};`,
+    ];
+    const nativeVariableLines = [...nativeColorLines, ...nativeGeometryLines].join("\n");
 
     return [
       `:root,\n:root[data-theme-mode="light"],\n:root[data-theme-mode="dark"],\n:root[data-theme="openknot"],\n:root[data-theme="openknot-light"],\n:root[data-theme="dash"],\n:root[data-theme="dash-light"] {\n${variableLines}\n${nativeVariableLines}\n--ocdp-font-family: ${fontFamily};\n--ocdp-font-scale: ${fontScale};\n}`,
@@ -1022,6 +1391,30 @@
     return { bundle, state };
   }
 
+  async function loadStoredUiStyleBundle() {
+    const stored = await getLocalStorageValues([
+      REMOTE_UI_STYLE_STORAGE_KEYS.bundle,
+      REMOTE_UI_STYLE_STORAGE_KEYS.state,
+    ]);
+    if (!stored) {
+      return null;
+    }
+    const bundle =
+      stored[REMOTE_UI_STYLE_STORAGE_KEYS.bundle] &&
+      typeof stored[REMOTE_UI_STYLE_STORAGE_KEYS.bundle] === "object"
+        ? normalizeUiStyleBundle(stored[REMOTE_UI_STYLE_STORAGE_KEYS.bundle])
+        : null;
+    const state =
+      stored[REMOTE_UI_STYLE_STORAGE_KEYS.state] &&
+      typeof stored[REMOTE_UI_STYLE_STORAGE_KEYS.state] === "object"
+        ? stored[REMOTE_UI_STYLE_STORAGE_KEYS.state]
+        : null;
+    if (!bundle) {
+      return null;
+    }
+    return { bundle, state };
+  }
+
   async function loadLocaleTranslations(locale, options = {}) {
     const nextLocale = typeof locale === "string" && locale.trim()
       ? locale.trim()
@@ -1085,52 +1478,81 @@
 
   async function loadThemePresetBundle(options = {}) {
     const nextPresetId = getSelectedThemePreset();
+    const nextUiStylePresetId = getSelectedUiStylePreset();
     const loadVersion = ++themeLoadVersion;
-    const builtinBundle = normalizeThemeBundle(BUILTIN_THEME_PRESET_BUNDLE);
+    const { themeBundle: builtinBundle, uiStyleBundle: builtinUiStyleBundle } = await ensureBuiltinThemeResources();
     let mergedBundle = builtinBundle;
+    let mergedUiStyleBundle = builtinUiStyleBundle;
     let nextState = {
       presetId: nextPresetId,
       presetLabel:
         resolveThemePreset(builtinBundle, nextPresetId)?.nativeLabel ||
         resolveThemePreset(builtinBundle, nextPresetId)?.label ||
         nextPresetId,
+      uiStylePresetId: nextUiStylePresetId,
+      uiStylePresetLabel:
+        resolveUiStylePreset(builtinUiStyleBundle, nextUiStylePresetId)?.nativeLabel ||
+        resolveUiStylePreset(builtinUiStyleBundle, nextUiStylePresetId)?.label ||
+        nextUiStylePresetId,
       activeSource: "builtin",
       bundleVersion: builtinBundle.version,
+      uiStyleBundleVersion: builtinUiStyleBundle.version,
       builtinVersion: builtinBundle.version,
       lastSyncAt: null,
       error: null,
     };
 
-    const storedTheme = await loadStoredThemeBundle();
+    const [storedTheme, storedUiStyle] = await Promise.all([
+      loadStoredThemeBundle(),
+      loadStoredUiStyleBundle(),
+    ]);
     if (loadVersion !== themeLoadVersion) {
       return remoteThemeState;
     }
     if (storedTheme?.bundle) {
       mergedBundle = mergeThemeBundles(builtinBundle, storedTheme.bundle);
+    }
+    if (storedUiStyle?.bundle) {
+      mergedUiStyleBundle = mergeUiStyleBundles(builtinUiStyleBundle, storedUiStyle.bundle);
+    }
+    if (storedTheme?.bundle || storedUiStyle?.bundle) {
       nextState = {
         presetId: nextPresetId,
         presetLabel:
           resolveThemePreset(mergedBundle, nextPresetId)?.nativeLabel ||
           resolveThemePreset(mergedBundle, nextPresetId)?.label ||
           nextPresetId,
+        uiStylePresetId: nextUiStylePresetId,
+        uiStylePresetLabel:
+          resolveUiStylePreset(mergedUiStyleBundle, nextUiStylePresetId)?.nativeLabel ||
+          resolveUiStylePreset(mergedUiStyleBundle, nextUiStylePresetId)?.label ||
+          nextUiStylePresetId,
         activeSource:
-          storedTheme.state?.sourceLabel ||
-          storedTheme.state?.sourceId ||
+          storedTheme?.state?.sourceLabel ||
+          storedUiStyle?.state?.sourceLabel ||
+          storedTheme?.state?.sourceId ||
+          storedUiStyle?.state?.sourceId ||
           "cached",
-        bundleVersion: storedTheme.bundle.version || builtinBundle.version,
+        bundleVersion: storedTheme?.bundle?.version || builtinBundle.version,
+        uiStyleBundleVersion: storedUiStyle?.bundle?.version || builtinUiStyleBundle.version,
         builtinVersion: builtinBundle.version,
-        lastSyncAt: storedTheme.state?.fetchedAt || null,
+        lastSyncAt: storedTheme?.state?.fetchedAt || storedUiStyle?.state?.fetchedAt || null,
         error: null,
       };
     }
 
     activeThemeBundle = mergedBundle;
     activeThemePreset = resolveThemePreset(mergedBundle, nextPresetId);
+    activeUiStyleBundle = mergedUiStyleBundle;
+    activeUiStylePreset = resolveUiStylePreset(mergedUiStyleBundle, nextUiStylePresetId);
     remoteThemeState = {
       ...nextState,
       presetId: activeThemePreset?.id || nextPresetId,
       presetLabel:
         activeThemePreset?.nativeLabel || activeThemePreset?.label || nextPresetId,
+      uiStylePresetId: activeUiStylePreset?.id || nextUiStylePresetId,
+      uiStylePresetLabel:
+        activeUiStylePreset?.nativeLabel || activeUiStylePreset?.label || nextUiStylePresetId,
     };
 
     if (options.apply !== false) {
@@ -1190,7 +1612,7 @@
     if (!styleElement) {
       return;
     }
-    const nextCss = buildThemeCss(runtimeSettings, activeThemePreset);
+    const nextCss = buildThemeCss(runtimeSettings, activeThemePreset, activeUiStylePreset);
     if (styleElement.textContent === nextCss) {
       return;
     }
@@ -1230,6 +1652,7 @@
         const runtimeKeys = ["enabled", "hosts", "ports"];
         const themeRelatedKeys = [
           "themePreset",
+          "uiStylePreset",
           "fontFamily",
           "fontScale",
           "styleOverride",
@@ -1296,12 +1719,15 @@
       if (
         areaName === "local" &&
         (changes[REMOTE_THEME_STORAGE_KEYS.bundle] ||
-          changes[REMOTE_THEME_STORAGE_KEYS.state])
+          changes[REMOTE_THEME_STORAGE_KEYS.state] ||
+          changes[REMOTE_UI_STYLE_STORAGE_KEYS.bundle] ||
+          changes[REMOTE_UI_STYLE_STORAGE_KEYS.state])
       ) {
         loadThemePresetBundle().catch((error) => {
           remoteThemeState = {
             ...remoteThemeState,
             presetId: getSelectedThemePreset(),
+            uiStylePresetId: getSelectedUiStylePreset(),
             error: String(error?.message || error),
           };
         });
@@ -1382,6 +1808,7 @@
     getRemoteThemeState: () => ({ ...remoteThemeState }),
     getActiveTranslationLocale: () => activeTranslationLocale,
     getActiveThemePreset: () => ({ ...(activeThemePreset || {}) }),
+    getActiveUiStylePreset: () => ({ ...(activeUiStylePreset || {}) }),
   };
 
   window.__OPENCLAW_ZH_CN__ = api;
@@ -1450,6 +1877,7 @@
     "hosts",
     "ports",
     "themePreset",
+    "uiStylePreset",
     "fontFamily",
     "fontScale",
     "styleOverride",
@@ -1462,6 +1890,8 @@
     STYLE_BUNDLE_STORAGE_KEYS.state,
     "remoteThemePresetBundle",
     "remoteThemePresetState",
+    "remoteThemeUiStyleBundle",
+    "remoteThemeUiStyleState",
   ]);
   const ALLOWED_MODULE_KINDS = new Set(["css", "html", "json"]);
   const BUILTIN_STYLE_BUNDLE_DATA = {"schemaVersion":1,"version":"builtin-0.2.2","modules":[{"id":"theme-override-core","kind":"css","settingKey":"styleOverride","assetPath":"style-modules/theme-override-core.css","content":":where(body, openclaw-app) {\n  color: var(--text) !important;\n}\n\n:where(.login-gate__card, .theme-orb__menu, .config-section-card, .settings-appearance__section, .settings-info-row, .cfg-array, .cfg-map, .cfg-object, .sidebar-version) {\n  border-color: var(--border) !important;\n  border-radius: var(--radius-lg) !important;\n  background: var(--bg-elevated) !important;\n  color: var(--text) !important;\n  box-shadow: var(--shadow-md) !important;\n}\n\n:where(.btn, .theme-orb__trigger, .theme-orb__option, .cfg-input__reset, .cfg-array__add, .cfg-map__add) {\n  border-radius: var(--radius-md) !important;\n}\n\n:where(.btn.primary, .cfg-segmented__btn.active, .config-mode-toggle__btn.active, .topbar-theme-mode__btn--active) {\n  background: var(--accent) !important;\n  color: var(--primary-foreground) !important;\n  border-color: color-mix(in srgb, var(--accent) 35%, transparent) !important;\n}\n\n:where(.btn:not(.primary):not(.danger), .theme-orb__trigger, .theme-orb__option, .cfg-input__reset, .cfg-array__add, .cfg-map__add) {\n  background: var(--bg-elevated) !important;\n  color: var(--text) !important;\n  border-color: var(--border-strong) !important;\n}\n\n:where(input:not([type=\"checkbox\"]):not([type=\"radio\"]), textarea, select, .cfg-input, .cfg-textarea, .cfg-select, .cfg-number) {\n  background: var(--input) !important;\n  color: var(--text) !important;\n  border-color: var(--border-strong) !important;\n  border-radius: var(--radius-md) !important;\n}\n"},{"id":"theme-repair-core","kind":"css","settingKey":"styleRepair","assetPath":"style-modules/theme-repair-core.css","content":":root {\n  color-scheme: light dark;\n}\n\n:where(*, *::before, *::after) {\n  box-sizing: border-box;\n}\n\n:where(body) {\n  font-family: var(--ocdp-font-family) !important;\n  font-size: var(--ocdp-font-scale) !important;\n  color: var(--text) !important;\n  background:\n    radial-gradient(circle at top right, var(--ocdp-page-overlay) 0%, transparent 28%),\n    var(--bg) !important;\n}\n\n:where(openclaw-app, button, input, textarea, select) {\n  font: inherit !important;\n}\n\n:where(a, .session-link) {\n  color: var(--accent) !important;\n}\n\n:where(input::placeholder, textarea::placeholder) {\n  color: var(--muted) !important;\n}\n\n:where(input, textarea, select, button, [role=\"button\"]) {\n  transition:\n    background-color 160ms ease,\n    border-color 160ms ease,\n    box-shadow 160ms ease,\n    color 160ms ease !important;\n}\n\n:where(input:focus, textarea:focus, select:focus, button:focus-visible, [role=\"button\"]:focus-visible) {\n  outline: none !important;\n  box-shadow: 0 0 0 3px var(--accent-subtle) !important;\n  border-color: var(--accent) !important;\n}\n\n:where(table, thead, tbody, tr, td, th) {\n  border-color: var(--border) !important;\n}\n\n:where(.callout) {\n  background: color-mix(in srgb, var(--danger-subtle, rgba(239, 68, 68, 0.1)) 60%, var(--bg-elevated) 40%) !important;\n}\n\n:where(code, pre, .mono, .login-gate__steps code) {\n  background: color-mix(in srgb, var(--bg-hover) 88%, transparent) !important;\n  color: var(--text) !important;\n  border-color: var(--border) !important;\n  border-radius: var(--radius-md) !important;\n}\n\n:where(.theme-orb__menu, .login-gate__card, .sidebar-version, .config-section-card, .settings-appearance__section, .settings-info-row, .cfg-array, .cfg-map, .cfg-object) {\n  box-shadow: var(--shadow-md) !important;\n}\n"},{"id":"theme-repair-layout","kind":"css","settingKey":"styleRepair","assetPath":"style-modules/theme-repair-layout.css","content":":where(.content-header, .chat-controls__session-row) {\n  gap: 12px !important;\n}\n\n:where(.chat-controls__session-row) {\n  align-items: flex-start !important;\n}\n\n:where(.chat-controls__session, .chat-controls__model) {\n  min-width: 0 !important;\n}\n\n:where(.composer, .message-composer, .chat-composer, .chat-input, .chat-input__box) {\n  border-radius: var(--radius-lg) !important;\n}\n\n:where(.message-composer textarea, .chat-input textarea, .composer textarea) {\n  line-height: 1.55 !important;\n}\n"},{"id":"theme-select-fix-core","kind":"css","settingKey":"selectStyleFix","assetPath":"style-modules/theme-select-fix-core.css","content":".ocdp-selectfix {\n  position: relative;\n  display: inline-block;\n  min-width: 160px;\n  vertical-align: middle;\n}\n\n.ocdp-selectfix select[data-ocdp-selectfix-bound=\"true\"] {\n  position: absolute !important;\n  inset: 0 !important;\n  width: 100% !important;\n  height: 100% !important;\n  opacity: 0 !important;\n  pointer-events: none !important;\n  margin: 0 !important;\n}\n\n.ocdp-selectfix__trigger {\n  position: relative;\n  z-index: 1;\n  display: inline-flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  width: 100%;\n  min-height: 40px;\n  padding: 0 14px;\n  border: 1px solid var(--border, #2e3040);\n  border-radius: var(--radius-md, 10px);\n  background: var(--input, #1e2028);\n  color: var(--text, #d4d4d8);\n  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);\n  cursor: pointer;\n  font: inherit;\n  text-align: left;\n}\n\n.ocdp-selectfix__trigger::after {\n  content: \"\";\n  flex: 0 0 auto;\n  width: 10px;\n  height: 10px;\n  border-right: 2px solid var(--muted, #8e8e93);\n  border-bottom: 2px solid var(--muted, #8e8e93);\n  transform: rotate(45deg) translateY(-1px);\n}\n\n.ocdp-selectfix.is-open .ocdp-selectfix__trigger {\n  border-color: var(--accent, #ff5c5c);\n  box-shadow:\n    0 0 0 3px color-mix(in srgb, var(--accent-subtle, rgba(255, 92, 92, 0.16)) 80%, transparent),\n    inset 0 1px 0 rgba(255, 255, 255, 0.04);\n}\n\n.ocdp-selectfix__trigger:disabled {\n  opacity: 0.6;\n  cursor: not-allowed;\n}\n\n.ocdp-selectfix__label {\n  flex: 1 1 auto;\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.ocdp-selectfix__menu {\n  position: fixed;\n  top: 0;\n  left: 0;\n  z-index: 2147483646;\n  display: none;\n  padding: 6px;\n  border: 1px solid var(--border-strong, #3e4050);\n  border-radius: calc(var(--radius-lg, 14px) + 2px);\n  background: color-mix(in srgb, var(--bg-elevated, #161920) 96%, black 4%);\n  box-shadow: var(--shadow-lg, 0 12px 32px rgba(0, 0, 0, 0.4));\n  backdrop-filter: blur(18px);\n  max-height: min(360px, 50vh);\n  overflow-y: auto;\n}\n\n.ocdp-selectfix.is-open .ocdp-selectfix__menu {\n  display: block;\n}\n\n.ocdp-selectfix__group {\n  margin: 2px 0 6px;\n  padding: 6px 10px 2px;\n  color: var(--muted, #8e8e93);\n  font-size: 11px;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n\n.ocdp-selectfix__option {\n  display: block;\n  width: 100%;\n  padding: 10px 12px;\n  border: 0;\n  border-radius: calc(var(--radius-md, 10px) - 2px);\n  background: transparent;\n  color: var(--text, #d4d4d8);\n  cursor: pointer;\n  font: inherit;\n  text-align: left;\n}\n\n.ocdp-selectfix__option:hover,\n.ocdp-selectfix__option:focus-visible {\n  outline: none;\n  background: color-mix(in srgb, var(--accent-subtle, rgba(255, 92, 92, 0.16)) 82%, var(--bg-elevated, #161920) 18%);\n  color: var(--text-strong, #f4f4f5);\n}\n\n.ocdp-selectfix__option.is-selected {\n  background: color-mix(in srgb, var(--accent-subtle, rgba(255, 92, 92, 0.16)) 88%, var(--bg-elevated, #161920) 12%);\n  color: var(--text-strong, #f4f4f5);\n  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent, #ff5c5c) 24%, transparent);\n}\n"},{"id":"theme-code-block-core","kind":"css","settingKey":"codeBlockStyleFix","assetPath":"style-modules/theme-code-block-core.css","content":".code-block-wrapper {\n  margin: 12px 0;\n  border: 1px solid color-mix(in srgb, var(--border, #2e3040) 88%, transparent);\n  border-radius: calc(var(--radius-lg, 14px) + 2px);\n  background:\n    linear-gradient(180deg, color-mix(in srgb, var(--bg-elevated, #161920) 98%, white 2%) 0%, var(--bg, #0e1015) 100%);\n  box-shadow:\n    0 16px 32px rgba(0, 0, 0, 0.22),\n    inset 0 1px 0 rgba(255, 255, 255, 0.04);\n  overflow: hidden;\n}\n\n.code-block-wrapper .code-block-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  min-height: 46px;\n  padding: 10px 12px;\n  border-bottom: 1px solid color-mix(in srgb, var(--border, #2e3040) 82%, transparent);\n  background:\n    linear-gradient(180deg, color-mix(in srgb, var(--bg-accent, #13151b) 92%, white 8%) 0%, color-mix(in srgb, var(--bg-hover, #1f2330) 86%, transparent) 100%);\n}\n\n.code-block-wrapper .code-block-lang {\n  color: var(--muted, #8e8e93);\n  font-size: 12px;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n\n.code-block-wrapper pre {\n  margin: 0 !important;\n  padding: 16px 18px 18px !important;\n  border: 0 !important;\n  border-radius: 0 !important;\n  background: transparent !important;\n  overflow: auto;\n}\n\n.code-block-wrapper code {\n  padding: 0 !important;\n  border: 0 !important;\n  border-radius: 0 !important;\n  background: transparent !important;\n  color: inherit !important;\n}\n\n.code-block-copy {\n  position: relative;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  min-width: 88px;\n  min-height: 30px;\n  padding: 0 12px;\n  border: 1px solid color-mix(in srgb, var(--border-strong, #3e4050) 84%, transparent);\n  border-radius: 999px;\n  background: color-mix(in srgb, var(--bg, #0e1015) 62%, transparent);\n  color: var(--muted, #8e8e93);\n  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);\n  cursor: pointer;\n  font: inherit;\n  font-size: 12px;\n  font-weight: 600;\n  letter-spacing: 0.01em;\n  transition:\n    background-color 160ms ease,\n    border-color 160ms ease,\n    color 160ms ease,\n    box-shadow 160ms ease,\n    transform 160ms ease;\n}\n\n.code-block-copy:hover,\n.code-block-copy:focus-visible {\n  outline: none;\n  border-color: color-mix(in srgb, var(--accent, #ff5c5c) 34%, var(--border-strong, #3e4050) 66%);\n  background: color-mix(in srgb, var(--bg-hover, #1f2330) 86%, transparent);\n  color: var(--text-strong, #f4f4f5);\n  box-shadow:\n    0 0 0 3px color-mix(in srgb, var(--accent-subtle, rgba(255, 92, 92, 0.16)) 78%, transparent),\n    inset 0 1px 0 rgba(255, 255, 255, 0.04);\n  transform: translateY(-1px);\n}\n\n.code-block-copy.copied {\n  border-color: color-mix(in srgb, var(--ok, #22c55e) 42%, var(--border-strong, #3e4050) 58%);\n  background: color-mix(in srgb, var(--ok-subtle, rgba(34, 197, 94, 0.08)) 82%, transparent);\n  color: var(--text-strong, #f4f4f5);\n}\n\n.code-block-copy__done {\n  display: none;\n}\n\n.code-block-copy.copied .code-block-copy__idle {\n  display: none;\n}\n\n.code-block-copy.copied .code-block-copy__done {\n  display: inline;\n}\n\ndetails.json-collapse {\n  margin: 12px 0;\n}\n\ndetails.json-collapse > summary {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  width: fit-content;\n  margin-bottom: 8px;\n  color: var(--muted, #8e8e93);\n  cursor: pointer;\n  font-size: 12px;\n  font-weight: 600;\n  list-style: none;\n  transition: color 160ms ease;\n}\n\ndetails.json-collapse > summary:hover,\ndetails.json-collapse[open] > summary {\n  color: var(--text, #d4d4d8);\n}\n\ndetails.json-collapse > summary::-webkit-details-marker {\n  display: none;\n}\n"},{"id":"theme-style-slots","kind":"json","assetPath":"style-modules/theme-style-slots.json","content":{"schemaVersion":1,"slots":[{"id":"styleOverride","description":"Visual surface overrides for cards, inputs, and buttons."},{"id":"styleRepair","description":"Low-risk layout, spacing, and readability repairs."},{"id":"selectStyleFix","description":"Dropdown repair visuals loaded from the external style bundle while runtime JS keeps the interaction logic."},{"id":"codeBlockStyleFix","description":"Code block wrapper polish for markdown output, including header chrome and copy-button hover states."}]}}]};
@@ -1628,6 +2058,7 @@
     return {
       enabled: true,
       themePreset: "openclaw-classic",
+      uiStylePreset: "openclaw-default",
       styleOverride: true,
       styleRepair: true,
       selectStyleFix: true,
@@ -1635,14 +2066,24 @@
     };
   }
 
-  function getActivePreset() {
+  function getActivePresetSelection() {
     const api = getRuntimeApi();
-    const preset = api?.getActiveThemePreset?.();
-    if (preset && typeof preset === "object" && typeof preset.id === "string" && preset.id.trim()) {
-      return preset;
-    }
+    const themePreset = api?.getActiveThemePreset?.();
+    const uiStylePreset = api?.getActiveUiStylePreset?.();
     const settings = getRuntimeSettings();
-    return { id: settings.themePreset || "openclaw-classic" };
+    const themeId =
+      themePreset && typeof themePreset === "object" && typeof themePreset.id === "string" && themePreset.id.trim()
+        ? themePreset.id.trim()
+        : settings.themePreset || "openclaw-classic";
+    const uiStyleId =
+      uiStylePreset && typeof uiStylePreset === "object" && typeof uiStylePreset.id === "string" && uiStylePreset.id.trim()
+        ? uiStylePreset.id.trim()
+        : settings.uiStylePreset || "openclaw-default";
+    return {
+      themePreset: { ...(themePreset || {}), id: themeId },
+      uiStylePreset: { ...(uiStylePreset || {}), id: uiStyleId },
+      ids: [themeId, uiStyleId],
+    };
   }
 
   function isOpenClawPage() {
@@ -1724,26 +2165,27 @@
     }
   }
 
-  function moduleMatches(module, settings, preset) {
+  function moduleMatches(module, settings, selection) {
     if (module.settingKey && settings[module.settingKey] === false) {
       return false;
     }
-    if (module.presetIds.length && !module.presetIds.includes(preset?.id || "")) {
+    const activeIds = Array.isArray(selection?.ids) ? selection.ids : [];
+    if (module.presetIds.length && !module.presetIds.some((id) => activeIds.includes(id))) {
       return false;
     }
-    if (module.excludePresetIds.length && module.excludePresetIds.includes(preset?.id || "")) {
+    if (module.excludePresetIds.length && module.excludePresetIds.some((id) => activeIds.includes(id))) {
       return false;
     }
     return true;
   }
 
-  async function buildStylePayload(settings, preset) {
+  async function buildStylePayload(settings, selection) {
     const bundle = activeStyleBundle || builtinStyleBundle;
     const cssParts = [];
     const assets = { html: {}, json: {} };
 
     for (const module of bundle.modules) {
-      if (!moduleMatches(module, settings, preset)) {
+      if (!moduleMatches(module, settings, selection)) {
         continue;
       }
       const content = await resolveModuleContent(module);
@@ -1776,7 +2218,7 @@
       clearStyleElement();
       return;
     }
-    const payload = await buildStylePayload(getRuntimeSettings(), getActivePreset());
+    const payload = await buildStylePayload(getRuntimeSettings(), getActivePresetSelection());
     window[STYLE_STATE_GLOBAL] = payload;
     if (!payload.cssText.trim()) {
       clearStyleElement();
@@ -2219,3 +2661,444 @@
   });
 })();
 
+(() => {
+  "use strict";
+
+  const CHAT_THREAD_SELECTOR = ".chat-thread";
+  const USER_ANCHOR_SELECTORS = Object.freeze([
+    ".chat-group.user",
+    ".chat-line.user",
+  ]);
+  const RAIL_CLASS = "ocdp-chat-progress";
+  const RAIL_LIST_CLASS = "ocdp-chat-progress__list";
+  const RAIL_DOT_CLASS = "ocdp-chat-progress__dot";
+  const RAIL_ACTIVE_CLASS = "is-active";
+  const PREVIEW_CLASS = "ocdp-chat-progress__preview";
+  const ANCHOR_ATTR = "data-ocdp-chat-progress-anchor";
+  const SCROLL_MARGIN = 18;
+  const PREVIEW_OFFSET = 18;
+
+  let railRoot = null;
+  let railList = null;
+  let previewCard = null;
+  let previewText = null;
+  let activeScrollContainer = null;
+  let trackedAnchors = [];
+  let observerStarted = false;
+  let scheduledRefresh = 0;
+  let scheduledSync = 0;
+
+  function getRuntimeApi() {
+    return window.__OPENCLAW_ZH_CN__ || null;
+  }
+
+  function isOpenClawPage() {
+    const api = getRuntimeApi();
+    if (typeof api?.isOpenClawPage === "function") {
+      try {
+        return api.isOpenClawPage();
+      } catch {
+        // fall through to the local heuristic
+      }
+    }
+    const title = document.title || "";
+    if (/OpenClaw/i.test(title)) {
+      return true;
+    }
+    const text = document.body?.textContent || "";
+    return /OpenClaw|Cron Jobs|Gateway Token|Main Session/i.test(text);
+  }
+
+  function ensureRailRoot() {
+    if (
+      railRoot instanceof HTMLDivElement &&
+      railList instanceof HTMLDivElement &&
+      previewCard instanceof HTMLDivElement
+    ) {
+      return railRoot;
+    }
+
+    railRoot = document.createElement("div");
+    railRoot.className = RAIL_CLASS;
+    railRoot.dataset.visible = "false";
+    railRoot.hidden = true;
+
+    railList = document.createElement("div");
+    railList.className = RAIL_LIST_CLASS;
+    railRoot.append(railList);
+
+    previewCard = document.createElement("div");
+    previewCard.className = PREVIEW_CLASS;
+    previewCard.dataset.visible = "false";
+    previewCard.hidden = true;
+
+    previewText = document.createElement("div");
+    previewText.className = `${PREVIEW_CLASS}-text`;
+
+    previewCard.append(previewText);
+    document.body.append(railRoot, previewCard);
+    return railRoot;
+  }
+
+  function isOwnedUiNode(node) {
+    if (!(node instanceof Element)) {
+      return false;
+    }
+    return Boolean(node.closest(`.${RAIL_CLASS}, .${PREVIEW_CLASS}`));
+  }
+
+  function cleanupAnchorMarks() {
+    for (const anchor of trackedAnchors) {
+      if (anchor instanceof HTMLElement) {
+        anchor.removeAttribute(ANCHOR_ATTR);
+      }
+    }
+    trackedAnchors = [];
+  }
+
+  function hideRail() {
+    cleanupAnchorMarks();
+    if (railList instanceof HTMLDivElement) {
+      railList.textContent = "";
+    }
+    if (railRoot instanceof HTMLDivElement) {
+      railRoot.hidden = true;
+      railRoot.dataset.visible = "false";
+    }
+    hidePreview();
+    if (activeScrollContainer instanceof EventTarget) {
+      activeScrollContainer.removeEventListener("scroll", scheduleSyncActiveDot, true);
+      activeScrollContainer = null;
+    }
+  }
+
+  function getAnchorPreview(anchor) {
+    if (!(anchor instanceof HTMLElement)) {
+      return "";
+    }
+
+    const candidates = [
+      ".chat-text",
+      ".chat-bubble",
+      ".chat-message-images img",
+      ".chat-attachment-file",
+    ];
+
+    for (const selector of candidates) {
+      const target = anchor.querySelector(selector);
+      if (!(target instanceof HTMLElement || target instanceof HTMLImageElement)) {
+        continue;
+      }
+      if (target instanceof HTMLImageElement) {
+        const altText = target.getAttribute("alt") || "";
+        if (altText.trim()) {
+          return altText.trim();
+        }
+        continue;
+      }
+      const text = target.textContent?.replace(/\s+/g, " ").trim() || "";
+      if (text) {
+        return text;
+      }
+    }
+
+    return anchor.textContent?.replace(/\s+/g, " ").trim() || "";
+  }
+
+  function hidePreview() {
+    if (!(previewCard instanceof HTMLDivElement)) {
+      return;
+    }
+    previewCard.hidden = true;
+    previewCard.dataset.visible = "false";
+  }
+
+  function showPreview(anchor, button) {
+    ensureRailRoot();
+    if (
+      !(anchor instanceof HTMLElement) ||
+      !(button instanceof HTMLButtonElement) ||
+      !(previewCard instanceof HTMLDivElement) ||
+      !(previewText instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const summary = getAnchorPreview(anchor);
+    previewText.textContent = summary || "Message preview unavailable";
+    previewCard.hidden = false;
+    previewCard.dataset.visible = "true";
+
+    const buttonRect = button.getBoundingClientRect();
+    const previewWidth = Math.min(320, Math.max(220, window.innerWidth - 88));
+    const left = Math.max(16, buttonRect.left - previewWidth - PREVIEW_OFFSET);
+    const centerY = buttonRect.top + buttonRect.height / 2;
+    previewCard.style.left = `${left}px`;
+    previewCard.style.top = `${Math.max(20, Math.min(window.innerHeight - 20, centerY))}px`;
+  }
+
+  function findChatThread() {
+    const thread = document.querySelector(CHAT_THREAD_SELECTOR);
+    return thread instanceof HTMLElement ? thread : null;
+  }
+
+  function findScrollContainer(thread) {
+    if (!(thread instanceof HTMLElement)) {
+      return null;
+    }
+
+    let node = thread;
+    while (node instanceof HTMLElement) {
+      const styles = getComputedStyle(node);
+      if (/(auto|scroll|overlay)/i.test(styles.overflowY) && node.scrollHeight > node.clientHeight + 12) {
+        return node;
+      }
+      node = node.parentElement;
+    }
+
+    return thread;
+  }
+
+  function collectUserAnchors(thread) {
+    if (!(thread instanceof HTMLElement)) {
+      return [];
+    }
+
+    for (const selector of USER_ANCHOR_SELECTORS) {
+      const matches = Array.from(thread.querySelectorAll(selector)).filter(
+        (node) => node instanceof HTMLElement && node.getClientRects().length,
+      );
+      if (matches.length) {
+        return matches;
+      }
+    }
+    return [];
+  }
+
+  function scrollToAnchor(anchor) {
+    if (!(anchor instanceof HTMLElement)) {
+      return;
+    }
+
+    hidePreview();
+    const scrollContainer = activeScrollContainer;
+    if (
+      scrollContainer instanceof HTMLElement &&
+      scrollContainer !== document.body &&
+      scrollContainer !== document.documentElement &&
+      scrollContainer !== document.scrollingElement
+    ) {
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const anchorRect = anchor.getBoundingClientRect();
+      const nextTop = scrollContainer.scrollTop + (anchorRect.top - containerRect.top) - SCROLL_MARGIN;
+      scrollContainer.scrollTo({
+        top: Math.max(0, nextTop),
+        behavior: "smooth",
+      });
+    } else {
+      anchor.scrollIntoView({
+        block: "start",
+        inline: "nearest",
+        behavior: "smooth",
+      });
+    }
+
+    scheduleSyncActiveDot();
+    window.setTimeout(scheduleSyncActiveDot, 220);
+  }
+
+  function buildRailButtons() {
+    ensureRailRoot();
+    if (!(railList instanceof HTMLDivElement)) {
+      return;
+    }
+
+    railList.textContent = "";
+    trackedAnchors.forEach((anchor, index) => {
+      if (!(anchor instanceof HTMLElement)) {
+        return;
+      }
+      anchor.setAttribute(ANCHOR_ATTR, String(index + 1));
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = RAIL_DOT_CLASS;
+      button.dataset.anchorIndex = String(index);
+      button.setAttribute("aria-label", "Scroll to this message");
+      button.addEventListener("mouseenter", () => showPreview(anchor, button));
+      button.addEventListener("focus", () => showPreview(anchor, button));
+      button.addEventListener("mouseleave", hidePreview);
+      button.addEventListener("blur", hidePreview);
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        scrollToAnchor(anchor);
+      });
+      railList.append(button);
+    });
+  }
+
+  function syncRailPosition() {
+    if (!(railRoot instanceof HTMLDivElement) || !(activeScrollContainer instanceof HTMLElement)) {
+      return;
+    }
+
+    const rect = activeScrollContainer.getBoundingClientRect();
+    const isVisible = rect.height > 120 && rect.bottom > 64 && rect.top < window.innerHeight - 64;
+    railRoot.hidden = !isVisible || trackedAnchors.length === 0;
+    railRoot.dataset.visible = railRoot.hidden ? "false" : "true";
+
+    if (railRoot.hidden) {
+      hidePreview();
+      return;
+    }
+
+    const right = Math.max(12, Math.round(window.innerWidth - rect.right + 10));
+    const visibleHeight = Math.max(160, Math.min(rect.height - 24, window.innerHeight * 0.78, 720));
+    railRoot.style.top = `${Math.round(window.innerHeight / 2)}px`;
+    railRoot.style.maxHeight = `${Math.max(160, visibleHeight)}px`;
+    railRoot.style.right = `${right}px`;
+  }
+
+  function syncActiveDot() {
+    scheduledSync = 0;
+
+    if (
+      !(railList instanceof HTMLDivElement) ||
+      !(activeScrollContainer instanceof HTMLElement) ||
+      trackedAnchors.length === 0
+    ) {
+      return;
+    }
+
+    syncRailPosition();
+
+    const containerRect = activeScrollContainer.getBoundingClientRect();
+    const probeTop = containerRect.top + Math.min(Math.max(containerRect.height * 0.24, 32), 160);
+    let activeIndex = 0;
+
+    trackedAnchors.forEach((anchor, index) => {
+      if (!(anchor instanceof HTMLElement)) {
+        return;
+      }
+      if (anchor.getBoundingClientRect().top <= probeTop) {
+        activeIndex = index;
+      }
+    });
+
+    if (
+      activeScrollContainer.scrollHeight - activeScrollContainer.scrollTop - activeScrollContainer.clientHeight <=
+      6
+    ) {
+      activeIndex = trackedAnchors.length - 1;
+    }
+
+    for (const button of railList.querySelectorAll(`.${RAIL_DOT_CLASS}`)) {
+      const index = Number(button.getAttribute("data-anchor-index"));
+      button.classList.toggle(RAIL_ACTIVE_CLASS, index === activeIndex);
+    }
+  }
+
+  function scheduleSyncActiveDot() {
+    hidePreview();
+    if (scheduledSync) {
+      return;
+    }
+    scheduledSync = window.requestAnimationFrame(syncActiveDot);
+  }
+
+  function refreshConversationRail() {
+    scheduledRefresh = 0;
+
+    if (!isOpenClawPage()) {
+      hideRail();
+      return;
+    }
+
+    const thread = findChatThread();
+    if (!(thread instanceof HTMLElement)) {
+      hideRail();
+      return;
+    }
+
+    const nextAnchors = collectUserAnchors(thread);
+    if (!nextAnchors.length) {
+      hideRail();
+      return;
+    }
+
+    cleanupAnchorMarks();
+    trackedAnchors = nextAnchors;
+    buildRailButtons();
+
+    const nextScrollContainer = findScrollContainer(thread);
+    if (activeScrollContainer !== nextScrollContainer) {
+      if (activeScrollContainer instanceof EventTarget) {
+        activeScrollContainer.removeEventListener("scroll", scheduleSyncActiveDot, true);
+      }
+      activeScrollContainer = nextScrollContainer;
+      if (activeScrollContainer instanceof EventTarget) {
+        activeScrollContainer.addEventListener("scroll", scheduleSyncActiveDot, {
+          passive: true,
+          capture: true,
+        });
+      }
+    }
+
+    syncRailPosition();
+    scheduleSyncActiveDot();
+  }
+
+  function scheduleRailRefresh(delayMs = 0) {
+    window.clearTimeout(scheduledRefresh);
+    scheduledRefresh = window.setTimeout(() => {
+      refreshConversationRail();
+    }, delayMs);
+  }
+
+  function queueRailRefreshes() {
+    scheduleRailRefresh(0);
+    window.setTimeout(() => scheduleRailRefresh(0), 400);
+    window.setTimeout(() => scheduleRailRefresh(0), 1600);
+    window.setTimeout(() => scheduleRailRefresh(0), 4200);
+  }
+
+  function startConversationRailObserver() {
+    if (observerStarted || typeof MutationObserver !== "function") {
+      return;
+    }
+
+    observerStarted = true;
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (isOwnedUiNode(mutation.target)) {
+          continue;
+        }
+
+        for (const node of mutation.addedNodes) {
+          if (isOwnedUiNode(node)) {
+            continue;
+          }
+          scheduleRailRefresh(80);
+          return;
+        }
+
+        if (mutation.type === "attributes") {
+          scheduleRailRefresh(80);
+          return;
+        }
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+  }
+
+  startConversationRailObserver();
+  window.addEventListener("resize", scheduleSyncActiveDot, { passive: true });
+  window.addEventListener("hashchange", () => scheduleRailRefresh(120));
+  document.addEventListener("DOMContentLoaded", queueRailRefreshes, { once: true });
+  window.addEventListener("load", queueRailRefreshes, { once: true });
+  queueRailRefreshes();
+})();

@@ -102,16 +102,30 @@
             <h3 data-i18n="theme_preset_title">UI 主题样式</h3>
 
             <label class="field">
-              <span data-i18n="theme_preset_label">UI 样式预设</span>
-              <div id="theme-preset-control" class="custom-select">
+              <span data-i18n="theme_palette_label">配色方案</span>
+              <div id="theme-palette-control" class="custom-select">
                 <button
-                  id="theme-preset-trigger"
+                  id="theme-palette-trigger"
                   type="button"
                   class="select-trigger"
                   aria-haspopup="listbox"
                   aria-expanded="false"
                 ></button>
-                <div id="theme-preset-menu" class="select-menu" role="listbox"></div>
+                <div id="theme-palette-menu" class="select-menu" role="listbox"></div>
+              </div>
+            </label>
+
+            <label class="field">
+              <span data-i18n="theme_ui_style_label">界面风格</span>
+              <div id="theme-ui-style-control" class="custom-select">
+                <button
+                  id="theme-ui-style-trigger"
+                  type="button"
+                  class="select-trigger"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                ></button>
+                <div id="theme-ui-style-menu" class="select-menu" role="listbox"></div>
               </div>
             </label>
 
@@ -188,8 +202,12 @@
 
             <div class="info-grid">
               <div class="info-cell">
-                <span data-i18n="theme_current_preset">当前预设</span>
-                <strong id="theme-current-preset">-</strong>
+                <span data-i18n="theme_current_palette">当前配色</span>
+                <strong id="theme-current-palette">-</strong>
+              </div>
+              <div class="info-cell">
+                <span data-i18n="theme_current_ui_style">当前 UI 风格</span>
+                <strong id="theme-current-ui-style">-</strong>
               </div>
               <div class="info-cell">
                 <span data-i18n="theme_builtin_version">内置版本</span>

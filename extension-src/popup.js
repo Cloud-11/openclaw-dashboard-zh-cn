@@ -7,6 +7,7 @@ const DEFAULT_SETTINGS = {
   locale: "zh-CN",
   panelLocale: SYSTEM_UI_LOCALE,
   themePreset: "openclaw-classic",
+  uiStylePreset: "openclaw-default",
   fontFamily: "system",
   fontScale: "100",
   styleOverride: true,
@@ -19,9 +20,16 @@ const STORAGE_KEYS = {
   states: "remoteLanguageStates",
   themeBundle: "remoteThemePresetBundle",
   themeState: "remoteThemePresetState",
+  uiStyleBundle: "remoteThemeUiStyleBundle",
+  uiStyleState: "remoteThemeUiStyleState",
   styleBundle: "remoteThemeStyleBundle",
   styleState: "remoteThemeStyleState",
 };
+const LEGACY_THEME_PRESET_ALIASES = Object.freeze({
+  "apple-light": "soft-light",
+  "google-light": "clear-light",
+  "microsoft-light": "mist-light",
+});
 const uiLocaleStringsCache = new Map();
 const REMOTE_FETCH_TIMEOUT_MS = 6000;
 const ALLOWED_STYLE_MODULE_KINDS = new Set(["css", "html", "json"]);
@@ -38,7 +46,7 @@ const FONT_OPTIONS = [
     labelKey: "theme_font_modern",
     fallback: "Modern Sans",
     noteKey: "theme_font_modern_note",
-    noteFallback: "Prefer Google Sans / Segoe UI style rendering",
+    noteFallback: "Prefer a clean modern sans-serif rendering",
   },
   {
     value: "noto",
@@ -100,6 +108,34 @@ const FALLBACK_THEME_BUNDLE = {
     {
       id: "plus-contrast",
     },
+    {
+      id: "soft-light",
+    },
+    {
+      id: "clear-light",
+    },
+    {
+      id: "mist-light",
+    },
+  ],
+};
+const FALLBACK_UI_STYLE_BUNDLE = {
+  schemaVersion: 1,
+  version: "builtin",
+  defaultPreset: "openclaw-default",
+  presets: [
+    {
+      id: "openclaw-default",
+    },
+    {
+      id: "material",
+    },
+    {
+      id: "flat",
+    },
+    {
+      id: "soft-rounded",
+    },
   ],
 };
 const FALLBACK_METADATA = {
@@ -121,6 +157,7 @@ const FALLBACK_METADATA = {
   ],
   translationBundle: { defaultLocale: "zh-CN", builtinVersions: { "zh-CN": "builtin", en: "builtin" } },
   themeBundle: { defaultPreset: "openclaw-classic", builtinVersion: "builtin" },
+  uiStyleBundle: { defaultPreset: "openclaw-default", builtinVersion: "builtin" },
   styleBundle: { builtinVersion: "builtin" },
   updateSources: [
     {
@@ -131,6 +168,7 @@ const FALLBACK_METADATA = {
       localeUrlTemplate: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/language-packs/{locale}.json",
       uiLocaleUrlTemplate: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/ui-locales/{locale}.json",
       themePresetsUrl: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/extension-src/theme-presets.json",
+      uiStylePresetsUrl: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/extension-src/ui-style-presets.json",
       styleBundleUrl: "https://raw.githubusercontent.com/Cloud-11/openclaw-dashboard-plus/main/extension-src/style-bundle.json",
     },
     {
@@ -141,6 +179,7 @@ const FALLBACK_METADATA = {
       localeUrlTemplate: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/language-packs/{locale}.json",
       uiLocaleUrlTemplate: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/ui-locales/{locale}.json",
       themePresetsUrl: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/extension-src/theme-presets.json",
+      uiStylePresetsUrl: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/extension-src/ui-style-presets.json",
       styleBundleUrl: "https://gitee.com/Cloud-11/openclaw-dashboard-plus/raw/main/extension-src/style-bundle.json",
     },
   ],
@@ -161,7 +200,8 @@ function getElements() {
     saveStatus: $("save-status"),
     panelSelect: { root: $("panel-locale-control"), trigger: $("panel-locale-trigger"), menu: $("panel-locale-menu") },
     contentSelect: { root: $("locale-control"), trigger: $("locale-trigger"), menu: $("locale-menu") },
-    themePresetSelect: { root: $("theme-preset-control"), trigger: $("theme-preset-trigger"), menu: $("theme-preset-menu") },
+    themePresetSelect: { root: $("theme-palette-control"), trigger: $("theme-palette-trigger"), menu: $("theme-palette-menu") },
+    uiStylePresetSelect: { root: $("theme-ui-style-control"), trigger: $("theme-ui-style-trigger"), menu: $("theme-ui-style-menu") },
     themeFontSelect: { root: $("theme-font-control"), trigger: $("theme-font-trigger"), menu: $("theme-font-menu") },
     themeScaleSelect: { root: $("theme-scale-control"), trigger: $("theme-scale-trigger"), menu: $("theme-scale-menu") },
     styleOverride: $("style-override"),
@@ -172,7 +212,8 @@ function getElements() {
     downloadTheme: $("download-theme"),
     clearTheme: $("clear-theme"),
     themeStatus: $("theme-status"),
-    themeCurrentPreset: $("theme-current-preset"),
+    themeCurrentPalette: $("theme-current-palette"),
+    themeCurrentUiStyle: $("theme-current-ui-style"),
     themeBuiltinVersion: $("theme-builtin-version"),
     themeCachedVersion: $("theme-cached-version"),
     themeActiveSource: $("theme-active-source"),
@@ -313,6 +354,11 @@ function normalizeChoice(value, allowedValues, fallbackValue) {
   return allowedValues.includes(normalizedValue) ? normalizedValue : fallbackValue;
 }
 
+function normalizeThemePresetId(value) {
+  const normalizedValue = typeof value === "string" ? value.trim() : "";
+  return LEGACY_THEME_PRESET_ALIASES[normalizedValue] || normalizedValue || DEFAULT_SETTINGS.themePreset;
+}
+
 function normalizeFontScale(value) {
   const rawValue = typeof value === "string" || typeof value === "number" ? String(value).trim() : "";
   const parsedValue = Number.parseFloat(rawValue || DEFAULT_SETTINGS.fontScale);
@@ -357,10 +403,14 @@ function normalizeThemePreset(entry) {
   if (!entry || typeof entry !== "object") {
     return null;
   }
-  const id = typeof entry.id === "string" && entry.id.trim() ? entry.id.trim() : "";
+  const id = normalizeThemePresetId(entry.id);
   if (!id) {
     return null;
   }
+  const label = typeof entry.label === "string" && entry.label.trim() ? entry.label.trim() : id;
+  const nativeLabel = typeof entry.nativeLabel === "string" && entry.nativeLabel.trim()
+    ? entry.nativeLabel.trim()
+    : label;
   const variables = entry.variables && typeof entry.variables === "object"
     ? Object.fromEntries(
         Object.entries(entry.variables)
@@ -370,7 +420,13 @@ function normalizeThemePreset(entry) {
     : {};
   return {
     id,
+    label,
+    nativeLabel,
     preserveNativeColors: entry.preserveNativeColors === true,
+    description: typeof entry.description === "string" && entry.description.trim() ? entry.description.trim() : "",
+    nativeDescription: typeof entry.nativeDescription === "string" && entry.nativeDescription.trim()
+      ? entry.nativeDescription.trim()
+      : "",
     variables,
   };
 }
@@ -388,8 +444,58 @@ function normalizeThemeBundle(bundle, fallbackVersion = FALLBACK_THEME_BUNDLE.ve
       ? bundle.version.trim()
       : fallbackVersion,
     defaultPreset: typeof bundle?.defaultPreset === "string" && bundle.defaultPreset.trim()
-      ? bundle.defaultPreset.trim()
+      ? normalizeThemePresetId(bundle.defaultPreset)
       : normalizedPresets[0]?.id || FALLBACK_THEME_BUNDLE.defaultPreset,
+    presets: normalizedPresets,
+  };
+}
+
+function normalizeUiStylePreset(entry) {
+  if (!entry || typeof entry !== "object") {
+    return null;
+  }
+  const id = typeof entry.id === "string" && entry.id.trim() ? entry.id.trim() : "";
+  if (!id) {
+    return null;
+  }
+  const label = typeof entry.label === "string" && entry.label.trim() ? entry.label.trim() : id;
+  const nativeLabel = typeof entry.nativeLabel === "string" && entry.nativeLabel.trim()
+    ? entry.nativeLabel.trim()
+    : label;
+  const variables = entry.variables && typeof entry.variables === "object"
+    ? Object.fromEntries(
+        Object.entries(entry.variables)
+          .filter(([key, value]) => typeof key === "string" && typeof value === "string")
+          .map(([key, value]) => [key.trim(), value.trim()]),
+      )
+    : {};
+  return {
+    id,
+    label,
+    nativeLabel,
+    description: typeof entry.description === "string" && entry.description.trim() ? entry.description.trim() : "",
+    nativeDescription: typeof entry.nativeDescription === "string" && entry.nativeDescription.trim()
+      ? entry.nativeDescription.trim()
+      : "",
+    variables,
+  };
+}
+
+function normalizeUiStyleBundle(bundle, fallbackVersion = FALLBACK_UI_STYLE_BUNDLE.version) {
+  const presets = Array.isArray(bundle?.presets)
+    ? bundle.presets.map((entry) => normalizeUiStylePreset(entry)).filter(Boolean)
+    : [];
+  const normalizedPresets = presets.length
+    ? presets
+    : FALLBACK_UI_STYLE_BUNDLE.presets.map((entry) => normalizeUiStylePreset(entry)).filter(Boolean);
+  return {
+    schemaVersion: 1,
+    version: typeof bundle?.version === "string" && bundle.version.trim()
+      ? bundle.version.trim()
+      : fallbackVersion,
+    defaultPreset: typeof bundle?.defaultPreset === "string" && bundle.defaultPreset.trim()
+      ? bundle.defaultPreset.trim()
+      : normalizedPresets[0]?.id || FALLBACK_UI_STYLE_BUNDLE.defaultPreset,
     presets: normalizedPresets,
   };
 }
@@ -515,8 +621,47 @@ function mergeThemeBundles(baseBundle, nextBundle) {
   };
 }
 
+function mergeUiStyleBundles(baseBundle, nextBundle) {
+  const mergedMap = new Map();
+  for (const preset of normalizeUiStyleBundle(baseBundle).presets) {
+    mergedMap.set(preset.id, preset);
+  }
+  for (const preset of normalizeUiStyleBundle(nextBundle).presets) {
+    const previousPreset = mergedMap.get(preset.id);
+    mergedMap.set(
+      preset.id,
+      previousPreset
+        ? {
+            ...previousPreset,
+            ...preset,
+            variables: {
+              ...(previousPreset.variables || {}),
+              ...(preset.variables || {}),
+            },
+          }
+        : preset,
+    );
+  }
+  return {
+    schemaVersion: 1,
+    version: normalizeUiStyleBundle(nextBundle).version || normalizeUiStyleBundle(baseBundle).version,
+    defaultPreset: normalizeUiStyleBundle(nextBundle).defaultPreset || normalizeUiStyleBundle(baseBundle).defaultPreset,
+    presets: Array.from(mergedMap.values()),
+  };
+}
+
 function resolveThemePreset(bundle, presetId) {
   const normalizedBundle = normalizeThemeBundle(bundle);
+  return (
+    normalizedBundle.presets.find((preset) => preset.id === normalizeThemePresetId(presetId)) ||
+    normalizedBundle.presets.find((preset) => preset.id === normalizedBundle.defaultPreset) ||
+    normalizedBundle.presets[0] ||
+    null
+  );
+}
+
+function resolveUiStylePreset(bundle, presetId) {
+  const normalizedBundle = normalizeUiStyleBundle(bundle);
   return (
     normalizedBundle.presets.find((preset) => preset.id === presetId) ||
     normalizedBundle.presets.find((preset) => preset.id === normalizedBundle.defaultPreset) ||
@@ -553,6 +698,10 @@ function normalizeMetadata(raw, version) {
       ...FALLBACK_METADATA.themeBundle,
       ...(metadata.themeBundle || {}),
     },
+    uiStyleBundle: {
+      ...FALLBACK_METADATA.uiStyleBundle,
+      ...(metadata.uiStyleBundle || {}),
+    },
     styleBundle: {
       ...FALLBACK_METADATA.styleBundle,
       ...(metadata.styleBundle || {}),
@@ -581,6 +730,10 @@ function mergeMetadata(base, next) {
     themeBundle: {
       ...(base.themeBundle || {}),
       ...(next.themeBundle || {}),
+    },
+    uiStyleBundle: {
+      ...(base.uiStyleBundle || {}),
+      ...(next.uiStyleBundle || {}),
     },
     styleBundle: {
       ...(base.styleBundle || {}),
@@ -620,6 +773,7 @@ function buildThemeBundleUrls(metadata) {
     if (source?.themePresetsUrl) {
       return {
         url: source.themePresetsUrl,
+        uiStyleUrl: source.uiStylePresetsUrl || "",
         styleUrl: source.styleBundleUrl || "",
         source,
       };
@@ -630,6 +784,12 @@ function buildThemeBundleUrls(metadata) {
 
 function effectiveThemeBundle(state) {
   return state.cachedThemeBundle ? mergeThemeBundles(state.builtinThemeBundle, state.cachedThemeBundle) : state.builtinThemeBundle;
+}
+
+function effectiveUiStyleBundle(state) {
+  return state.cachedUiStyleBundle
+    ? mergeUiStyleBundles(state.builtinUiStyleBundle, state.cachedUiStyleBundle)
+    : state.builtinUiStyleBundle;
 }
 
 function localeName(entry, uiLocale) {
@@ -656,14 +816,32 @@ function themePresetName(state, entry) {
   if (!entry) {
     return "";
   }
-  return t(state, themePresetKey(entry.id, "label"), {}, entry.id);
+  return t(state, themePresetKey(entry.id, "label"), {}, entry.label || entry.nativeLabel || entry.id);
 }
 
 function themePresetDescription(state, entry) {
   if (!entry) {
     return "";
   }
-  return t(state, themePresetKey(entry.id, "description"), {}, "");
+  return t(state, themePresetKey(entry.id, "description"), {}, entry.description || entry.nativeDescription || "");
+}
+
+function uiStylePresetKey(presetId, suffix) {
+  return `ui_style_preset_${presetId}_${suffix}`;
+}
+
+function uiStylePresetName(state, entry) {
+  if (!entry) {
+    return "";
+  }
+  return t(state, uiStylePresetKey(entry.id, "label"), {}, entry.label || entry.nativeLabel || entry.id);
+}
+
+function uiStylePresetDescription(state, entry) {
+  if (!entry) {
+    return "";
+  }
+  return t(state, uiStylePresetKey(entry.id, "description"), {}, entry.description || entry.nativeDescription || "");
 }
 
 function systemLocale(supportedCodes = panelUiLocaleEntries(FALLBACK_METADATA).map((entry) => entry.code)) {
@@ -917,9 +1095,14 @@ function renderAll(elements, state) {
   const cachedState = state.cachedStates?.[content];
   const activeSource = sourceLabel(state, cachedState, localeEntry);
   const themeBundle = effectiveThemeBundle(state);
+  const uiStyleBundle = effectiveUiStyleBundle(state);
   const themePreset = resolveThemePreset(
     themeBundle,
     state.draft.themePreset || state.settings.themePreset || metadata.themeBundle?.defaultPreset || DEFAULT_SETTINGS.themePreset,
+  );
+  const uiStylePreset = resolveUiStylePreset(
+    uiStyleBundle,
+    state.draft.uiStylePreset || state.settings.uiStylePreset || metadata.uiStyleBundle?.defaultPreset || DEFAULT_SETTINGS.uiStylePreset,
   );
 
   ensureMessages(state, metadata);
@@ -971,6 +1154,20 @@ function renderAll(elements, state) {
     })),
     themePreset.id,
     state.openSelect === "themePreset",
+  );
+  renderSelect(
+    elements.uiStylePresetSelect,
+    uiStyleBundle.presets.map((entry) => ({
+      value: entry.id,
+      label: uiStylePresetName(state, entry),
+      note: uiStylePresetDescription(state, entry) || (
+        state.cachedUiStyleBundle?.presets?.some((preset) => preset.id === entry.id)
+          ? t(state, "theme_option_cached", {}, "Cached remote preset")
+          : t(state, "theme_option_builtin", {}, "Bundled preset")
+      ),
+    })),
+    uiStylePreset.id,
+    state.openSelect === "uiStylePreset",
   );
   renderSelect(
     elements.themeFontSelect,
@@ -1043,11 +1240,22 @@ function renderAll(elements, state) {
   elements.cachedVersion.textContent = cachedBundle?.version || cachedState?.version || t(state, "not_cached", {}, "Not cached");
   elements.activeSource.textContent = activeSource;
   elements.lastSync.textContent = formatDateTime(state, cachedState?.fetchedAt);
-  elements.themeCurrentPreset.textContent = themePresetName(state, themePreset) || themePreset.id;
-  elements.themeBuiltinVersion.textContent = state.builtinThemeBundle?.version || metadata.themeBundle?.builtinVersion || t(state, "not_builtin", {}, "Not built-in");
-  elements.themeCachedVersion.textContent = state.cachedThemeBundle?.version || t(state, "not_cached", {}, "Not cached");
-  elements.themeActiveSource.textContent = state.cachedThemeState?.sourceLabel || (state.cachedThemeBundle ? t(state, "locale_source_cached", {}, "Cached") : t(state, "locale_source_builtin", {}, "Built-in"));
-  elements.themeLastSync.textContent = formatDateTime(state, state.cachedThemeState?.fetchedAt);
+  elements.themeCurrentPalette.textContent = themePresetName(state, themePreset) || themePreset.id;
+  elements.themeCurrentUiStyle.textContent = uiStylePresetName(state, uiStylePreset) || uiStylePreset.id;
+  elements.themeBuiltinVersion.textContent = [
+    state.builtinThemeBundle?.version || metadata.themeBundle?.builtinVersion,
+    state.builtinUiStyleBundle?.version || metadata.uiStyleBundle?.builtinVersion,
+  ].filter(Boolean).join(" / ") || t(state, "not_builtin", {}, "Not built-in");
+  elements.themeCachedVersion.textContent = [
+    state.cachedThemeBundle?.version,
+    state.cachedUiStyleBundle?.version,
+  ].filter(Boolean).join(" / ") || t(state, "not_cached", {}, "Not cached");
+  elements.themeActiveSource.textContent = state.cachedThemeState?.sourceLabel
+    || state.cachedUiStyleState?.sourceLabel
+    || (state.cachedThemeBundle || state.cachedUiStyleBundle
+      ? t(state, "locale_source_cached", {}, "Cached")
+      : t(state, "locale_source_builtin", {}, "Built-in"));
+  elements.themeLastSync.textContent = formatDateTime(state, state.cachedThemeState?.fetchedAt || state.cachedUiStyleState?.fetchedAt);
 
   renderStatuses(elements, state);
 }
@@ -1066,6 +1274,14 @@ async function loadBuiltinThemeBundle() {
     return normalizeThemeBundle(await fetchJson(chrome.runtime.getURL("theme-presets.json"), 2500));
   } catch {
     return normalizeThemeBundle(FALLBACK_THEME_BUNDLE);
+  }
+}
+
+async function loadBuiltinUiStyleBundle() {
+  try {
+    return normalizeUiStyleBundle(await fetchJson(chrome.runtime.getURL("ui-style-presets.json"), 2500));
+  } catch {
+    return normalizeUiStyleBundle(FALLBACK_UI_STYLE_BUNDLE);
   }
 }
 
@@ -1100,8 +1316,11 @@ async function loadSettings(defaultLocale) {
       locale: settings.locale || defaultLocale || DEFAULT_SETTINGS.locale,
       panelLocale: settings.panelLocale || SYSTEM_UI_LOCALE,
       themePreset: typeof settings.themePreset === "string" && settings.themePreset.trim()
-        ? settings.themePreset.trim()
+        ? normalizeThemePresetId(settings.themePreset)
         : DEFAULT_SETTINGS.themePreset,
+      uiStylePreset: typeof settings.uiStylePreset === "string" && settings.uiStylePreset.trim()
+        ? settings.uiStylePreset.trim()
+        : DEFAULT_SETTINGS.uiStylePreset,
       fontFamily: normalizeChoice(settings.fontFamily, fontOptions, DEFAULT_SETTINGS.fontFamily),
       fontScale: normalizeFontScale(settings.fontScale),
       styleOverride: settings.styleOverride !== false,
@@ -1121,6 +1340,8 @@ async function loadCache() {
       STORAGE_KEYS.states,
       STORAGE_KEYS.themeBundle,
       STORAGE_KEYS.themeState,
+      STORAGE_KEYS.uiStyleBundle,
+      STORAGE_KEYS.uiStyleState,
       STORAGE_KEYS.styleBundle,
       STORAGE_KEYS.styleState,
     ]);
@@ -1129,11 +1350,26 @@ async function loadCache() {
       states: stored?.[STORAGE_KEYS.states] && typeof stored[STORAGE_KEYS.states] === "object" ? stored[STORAGE_KEYS.states] : {},
       themeBundle: stored?.[STORAGE_KEYS.themeBundle] && typeof stored[STORAGE_KEYS.themeBundle] === "object" ? normalizeThemeBundle(stored[STORAGE_KEYS.themeBundle]) : null,
       themeState: stored?.[STORAGE_KEYS.themeState] && typeof stored[STORAGE_KEYS.themeState] === "object" ? stored[STORAGE_KEYS.themeState] : null,
+      uiStyleBundle: stored?.[STORAGE_KEYS.uiStyleBundle] && typeof stored[STORAGE_KEYS.uiStyleBundle] === "object"
+        ? normalizeUiStyleBundle(stored[STORAGE_KEYS.uiStyleBundle], "cached")
+        : null,
+      uiStyleState: stored?.[STORAGE_KEYS.uiStyleState] && typeof stored[STORAGE_KEYS.uiStyleState] === "object"
+        ? stored[STORAGE_KEYS.uiStyleState]
+        : null,
       styleBundle: stored?.[STORAGE_KEYS.styleBundle] && typeof stored[STORAGE_KEYS.styleBundle] === "object" ? normalizeStyleBundle(stored[STORAGE_KEYS.styleBundle], "cached") : null,
       styleState: stored?.[STORAGE_KEYS.styleState] && typeof stored[STORAGE_KEYS.styleState] === "object" ? stored[STORAGE_KEYS.styleState] : null,
     };
   } catch {
-    return { bundles: {}, states: {}, themeBundle: null, themeState: null, styleBundle: null, styleState: null };
+    return {
+      bundles: {},
+      states: {},
+      themeBundle: null,
+      themeState: null,
+      uiStyleBundle: null,
+      uiStyleState: null,
+      styleBundle: null,
+      styleState: null,
+    };
   }
 }
 
@@ -1196,11 +1432,15 @@ async function saveRuntimeSettings(elements, state) {
 
 async function saveThemeSettings(elements, state) {
   const fontOptions = FONT_OPTIONS.map((entry) => entry.value);
+  const uiStyleBundle = effectiveUiStyleBundle(state);
   const nextSettings = {
     ...state.settings,
     themePreset: typeof state.draft.themePreset === "string" && state.draft.themePreset.trim()
       ? state.draft.themePreset.trim()
       : DEFAULT_SETTINGS.themePreset,
+    uiStylePreset: typeof state.draft.uiStylePreset === "string" && state.draft.uiStylePreset.trim()
+      ? resolveUiStylePreset(uiStyleBundle, state.draft.uiStylePreset.trim())?.id || DEFAULT_SETTINGS.uiStylePreset
+      : DEFAULT_SETTINGS.uiStylePreset,
     fontFamily: normalizeChoice(state.draft.fontFamily, fontOptions, DEFAULT_SETTINGS.fontFamily),
     fontScale: normalizeFontScale(state.draft.fontScale),
     styleOverride: state.draft.styleOverride !== false,
@@ -1350,6 +1590,22 @@ async function downloadThemeBundle(elements, state) {
         version: bundle.version || "remote",
         fetchedAt: new Date().toISOString(),
       };
+      let uiStyleBundle = null;
+      let uiStyleState = null;
+      if (candidate.uiStyleUrl) {
+        try {
+          uiStyleBundle = normalizeUiStyleBundle(await fetchJson(candidate.uiStyleUrl), bundleState.version || "remote");
+          uiStyleState = {
+            sourceId: bundleState.sourceId,
+            sourceLabel: bundleState.sourceLabel,
+            version: uiStyleBundle.version || bundleState.version,
+            fetchedAt: bundleState.fetchedAt,
+          };
+        } catch {
+          uiStyleBundle = state.cachedUiStyleBundle || null;
+          uiStyleState = state.cachedUiStyleState || null;
+        }
+      }
       let styleBundle = null;
       let styleState = null;
       if (candidate.styleUrl) {
@@ -1369,11 +1625,15 @@ async function downloadThemeBundle(elements, state) {
       await storageSet("local", {
         [STORAGE_KEYS.themeBundle]: bundle,
         [STORAGE_KEYS.themeState]: bundleState,
+        [STORAGE_KEYS.uiStyleBundle]: uiStyleBundle,
+        [STORAGE_KEYS.uiStyleState]: uiStyleState,
         [STORAGE_KEYS.styleBundle]: styleBundle,
         [STORAGE_KEYS.styleState]: styleState,
       });
       state.cachedThemeBundle = bundle;
       state.cachedThemeState = bundleState;
+      state.cachedUiStyleBundle = uiStyleBundle;
+      state.cachedUiStyleState = uiStyleState;
       state.cachedStyleBundle = styleBundle;
       state.cachedStyleState = styleState;
       state.busy.theme = false;
@@ -1399,11 +1659,15 @@ async function clearThemeBundle(elements, state) {
     await storageSet("local", {
       [STORAGE_KEYS.themeBundle]: null,
       [STORAGE_KEYS.themeState]: null,
+      [STORAGE_KEYS.uiStyleBundle]: null,
+      [STORAGE_KEYS.uiStyleState]: null,
       [STORAGE_KEYS.styleBundle]: null,
       [STORAGE_KEYS.styleState]: null,
     });
     state.cachedThemeBundle = null;
     state.cachedThemeState = null;
+    state.cachedUiStyleBundle = null;
+    state.cachedUiStyleState = null;
     state.cachedStyleBundle = null;
     state.cachedStyleState = null;
     setStatus(state, "theme", "theme_status_clear_success", "success");
@@ -1438,6 +1702,17 @@ function bindSelects(elements, state) {
         state.openSelect = null;
         setStatus(state, "theme", "theme_status_selected", "info", {
           preset: themePresetName(state, resolveThemePreset(effectiveThemeBundle(state), value)) || value,
+        });
+        renderAll(elements, state);
+      },
+    },
+    uiStylePreset: {
+      control: elements.uiStylePresetSelect,
+      onPick: async (value) => {
+        state.draft.uiStylePreset = value;
+        state.openSelect = null;
+        setStatus(state, "theme", "theme_status_selected", "info", {
+          preset: uiStylePresetName(state, resolveUiStylePreset(effectiveUiStyleBundle(state), value)) || value,
         });
         renderAll(elements, state);
       },
@@ -1480,6 +1755,7 @@ function bindSelects(elements, state) {
       elements.panelSelect.root,
       elements.contentSelect.root,
       elements.themePresetSelect.root,
+      elements.uiStylePresetSelect.root,
       elements.themeFontSelect.root,
       elements.themeScaleSelect.root,
     ];
@@ -1500,6 +1776,7 @@ async function initializePopup() {
   const elements = getElements();
   const localMetadata = await loadLocalMetadata();
   const builtinThemeBundle = await loadBuiltinThemeBundle();
+  const builtinUiStyleBundle = await loadBuiltinUiStyleBundle();
   const settings = await loadSettings(localMetadata.translationBundle?.defaultLocale || DEFAULT_SETTINGS.locale);
   const resolvedUiLocale = panelUiLocale(settings.panelLocale || SYSTEM_UI_LOCALE, localMetadata);
   const uiBundle = await loadUiLocaleBundle(resolvedUiLocale, localMetadata);
@@ -1508,8 +1785,11 @@ async function initializePopup() {
     localMetadata,
     remoteMetadata: null,
     builtinThemeBundle,
+    builtinUiStyleBundle,
     cachedThemeBundle: cache.themeBundle,
     cachedThemeState: cache.themeState,
+    cachedUiStyleBundle: cache.uiStyleBundle,
+    cachedUiStyleState: cache.uiStyleState,
     cachedStyleBundle: cache.styleBundle,
     cachedStyleState: cache.styleState,
     settings,

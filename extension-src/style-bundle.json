@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "builtin-0.2.2",
+  "version": "builtin-0.3.0",
   "modules": [
     {
       "id": "theme-override-core",
@@ -31,6 +31,11 @@
       "kind": "css",
       "settingKey": "codeBlockStyleFix",
       "assetPath": "style-modules/theme-code-block-core.css"
+    },
+    {
+      "id": "feature-chat-progress-rail",
+      "kind": "css",
+      "assetPath": "style-modules/feature-chat-progress-rail.css"
     },
     {
       "id": "theme-style-slots",

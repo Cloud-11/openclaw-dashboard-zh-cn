@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "version": "builtin-0.3.0",
+  "defaultPreset": "openclaw-default",
+  "presets": [
+    {
+      "id": "openclaw-default",
+      "label": "OpenClaw Default",
+      "nativeLabel": "OpenClaw 默认",
+      "description": "Keeps the original OpenClaw control geometry and depth while letting repairs reuse the same shape language.",
+      "nativeDescription": "保留 OpenClaw 原本的控件几何和层次，同时让修补样式沿用同一套形态语言。",
+      "variables": {
+        "radius-sm": "10px",
+        "radius-md": "12px",
+        "radius-lg": "16px",
+        "radius-xl": "20px",
+        "shadow-sm": "0 8px 18px rgba(2, 8, 23, 0.16)",
+        "shadow-md": "0 14px 28px rgba(2, 8, 23, 0.22)",
+        "shadow-lg": "0 22px 44px rgba(2, 8, 23, 0.28)",
+        "shadow-xl": "0 30px 56px rgba(2, 8, 23, 0.34)",
+        "control-height": "40px",
+        "control-padding-x": "14px",
+        "button-padding-x": "16px",
+        "card-padding": "16px",
+        "section-gap": "14px",
+        "surface-border-width": "1px"
+      }
+    },
+    {
+      "id": "material",
+      "label": "Material Design",
+      "nativeLabel": "Material Design",
+      "description": "Balanced density, clear outlines, modest radii, and layered elevation.",
+      "nativeDescription": "密度均衡、描边清晰、圆角适中，层级依靠明确的海拔感来表达。",
+      "variables": {
+        "radius-sm": "6px",
+        "radius-md": "10px",
+        "radius-lg": "14px",
+        "radius-xl": "18px",
+        "shadow-sm": "0 2px 6px rgba(15, 23, 42, 0.14)",
+        "shadow-md": "0 8px 20px rgba(15, 23, 42, 0.18)",
+        "shadow-lg": "0 16px 32px rgba(15, 23, 42, 0.22)",
+        "shadow-xl": "0 24px 48px rgba(15, 23, 42, 0.24)",
+        "control-height": "44px",
+        "control-padding-x": "16px",
+        "button-padding-x": "18px",
+        "card-padding": "18px",
+        "section-gap": "16px",
+        "surface-border-width": "1px"
+      }
+    },
+    {
+      "id": "flat",
+      "label": "Flat Design",
+      "nativeLabel": "Flat Design",
+      "description": "Sharper corners, lighter depth, and a cleaner, more direct block layout.",
+      "nativeDescription": "边角更利落、层次更轻，整体更偏直接干净的块面感。",
+      "variables": {
+        "radius-sm": "2px",
+        "radius-md": "4px",
+        "radius-lg": "6px",
+        "radius-xl": "8px",
+        "shadow-sm": "0 0 0 rgba(0, 0, 0, 0)",
+        "shadow-md": "0 0 0 rgba(0, 0, 0, 0)",
+        "shadow-lg": "0 0 0 rgba(0, 0, 0, 0)",
+        "shadow-xl": "0 0 0 rgba(0, 0, 0, 0)",
+        "control-height": "36px",
+        "control-padding-x": "12px",
+        "button-padding-x": "14px",
+        "card-padding": "14px",
+        "section-gap": "10px",
+        "surface-border-width": "1px"
+      }
+    },
+    {
+      "id": "soft-rounded",
+      "label": "Soft Rounded",
+      "nativeLabel": "柔和圆角",
+      "description": "Friendlier proportions with larger radii, softer cards, and roomier surfaces.",
+      "nativeDescription": "比例更柔和，圆角更大，卡片与表面更宽松，整体更轻松。",
+      "variables": {
+        "radius-sm": "14px",
+        "radius-md": "18px",
+        "radius-lg": "24px",
+        "radius-xl": "30px",
+        "shadow-sm": "0 8px 18px rgba(15, 23, 42, 0.10)",
+        "shadow-md": "0 16px 30px rgba(15, 23, 42, 0.14)",
+        "shadow-lg": "0 24px 42px rgba(15, 23, 42, 0.18)",
+        "shadow-xl": "0 32px 54px rgba(15, 23, 42, 0.22)",
+        "control-height": "46px",
+        "control-padding-x": "18px",
+        "button-padding-x": "22px",
+        "card-padding": "22px",
+        "section-gap": "18px",
+        "surface-border-width": "1px"
+      }
+    }
+  ]
+}

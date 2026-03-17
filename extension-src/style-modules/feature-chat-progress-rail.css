@@ -1,0 +1,130 @@
+.ocdp-chat-progress {
+  position: fixed;
+  z-index: 2147483638;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  width: 28px;
+  max-height: min(78vh, 720px);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(8px, -50%, 0);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.ocdp-chat-progress[data-visible="true"] {
+  opacity: 1;
+  transform: translate3d(0, -50%, 0);
+}
+
+.ocdp-chat-progress__list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 0;
+  padding: 14px 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  pointer-events: auto;
+  scrollbar-width: none;
+}
+
+.ocdp-chat-progress__list::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.ocdp-chat-progress__list::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 50%;
+  width: 2px;
+  border-radius: 999px;
+  transform: translateX(-50%);
+  background: color-mix(in srgb, var(--border-strong, #3e4050) 78%, transparent);
+  opacity: 0.88;
+}
+
+.ocdp-chat-progress__dot {
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 2px solid color-mix(in srgb, var(--accent, #ff7a45) 52%, white 48%);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-elevated, #161920) 54%, white 46%);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--bg, #0e1015) 80%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--accent-subtle, rgba(255, 122, 69, 0.2)) 52%, transparent);
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.ocdp-chat-progress__dot:hover,
+.ocdp-chat-progress__dot:focus-visible {
+  outline: none;
+  transform: scale(1.12);
+  border-color: color-mix(in srgb, var(--accent, #ff7a45) 76%, white 24%);
+  background: color-mix(in srgb, var(--accent-subtle, rgba(255, 122, 69, 0.22)) 78%, white 22%);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent-subtle, rgba(255, 122, 69, 0.24)) 82%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--bg, #0e1015) 76%, transparent);
+}
+
+.ocdp-chat-progress__dot.is-active {
+  transform: scale(1.16);
+  border-color: color-mix(in srgb, var(--accent, #ff7a45) 82%, white 18%);
+  background: color-mix(in srgb, var(--accent, #ff7a45) 86%, white 14%);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent-subtle, rgba(255, 122, 69, 0.28)) 88%, transparent),
+    0 0 0 8px color-mix(in srgb, var(--bg, #0e1015) 74%, transparent);
+}
+
+.ocdp-chat-progress__preview {
+  position: fixed;
+  z-index: 2147483639;
+  width: min(320px, calc(100vw - 88px));
+  max-width: 320px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--border-strong, #3e4050) 84%, transparent);
+  border-radius: calc(var(--radius-lg, 14px) + 2px);
+  background: color-mix(in srgb, var(--bg-elevated, #161920) 94%, black 6%);
+  box-shadow: var(--shadow-lg, 0 12px 32px rgba(0, 0, 0, 0.4));
+  color: var(--text, #d4d4d8);
+  backdrop-filter: blur(18px);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(8px, -50%, 0);
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
+}
+
+.ocdp-chat-progress__preview[data-visible="true"] {
+  opacity: 1;
+  transform: translate3d(0, -50%, 0);
+}
+
+.ocdp-chat-progress__preview-text {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text-strong, #f4f4f5);
+  font-size: 13px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}

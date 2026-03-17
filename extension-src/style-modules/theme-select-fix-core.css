@@ -23,9 +23,9 @@
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  min-height: 40px;
-  padding: 0 14px;
-  border: 1px solid var(--border, #2e3040);
+  min-height: var(--ocdp-control-height, 40px);
+  padding: 0 var(--ocdp-control-padding-x, 14px);
+  border: var(--ocdp-surface-border-width, 1px) solid var(--border, #2e3040);
   border-radius: var(--radius-md, 10px);
   background: var(--input, #1e2028);
   color: var(--text, #d4d4d8);
@@ -72,7 +72,7 @@
   z-index: 2147483646;
   display: none;
   padding: 6px;
-  border: 1px solid var(--border-strong, #3e4050);
+  border: var(--ocdp-surface-border-width, 1px) solid var(--border-strong, #3e4050);
   border-radius: calc(var(--radius-lg, 14px) + 2px);
   background: color-mix(in srgb, var(--bg-elevated, #161920) 96%, black 4%);
   box-shadow: var(--shadow-lg, 0 12px 32px rgba(0, 0, 0, 0.4));
@@ -87,7 +87,7 @@
 
 .ocdp-selectfix__group {
   margin: 2px 0 6px;
-  padding: 6px 10px 2px;
+  padding: 6px var(--ocdp-control-padding-x, 14px) 2px;
   color: var(--muted, #8e8e93);
   font-size: 11px;
   font-weight: 700;
@@ -98,7 +98,7 @@
 .ocdp-selectfix__option {
   display: block;
   width: 100%;
-  padding: 10px 12px;
+  padding: 10px var(--ocdp-control-padding-x, 14px);
   border: 0;
   border-radius: calc(var(--radius-md, 10px) - 2px);
   background: transparent;

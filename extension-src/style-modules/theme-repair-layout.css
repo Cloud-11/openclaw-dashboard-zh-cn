@@ -1,5 +1,9 @@
 :where(.content-header, .chat-controls__session-row) {
-  gap: 12px !important;
+  gap: var(--ocdp-section-gap, 12px) !important;
+}
+
+:where(.theme-orb__menu, .config-section-card, .settings-appearance__section) {
+  gap: var(--ocdp-section-gap, 12px) !important;
 }
 
 :where(.chat-controls__session-row) {

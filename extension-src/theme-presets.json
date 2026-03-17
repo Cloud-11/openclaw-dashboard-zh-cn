@@ -5,6 +5,10 @@
   "presets": [
     {
       "id": "openclaw-classic",
+      "label": "OpenClaw Classic",
+      "nativeLabel": "OpenClaw 原版增强",
+      "description": "Keeps the original OpenClaw palette and only layers structural repairs on top.",
+      "nativeDescription": "保留 OpenClaw 原本配色，只在其上叠加结构性修补。",
       "preserveNativeColors": true,
       "variables": {
         "page-bg": "var(--bg)",
@@ -18,12 +22,15 @@
         "control-bg": "var(--input)",
         "control-text": "var(--text)",
         "control-border": "var(--border-strong)",
-        "radius": "var(--radius-md)",
-        "shadow": "var(--shadow-md)"
+        "page-overlay": "transparent"
       }
     },
     {
       "id": "plus-clean",
+      "label": "Plus Clean",
+      "nativeLabel": "Plus 清爽版",
+      "description": "A restrained dark palette with cleaner neutrals and calmer contrast.",
+      "nativeDescription": "更克制的暗色配色，中性色更干净、对比更柔和。",
       "variables": {
         "page-bg": "#0c1422",
         "surface": "rgba(13, 24, 39, 0.95)",
@@ -36,12 +43,15 @@
         "control-bg": "#152338",
         "control-text": "#edf5ff",
         "control-border": "rgba(125, 159, 211, 0.28)",
-        "radius": "14px",
-        "shadow": "0 14px 30px rgba(3, 11, 23, 0.28)"
+        "page-overlay": "rgba(125, 211, 252, 0.14)"
       }
     },
     {
       "id": "plus-contrast",
+      "label": "Plus Contrast",
+      "nativeLabel": "Plus 高对比",
+      "description": "A darker, higher-contrast palette tuned for stronger separation and emphasis.",
+      "nativeDescription": "更深、更高对比的配色，强调层级分离和重点信息。",
       "variables": {
         "page-bg": "#060b16",
         "surface": "rgba(10, 17, 31, 0.96)",
@@ -54,62 +64,70 @@
         "control-bg": "#101a2b",
         "control-text": "#f8fbff",
         "control-border": "rgba(103, 232, 249, 0.34)",
-        "radius": "14px",
-        "shadow": "0 18px 46px rgba(2, 6, 23, 0.34)"
+        "page-overlay": "rgba(56, 189, 248, 0.18)"
       }
     },
     {
-      "id": "apple-light",
+      "id": "soft-light",
+      "label": "Soft Light",
+      "nativeLabel": "柔光亮色",
+      "description": "A gentle light palette with warm neutrals and soft blue accents.",
+      "nativeDescription": "柔和的亮色配色，暖中性色搭配克制的蓝色强调。",
       "variables": {
-        "page-bg": "#f5f5f7",
-        "surface": "rgba(255, 255, 255, 0.9)",
-        "surface-2": "#ffffff",
-        "text": "#1d1d1f",
-        "muted": "#6e6e73",
-        "border": "rgba(29, 29, 31, 0.08)",
-        "accent": "#0071e3",
-        "accent-soft": "rgba(0, 113, 227, 0.14)",
+        "page-bg": "#f6f3ee",
+        "surface": "rgba(255, 252, 248, 0.94)",
+        "surface-2": "#fffaf5",
+        "text": "#2d241f",
+        "muted": "#7e6f66",
+        "border": "rgba(67, 47, 34, 0.12)",
+        "accent": "#5a7be7",
+        "accent-soft": "rgba(90, 123, 231, 0.14)",
         "control-bg": "rgba(255, 255, 255, 0.96)",
-        "control-text": "#1d1d1f",
-        "control-border": "rgba(29, 29, 31, 0.12)",
-        "radius": "22px",
-        "shadow": "0 20px 44px rgba(15, 23, 42, 0.08)"
+        "control-text": "#2d241f",
+        "control-border": "rgba(67, 47, 34, 0.16)",
+        "page-overlay": "rgba(90, 123, 231, 0.10)"
       }
     },
     {
-      "id": "google-light",
+      "id": "clear-light",
+      "label": "Clear Light",
+      "nativeLabel": "清透亮色",
+      "description": "A cleaner light palette with crisp surfaces and brighter accents.",
+      "nativeDescription": "更清透的亮色配色，表面更清爽，强调色更明快。",
       "variables": {
-        "page-bg": "#f8fafd",
+        "page-bg": "#f7fbff",
         "surface": "#ffffff",
-        "surface-2": "#f7faff",
-        "text": "#1f1f1f",
-        "muted": "#5f6368",
-        "border": "#dde3ea",
-        "accent": "#1a73e8",
-        "accent-soft": "rgba(26, 115, 232, 0.14)",
+        "surface-2": "#f3f8ff",
+        "text": "#1f2937",
+        "muted": "#66758b",
+        "border": "#dbe5f1",
+        "accent": "#2d6cdf",
+        "accent-soft": "rgba(45, 108, 223, 0.14)",
         "control-bg": "#f8fbff",
-        "control-text": "#1f1f1f",
-        "control-border": "#c7d5eb",
-        "radius": "16px",
-        "shadow": "0 12px 28px rgba(60, 64, 67, 0.12)"
+        "control-text": "#1f2937",
+        "control-border": "#c9d8ea",
+        "page-overlay": "rgba(45, 108, 223, 0.10)"
       }
     },
     {
-      "id": "microsoft-light",
+      "id": "mist-light",
+      "label": "Mist Light",
+      "nativeLabel": "雾感亮色",
+      "description": "A cool, calm light palette with softer contrast and muted surfaces.",
+      "nativeDescription": "偏冷静的亮色配色，对比更柔和，表面层次更安静。",
       "variables": {
-        "page-bg": "#f3f6fb",
-        "surface": "rgba(255, 255, 255, 0.94)",
-        "surface-2": "#eef3f9",
-        "text": "#1b1b1f",
-        "muted": "#61656f",
-        "border": "rgba(97, 101, 111, 0.16)",
-        "accent": "#0f6cbd",
-        "accent-soft": "rgba(15, 108, 189, 0.14)",
+        "page-bg": "#f2f5fb",
+        "surface": "rgba(255, 255, 255, 0.95)",
+        "surface-2": "#edf2f8",
+        "text": "#1d2430",
+        "muted": "#657182",
+        "border": "rgba(82, 94, 117, 0.16)",
+        "accent": "#2f6fb5",
+        "accent-soft": "rgba(47, 111, 181, 0.14)",
         "control-bg": "#ffffff",
-        "control-text": "#1b1b1f",
-        "control-border": "rgba(15, 108, 189, 0.18)",
-        "radius": "12px",
-        "shadow": "0 16px 36px rgba(15, 23, 42, 0.1)"
+        "control-text": "#1d2430",
+        "control-border": "rgba(47, 111, 181, 0.18)",
+        "page-overlay": "rgba(47, 111, 181, 0.09)"
       }
     }
   ]

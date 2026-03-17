@@ -3,6 +3,8 @@
 }
 
 :where(.login-gate__card, .theme-orb__menu, .config-section-card, .settings-appearance__section, .settings-info-row, .cfg-array, .cfg-map, .cfg-object, .sidebar-version) {
+  border-style: solid !important;
+  border-width: var(--ocdp-surface-border-width, 1px) !important;
   border-color: var(--border) !important;
   border-radius: var(--radius-lg) !important;
   background: var(--bg-elevated) !important;
@@ -10,8 +12,22 @@
   box-shadow: var(--shadow-md) !important;
 }
 
+:where(.login-gate__card, .theme-orb__menu, .config-section-card, .settings-appearance__section, .settings-info-row, .sidebar-version) {
+  padding: var(--ocdp-card-padding, 16px) !important;
+}
+
 :where(.btn, .theme-orb__trigger, .theme-orb__option, .cfg-input__reset, .cfg-array__add, .cfg-map__add) {
+  min-height: var(--ocdp-control-height, 40px) !important;
+  padding-inline: var(--ocdp-button-padding-x, 16px) !important;
+  border-style: solid !important;
+  border-width: var(--ocdp-surface-border-width, 1px) !important;
   border-radius: var(--radius-md) !important;
+}
+
+:where(.btn--sm, .cfg-segmented__btn, .config-mode-toggle__btn, .topbar-theme-mode__btn) {
+  min-height: calc(var(--ocdp-control-height, 40px) - 8px) !important;
+  padding-inline: calc(var(--ocdp-button-padding-x, 16px) - 4px) !important;
+  border-radius: var(--radius-sm) !important;
 }
 
 :where(.btn.primary, .cfg-segmented__btn.active, .config-mode-toggle__btn.active, .topbar-theme-mode__btn--active) {
@@ -20,13 +36,24 @@
   border-color: color-mix(in srgb, var(--accent) 35%, transparent) !important;
 }
 
-:where(.btn:not(.primary):not(.danger), .theme-orb__trigger, .theme-orb__option, .cfg-input__reset, .cfg-array__add, .cfg-map__add) {
+:where(.btn.active:not(.primary):not(.danger), .btn.btn--icon.active:not(.primary):not(.danger)) {
+  background: var(--accent-subtle) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent) !important;
+}
+
+:where(.btn:not(.primary):not(.danger):not(.active), .theme-orb__trigger, .theme-orb__option, .cfg-input__reset, .cfg-array__add, .cfg-map__add) {
   background: var(--bg-elevated) !important;
   color: var(--text) !important;
   border-color: var(--border-strong) !important;
 }
 
 :where(input:not([type="checkbox"]):not([type="radio"]), textarea, select, .cfg-input, .cfg-textarea, .cfg-select, .cfg-number) {
+  min-height: var(--ocdp-control-height, 40px) !important;
+  padding-inline: var(--ocdp-control-padding-x, 14px) !important;
+  border-style: solid !important;
+  border-width: var(--ocdp-surface-border-width, 1px) !important;
   background: var(--input) !important;
   color: var(--text) !important;
   border-color: var(--border-strong) !important;
