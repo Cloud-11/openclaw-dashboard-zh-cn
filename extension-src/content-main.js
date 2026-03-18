@@ -354,7 +354,7 @@
   });
   const FALLBACK_THEME_PRESET_BUNDLE = Object.freeze({
     "schemaVersion": 1,
-    "version": "builtin-0.6.0",
+    "version": "builtin-0.7.0",
     "defaultPreset": "openclaw-classic",
     "presets": [
       {

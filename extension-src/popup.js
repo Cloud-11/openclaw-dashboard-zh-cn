@@ -100,7 +100,7 @@ const FONT_SCALE_OPTIONS = [
 ];
 const FALLBACK_THEME_BUNDLE = {
   schemaVersion: 1,
-  version: "builtin-0.6.0",
+  version: "builtin-0.7.0",
   defaultPreset: "openclaw-classic",
   presets: [
     {

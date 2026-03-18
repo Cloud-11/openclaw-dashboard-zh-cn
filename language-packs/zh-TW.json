@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "locale": "zh-TW",
-  "version": "builtin-0.2.3",
+  "version": "builtin-0.3.0",
   "exactTranslations": {
     "OpenClaw Control": "OpenClaw 控制檯",
     "AI & Agents": "AI 與代理",
