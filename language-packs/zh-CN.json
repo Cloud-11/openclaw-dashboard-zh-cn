@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "locale": "zh-CN",
-  "version": "builtin-0.2.0",
+  "version": "builtin-0.2.3",
   "exactTranslations": {
     "OpenClaw Control": "OpenClaw 控制台",
     "AI & Agents": "AI 与智能体",
@@ -1109,661 +1109,167 @@
     "Gateway runtime surface for bind mode, auth, control UI, remote transport, and operational safety controls. Keep conservative defaults unless you intentionally expose the gateway beyond trusted local interfaces.": "网关运行时设置面，涵盖绑定模式、认证、控制界面、远程传输和运行安全控制。除非你明确希望将网关暴露到受信任本地接口之外，否则请保持保守默认值。"
   },
   "configLabelReplacements": [
-    [
-      "Config Last Touched Version",
-      "配置最近修改版本"
-    ],
-    [
-      "Config Last Touched At",
-      "配置最近修改时间"
-    ],
-    [
-      "Shell Environment Import",
-      "Shell 环境导入"
-    ],
-    [
-      "Shell Environment Import Enabled",
-      "Shell 环境导入已启用"
-    ],
-    [
-      "Environment Variable Overrides",
-      "环境变量覆盖"
-    ],
-    [
-      "Wizard Last Run Timestamp",
-      "向导最近运行时间戳"
-    ],
-    [
-      "Wizard Last Run Version",
-      "向导最近运行版本"
-    ],
-    [
-      "Wizard Last Run Commit",
-      "向导最近运行提交"
-    ],
-    [
-      "Wizard Last Run Command",
-      "向导最近运行命令"
-    ],
-    [
-      "Wizard Last Run Mode",
-      "向导最近运行模式"
-    ],
-    [
-      "Sensitive Data Redaction Mode",
-      "敏感数据脱敏模式"
-    ],
-    [
-      "Update Check on Start",
-      "启动时检查更新"
-    ],
-    [
-      "OpenTelemetry Trace Sample Rate",
-      "OpenTelemetry 追踪采样率"
-    ],
-    [
-      "Gateway Auth Allow Tailscale Identity",
-      "网关认证允许 Tailscale 身份"
-    ],
-    [
-      "Gateway Trusted Proxy CIDRs",
-      "网关受信任代理 CIDR 列表"
-    ],
-    [
-      "Gateway HTTP Security Headers",
-      "网关 HTTP 安全头"
-    ],
-    [
-      "Bedrock Model Discovery",
-      "Bedrock 模型发现"
-    ],
-    [
-      "Model Discovery",
-      "模型发现"
-    ],
-    [
-      "Discovery Provider Filter",
-      "Discovery 提供商筛选"
-    ],
-    [
-      "Provider Filter",
-      "提供商筛选"
-    ],
-    [
-      "Approvals",
-      "审批"
-    ],
-    [
-      "Approval Forwarding Targets",
-      "审批转发目标"
-    ],
-    [
-      "DM Session Scope",
-      "DM 会话范围"
-    ],
-    [
-      "Model providers",
-      "模型提供商"
-    ],
-    [
-      "Model provider",
-      "模型提供商"
-    ],
-    [
-      "Browser Headless Mode",
-      "浏览器无头模式"
-    ],
-    [
-      "Image Understanding Max Bytes",
-      "图像理解最大字节数"
-    ],
-    [
-      "Tool-loop Critical Threshold",
-      "工具循环严重阈值"
-    ],
-    [
-      "Exec Approval Running Notice (ms)",
-      "执行审批运行提示（毫秒）"
-    ],
-    [
-      "Approval Target Account ID",
-      "审批目标账户 ID"
-    ],
-    [
-      "Allow Cross-Context (Across Providers)",
-      "允许跨上下文（跨提供商）"
-    ],
-    [
-      "Allow Cross-Context (Same Provider)",
-      "允许跨上下文（同一提供商）"
-    ],
-    [
-      "Web Search Max Results",
-      "Web 搜索最大结果数"
-    ],
-    [
-      "Gemini Search Model",
-      "Gemini 搜索模型"
-    ],
-    [
-      "Agent ACP Working Directory",
-      "智能体 ACP 工作目录"
-    ],
-    [
-      "Agent-to-Agent Target Allowlist",
-      "智能体到智能体目标允许列表"
-    ],
-    [
-      "Exec Safe Bin Trusted Dirs",
-      "Exec 安全二进制受信任目录"
-    ],
-    [
-      "Environment Variable",
-      "环境变量"
-    ],
-    [
-      "Sensitive Data Redaction",
-      "敏感数据脱敏"
-    ],
-    [
-      "Log File Path",
-      "日志文件路径"
-    ],
-    [
-      "Log Level",
-      "日志级别"
-    ],
-    [
-      "Console Log Level",
-      "控制台日志级别"
-    ],
-    [
-      "Console Log Style",
-      "控制台日志样式"
-    ],
-    [
-      "Auto Update",
-      "自动更新"
-    ],
-    [
-      "Cache Trace",
-      "缓存追踪"
-    ],
-    [
-      "Control UI",
-      "控制界面"
-    ],
-    [
-      "Trusted Proxy",
-      "受信任代理"
-    ],
-    [
-      "Remote Gateway",
-      "远程网关"
-    ],
-    [
-      "Config Reload",
-      "配置重载"
-    ],
-    [
-      "HTTP Security Headers",
-      "HTTP 安全头"
-    ],
-    [
-      "HTTP Endpoints",
-      "HTTP 端点"
-    ],
-    [
-      "HTTP API",
-      "HTTP API"
-    ],
-    [
-      "Certificate Path",
-      "证书路径"
-    ],
-    [
-      "Key Path",
-      "密钥路径"
-    ],
-    [
-      "CA Path",
-      "CA 路径"
-    ],
-    [
-      "No-Sandbox Mode",
-      "无沙箱模式"
-    ],
-    [
-      "Attach-only Mode",
-      "仅附加模式"
-    ],
-    [
-      "Relay Bind Address",
-      "中继绑定地址"
-    ],
-    [
-      "Default Profile",
-      "默认配置"
-    ],
-    [
-      "Port Range Start",
-      "端口范围起始值"
-    ],
-    [
-      "Accent Color",
-      "强调色"
-    ],
-    [
-      "Image Understanding",
-      "图像理解"
-    ],
-    [
-      "Video Understanding",
-      "视频理解"
-    ],
-    [
-      "Link Understanding",
-      "链接理解"
-    ],
-    [
-      "Max Bytes",
-      "最大字节数"
-    ],
-    [
-      "Max Chars",
-      "最大字符数"
-    ],
-    [
-      "Attachment Policy",
-      "附件策略"
-    ],
-    [
-      "Max Links",
-      "最大链接数"
-    ],
-    [
-      "Shared Models",
-      "共享模型"
-    ],
-    [
-      "Tool Profile",
-      "工具配置档"
-    ],
-    [
-      "Allowlist Additions",
-      "允许列表附加项"
-    ],
-    [
-      "Policy by Provider",
-      "按提供商划分的策略"
-    ],
-    [
-      "Workspace-Only",
-      "仅工作区"
-    ],
-    [
-      "History Size",
-      "历史大小"
-    ],
-    [
-      "Global Circuit Breaker Threshold",
-      "全局熔断阈值"
-    ],
-    [
-      "Repeat Detection",
-      "重复检测"
-    ],
-    [
-      "No-Progress Detection",
-      "无进展检测"
-    ],
-    [
-      "Ping-Pong Detection",
-      "乒乓检测"
-    ],
-    [
-      "Session Tools Visibility",
-      "会话工具可见性"
-    ],
-    [
-      "Notify On Exit",
-      "退出时通知"
-    ],
-    [
-      "Notify On Empty Success",
-      "空成功时通知"
-    ],
-    [
-      "Running Notice",
-      "运行提示"
-    ],
-    [
-      "Exec Host",
-      "执行主机"
-    ],
-    [
-      "Exec Security",
-      "执行安全"
-    ],
-    [
-      "Exec Ask",
-      "执行询问"
-    ],
-    [
-      "Node Binding",
-      "节点绑定"
-    ],
-    [
-      "Agent-to-Agent",
-      "智能体到智能体"
-    ],
-    [
-      "Target Allowlist",
-      "目标允许列表"
-    ],
-    [
-      "??????????????????????????????????????????????????????????????????????????????????????????????????????",
-      "高权限访问规则"
-    ],
-    [
-      "Command ??????????????????????????????????????????????????????????????????????????????????????????????????????",
-      "命令高权限访问规则"
-    ],
-    [
-      "Elevated Tool Access",
-      "高权限工具访问"
-    ],
-    [
-      "Allow Rules",
-      "允许规则"
-    ],
-    [
-      "Subagent Tool Policy",
-      "子智能体工具策略"
-    ],
-    [
-      "Sandbox Tool Policy",
-      "沙箱工具策略"
-    ],
-    [
-      "PATH Prepend",
-      "PATH 前置"
-    ],
-    [
-      "Safe Bin Trusted Dirs",
-      "安全二进制受信任目录"
-    ],
-    [
-      "Safe Bins",
-      "安全二进制"
-    ],
-    [
-      "Approval Forwarding",
-      "审批转发"
-    ],
-    [
-      "Forward Exec Approvals",
-      "转发执行审批"
-    ],
-    [
-      "Agent Filter",
-      "智能体筛选"
-    ],
-    [
-      "Session Filter",
-      "会话筛选"
-    ],
-    [
-      "Account ID",
-      "账户 ID"
-    ],
-    [
-      "Thread ID",
-      "线程 ID"
-    ],
-    [
-      "Cross-Context",
-      "跨上下文"
-    ],
-    [
-      "Marker Prefix",
-      "标记前缀"
-    ],
-    [
-      "Marker Suffix",
-      "标记后缀"
-    ],
-    [
-      "Message Broadcast",
-      "消息广播"
-    ],
-    [
-      "Web Search",
-      "Web 搜索"
-    ],
-    [
-      "Max Results",
-      "最大结果数"
-    ],
-    [
-      "Cache TTL",
-      "缓存 TTL"
-    ],
-    [
-      "Search Mode",
-      "搜索模式"
-    ],
-    [
-      "Search Model",
-      "搜索模型"
-    ],
-    [
-      "API Key",
-      "API 密钥"
-    ],
-    [
-      "Working Directory",
-      "工作目录"
-    ],
-    [
-      "Working Directory",
-      "工作目录"
-    ],
-    [
-      "ACP Runtime",
-      "ACP 运行时"
-    ],
-    [
-      "ACP Harness Agent",
-      "ACP 宿主智能体"
-    ],
-    [
-      "ACP Backend",
-      "ACP 后端"
-    ],
-    [
-      "ACP Mode",
-      "ACP 模式"
-    ],
-    [
-      "Service Name",
-      "服务名称"
-    ],
-    [
-      "Flush Interval",
-      "刷新间隔"
-    ],
-    [
-      "Warning Threshold",
-      "警告阈值"
-    ],
-    [
-      "Critical Threshold",
-      "严重阈值"
-    ],
-    [
-      "Rate Limit",
-      "速率限制"
-    ],
-    [
-      "Tailscale",
-      "Tailscale"
-    ],
-    [
-      "Allowlist",
-      "允许列表"
-    ],
-    [
-      "Denylist",
-      "拒绝列表"
-    ],
-    [
-      "Identity Avatar",
-      "身份头像"
-    ],
-    [
-      "Skill Filter",
-      "技能过滤器"
-    ],
-    [
-      "Agent Runtime",
-      "智能体运行时"
-    ],
-    [
-      "Defaults",
-      "默认值"
-    ],
-    [
-      "Enabled",
-      "已启用"
-    ],
-    [
-      "Version",
-      "版本"
-    ],
-    [
-      "Timestamp",
-      "时间戳"
-    ],
-    [
-      "Command",
-      "命令"
-    ],
-    [
-      "Timeout",
-      "超时"
-    ],
-    [
-      "Interval",
-      "间隔"
-    ],
-    [
-      "Path",
-      "路径"
-    ],
-    [
-      "Mode",
-      "模式"
-    ],
-    [
-      "State",
-      "状态"
-    ],
-    [
-      "Gateway",
-      "网关"
-    ],
-    [
-      "Environment",
-      "环境"
-    ],
-    [
-      "Browser",
-      "浏览器"
-    ],
-    [
-      "Diagnostics",
-      "诊断"
-    ],
-    [
-      "Logging",
-      "日志记录"
-    ],
-    [
-      "Agents",
-      "智能体"
-    ],
-    [
-      "Agent",
-      "智能体"
-    ],
-    [
-      "Tools",
-      "工具"
-    ],
-    [
-      "Tool",
-      "工具"
-    ],
-    [
-      "Session",
-      "会话"
-    ],
-    [
-      "Approval",
-      "审批"
-    ],
-    [
-      "Target",
-      "目标"
-    ],
-    [
-      "Provider",
-      "提供商"
-    ],
-    [
-      "Headers",
-      "请求头"
-    ],
-    [
-      "Protocol",
-      "协议"
-    ],
-    [
-      "Metrics",
-      "指标"
-    ],
-    [
-      "Traces",
-      "追踪"
-    ],
-    [
-      "Logs",
-      "日志"
-    ],
-    [
-      "Files",
-      "文件"
-    ],
-    [
-      "Prompt",
-      "提示词"
-    ],
-    [
-      "(ms)",
-      "（毫秒）"
-    ],
-    [
-      "(min)",
-      "（分钟）"
-    ],
-    [
-      "(hours)",
-      "（小时）"
-    ],
-    [
-      "(sec)",
-      "（秒）"
-    ]
+    ["Config Last Touched Version", "配置最近修改版本"],
+    ["Config Last Touched At", "配置最近修改时间"],
+    ["Shell Environment Import", "Shell 环境导入"],
+    ["Shell Environment Import Enabled", "Shell 环境导入已启用"],
+    ["Environment Variable Overrides", "环境变量覆盖"],
+    ["Wizard Last Run Timestamp", "向导最近运行时间戳"],
+    ["Wizard Last Run Version", "向导最近运行版本"],
+    ["Wizard Last Run Commit", "向导最近运行提交"],
+    ["Wizard Last Run Command", "向导最近运行命令"],
+    ["Wizard Last Run Mode", "向导最近运行模式"],
+    ["Sensitive Data Redaction Mode", "敏感数据脱敏模式"],
+    ["Update Check on Start", "启动时检查更新"],
+    ["OpenTelemetry Trace Sample Rate", "OpenTelemetry 追踪采样率"],
+    ["Gateway Auth Allow Tailscale Identity", "网关认证允许 Tailscale 身份"],
+    ["Gateway Trusted Proxy CIDRs", "网关受信任代理 CIDR 列表"],
+    ["Gateway HTTP Security Headers", "网关 HTTP 安全头"],
+    ["Bedrock Model Discovery", "Bedrock 模型发现"],
+    ["Model Discovery", "模型发现"],
+    ["Discovery Provider Filter", "Discovery 提供商筛选"],
+    ["Provider Filter", "提供商筛选"],
+    ["Approvals", "审批"],
+    ["Approval Forwarding Targets", "审批转发目标"],
+    ["DM Session Scope", "DM 会话范围"],
+    ["Model providers", "模型提供商"],
+    ["Model provider", "模型提供商"],
+    ["Browser Headless Mode", "浏览器无头模式"],
+    ["Image Understanding Max Bytes", "图像理解最大字节数"],
+    ["Tool-loop Critical Threshold", "工具循环严重阈值"],
+    ["Exec Approval Running Notice (ms)", "执行审批运行提示（毫秒）"],
+    ["Approval Target Account ID", "审批目标账户 ID"],
+    ["Allow Cross-Context (Across Providers)", "允许跨上下文（跨提供商）"],
+    ["Allow Cross-Context (Same Provider)", "允许跨上下文（同一提供商）"],
+    ["Web Search Max Results", "Web 搜索最大结果数"],
+    ["Gemini Search Model", "Gemini 搜索模型"],
+    ["Agent ACP Working Directory", "智能体 ACP 工作目录"],
+    ["Agent-to-Agent Target Allowlist", "智能体到智能体目标允许列表"],
+    ["Exec Safe Bin Trusted Dirs", "Exec 安全二进制受信任目录"],
+    ["Environment Variable", "环境变量"],
+    ["Sensitive Data Redaction", "敏感数据脱敏"],
+    ["Log File Path", "日志文件路径"],
+    ["Log Level", "日志级别"],
+    ["Console Log Level", "控制台日志级别"],
+    ["Console Log Style", "控制台日志样式"],
+    ["Auto Update", "自动更新"],
+    ["Cache Trace", "缓存追踪"],
+    ["Control UI", "控制界面"],
+    ["Trusted Proxy", "受信任代理"],
+    ["Remote Gateway", "远程网关"],
+    ["Config Reload", "配置重载"],
+    ["HTTP Security Headers", "HTTP 安全头"],
+    ["HTTP Endpoints", "HTTP 端点"],
+    ["HTTP API", "HTTP API"],
+    ["Certificate Path", "证书路径"],
+    ["Key Path", "密钥路径"],
+    ["CA Path", "CA 路径"],
+    ["No-Sandbox Mode", "无沙箱模式"],
+    ["Attach-only Mode", "仅附加模式"],
+    ["Relay Bind Address", "中继绑定地址"],
+    ["Default Profile", "默认配置"],
+    ["Port Range Start", "端口范围起始值"],
+    ["Accent Color", "强调色"],
+    ["Image Understanding", "图像理解"],
+    ["Video Understanding", "视频理解"],
+    ["Link Understanding", "链接理解"],
+    ["Max Bytes", "最大字节数"],
+    ["Max Chars", "最大字符数"],
+    ["Attachment Policy", "附件策略"],
+    ["Max Links", "最大链接数"],
+    ["Shared Models", "共享模型"],
+    ["Tool Profile", "工具配置档"],
+    ["Allowlist Additions", "允许列表附加项"],
+    ["Policy by Provider", "按提供商划分的策略"],
+    ["Workspace-Only", "仅工作区"],
+    ["History Size", "历史大小"],
+    ["Global Circuit Breaker Threshold", "全局熔断阈值"],
+    ["Repeat Detection", "重复检测"],
+    ["No-Progress Detection", "无进展检测"],
+    ["Ping-Pong Detection", "乒乓检测"],
+    ["Session Tools Visibility", "会话工具可见性"],
+    ["Notify On Exit", "退出时通知"],
+    ["Notify On Empty Success", "空成功时通知"],
+    ["Running Notice", "运行提示"],
+    ["Exec Host", "执行主机"],
+    ["Exec Security", "执行安全"],
+    ["Exec Ask", "执行询问"],
+    ["Node Binding", "节点绑定"],
+    ["Agent-to-Agent", "智能体到智能体"],
+    ["Target Allowlist", "目标允许列表"],
+    ["Elevated Tool Access", "高权限工具访问"],
+    ["Allow Rules", "允许规则"],
+    ["Subagent Tool Policy", "子智能体工具策略"],
+    ["Sandbox Tool Policy", "沙箱工具策略"],
+    ["PATH Prepend", "PATH 前置"],
+    ["Safe Bin Trusted Dirs", "安全二进制受信任目录"],
+    ["Safe Bins", "安全二进制"],
+    ["Approval Forwarding", "审批转发"],
+    ["Forward Exec Approvals", "转发执行审批"],
+    ["Agent Filter", "智能体筛选"],
+    ["Session Filter", "会话筛选"],
+    ["Account ID", "账户 ID"],
+    ["Thread ID", "线程 ID"],
+    ["Cross-Context", "跨上下文"],
+    ["Marker Prefix", "标记前缀"],
+    ["Marker Suffix", "标记后缀"],
+    ["Message Broadcast", "消息广播"],
+    ["Web Search", "Web 搜索"],
+    ["Max Results", "最大结果数"],
+    ["Cache TTL", "缓存 TTL"],
+    ["Search Mode", "搜索模式"],
+    ["Search Model", "搜索模型"],
+    ["API Key", "API 密钥"],
+    ["Working Directory", "工作目录"],
+    ["Working Directory", "工作目录"],
+    ["ACP Runtime", "ACP 运行时"],
+    ["ACP Harness Agent", "ACP 宿主智能体"],
+    ["ACP Backend", "ACP 后端"],
+    ["ACP Mode", "ACP 模式"],
+    ["Service Name", "服务名称"],
+    ["Flush Interval", "刷新间隔"],
+    ["Warning Threshold", "警告阈值"],
+    ["Critical Threshold", "严重阈值"],
+    ["Rate Limit", "速率限制"],
+    ["Tailscale", "Tailscale"],
+    ["Allowlist", "允许列表"],
+    ["Denylist", "拒绝列表"],
+    ["Identity Avatar", "身份头像"],
+    ["Skill Filter", "技能过滤器"],
+    ["Agent Runtime", "智能体运行时"],
+    ["Defaults", "默认值"],
+    ["Enabled", "已启用"],
+    ["Version", "版本"],
+    ["Timestamp", "时间戳"],
+    ["Command", "命令"],
+    ["Timeout", "超时"],
+    ["Interval", "间隔"],
+    ["Path", "路径"],
+    ["Mode", "模式"],
+    ["State", "状态"],
+    ["Gateway", "网关"],
+    ["Environment", "环境"],
+    ["Browser", "浏览器"],
+    ["Diagnostics", "诊断"],
+    ["Logging", "日志记录"],
+    ["Agents", "智能体"],
+    ["Agent", "智能体"],
+    ["Tools", "工具"],
+    ["Tool", "工具"],
+    ["Session", "会话"],
+    ["Approval", "审批"],
+    ["Target", "目标"],
+    ["Provider", "提供商"],
+    ["Headers", "请求头"],
+    ["Protocol", "协议"],
+    ["Metrics", "指标"],
+    ["Traces", "追踪"],
+    ["Logs", "日志"],
+    ["Files", "文件"],
+    ["Prompt", "提示词"],
+    ["(ms)", "（毫秒）"],
+    ["(min)", "（分钟）"],
+    ["(hours)", "（小时）"],
+    ["(sec)", "（秒）"]
   ]
 }
