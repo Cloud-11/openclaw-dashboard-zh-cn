@@ -26,9 +26,14 @@ const STORAGE_KEYS = {
   styleState: "remoteThemeStyleState",
 };
 const LEGACY_THEME_PRESET_ALIASES = Object.freeze({
-  "apple-light": "soft-light",
-  "google-light": "clear-light",
-  "microsoft-light": "mist-light",
+  "apple-light": "paper-blueprint",
+  "google-light": "material-workbench",
+  "microsoft-light": "paper-blueprint",
+  "plus-clean": "graphite-signal",
+  "plus-contrast": "graphite-signal",
+  "soft-light": "soft-neomorph",
+  "clear-light": "paper-blueprint",
+  "mist-light": "paper-blueprint",
 });
 const uiLocaleStringsCache = new Map();
 const REMOTE_FETCH_TIMEOUT_MS = 6000;
@@ -95,27 +100,39 @@ const FONT_SCALE_OPTIONS = [
 ];
 const FALLBACK_THEME_BUNDLE = {
   schemaVersion: 1,
-  version: "builtin",
+  version: "builtin-0.6.0",
   defaultPreset: "openclaw-classic",
   presets: [
     {
       id: "openclaw-classic",
+      themeType: "palette",
+      legacyUiStylePreset: "openclaw-default",
       preserveNativeColors: true,
     },
     {
-      id: "plus-clean",
+      id: "graphite-signal",
+      themeType: "palette",
+      legacyUiStylePreset: "openclaw-default",
     },
     {
-      id: "plus-contrast",
+      id: "cinder-amber",
+      themeType: "palette",
+      legacyUiStylePreset: "openclaw-default",
     },
     {
-      id: "soft-light",
+      id: "paper-blueprint",
+      themeType: "palette",
+      legacyUiStylePreset: "openclaw-default",
     },
     {
-      id: "clear-light",
+      id: "material-workbench",
+      themeType: "system",
+      legacyUiStylePreset: "material",
     },
     {
-      id: "mist-light",
+      id: "soft-neomorph",
+      themeType: "system",
+      legacyUiStylePreset: "soft-neumorphism",
     },
   ],
 };
@@ -134,7 +151,7 @@ const FALLBACK_UI_STYLE_BUNDLE = {
       id: "flat",
     },
     {
-      id: "soft-rounded",
+      id: "soft-neumorphism",
     },
   ],
 };
@@ -201,7 +218,6 @@ function getElements() {
     panelSelect: { root: $("panel-locale-control"), trigger: $("panel-locale-trigger"), menu: $("panel-locale-menu") },
     contentSelect: { root: $("locale-control"), trigger: $("locale-trigger"), menu: $("locale-menu") },
     themePresetSelect: { root: $("theme-palette-control"), trigger: $("theme-palette-trigger"), menu: $("theme-palette-menu") },
-    uiStylePresetSelect: { root: $("theme-ui-style-control"), trigger: $("theme-ui-style-trigger"), menu: $("theme-ui-style-menu") },
     themeFontSelect: { root: $("theme-font-control"), trigger: $("theme-font-trigger"), menu: $("theme-font-menu") },
     themeScaleSelect: { root: $("theme-scale-control"), trigger: $("theme-scale-trigger"), menu: $("theme-scale-menu") },
     styleOverride: $("style-override"),
@@ -213,7 +229,6 @@ function getElements() {
     clearTheme: $("clear-theme"),
     themeStatus: $("theme-status"),
     themeCurrentPalette: $("theme-current-palette"),
-    themeCurrentUiStyle: $("theme-current-ui-style"),
     themeBuiltinVersion: $("theme-builtin-version"),
     themeCachedVersion: $("theme-cached-version"),
     themeActiveSource: $("theme-active-source"),
@@ -422,6 +437,15 @@ function normalizeThemePreset(entry) {
     id,
     label,
     nativeLabel,
+    themeType:
+      entry.themeType === "palette" || entry.themeType === "system"
+        ? entry.themeType
+        : entry.preserveNativeColors === true
+          ? "palette"
+          : "system",
+    legacyUiStylePreset: typeof entry.legacyUiStylePreset === "string" && entry.legacyUiStylePreset.trim()
+      ? entry.legacyUiStylePreset.trim()
+      : "",
     preserveNativeColors: entry.preserveNativeColors === true,
     description: typeof entry.description === "string" && entry.description.trim() ? entry.description.trim() : "",
     nativeDescription: typeof entry.nativeDescription === "string" && entry.nativeDescription.trim()
@@ -670,6 +694,14 @@ function resolveUiStylePreset(bundle, presetId) {
   );
 }
 
+function resolveThemeLegacyUiStylePreset(bundle, themePreset, fallbackId = DEFAULT_SETTINGS.uiStylePreset) {
+  const requestedId =
+    themePreset && typeof themePreset.legacyUiStylePreset === "string" && themePreset.legacyUiStylePreset.trim()
+      ? themePreset.legacyUiStylePreset.trim()
+      : fallbackId;
+  return resolveUiStylePreset(bundle, requestedId)?.id || fallbackId;
+}
+
 function normalizeMetadata(raw, version) {
   const metadata = raw && typeof raw === "object" ? raw : {};
   const locales = normalizeLocaleEntries(metadata.locales, FALLBACK_METADATA.locales);
@@ -710,6 +742,20 @@ function normalizeMetadata(raw, version) {
   };
 }
 
+function mergeLocaleEntries(baseEntries = [], nextEntries = []) {
+  const merged = new Map();
+
+  for (const entry of normalizeLocaleEntries(baseEntries)) {
+    merged.set(entry.code, { ...entry });
+  }
+
+  for (const entry of normalizeLocaleEntries(nextEntries)) {
+    merged.set(entry.code, { ...(merged.get(entry.code) || {}), ...entry });
+  }
+
+  return [...merged.values()];
+}
+
 function mergeMetadata(base, next) {
   return {
     ...base,
@@ -717,8 +763,8 @@ function mergeMetadata(base, next) {
     compatibility: { ...(base.compatibility || {}), ...(next.compatibility || {}) },
     author: { ...(base.author || {}), ...(next.author || {}) },
     repositories: { ...(base.repositories || {}), ...(next.repositories || {}) },
-    locales: Array.isArray(next.locales) && next.locales.length ? next.locales : base.locales,
-    uiLocales: Array.isArray(next.uiLocales) && next.uiLocales.length ? next.uiLocales : base.uiLocales,
+    locales: mergeLocaleEntries(base.locales, next.locales),
+    uiLocales: mergeLocaleEntries(base.uiLocales, next.uiLocales),
     translationBundle: {
       ...(base.translationBundle || {}),
       ...(next.translationBundle || {}),
@@ -1095,14 +1141,9 @@ function renderAll(elements, state) {
   const cachedState = state.cachedStates?.[content];
   const activeSource = sourceLabel(state, cachedState, localeEntry);
   const themeBundle = effectiveThemeBundle(state);
-  const uiStyleBundle = effectiveUiStyleBundle(state);
   const themePreset = resolveThemePreset(
     themeBundle,
     state.draft.themePreset || state.settings.themePreset || metadata.themeBundle?.defaultPreset || DEFAULT_SETTINGS.themePreset,
-  );
-  const uiStylePreset = resolveUiStylePreset(
-    uiStyleBundle,
-    state.draft.uiStylePreset || state.settings.uiStylePreset || metadata.uiStyleBundle?.defaultPreset || DEFAULT_SETTINGS.uiStylePreset,
   );
 
   ensureMessages(state, metadata);
@@ -1154,20 +1195,6 @@ function renderAll(elements, state) {
     })),
     themePreset.id,
     state.openSelect === "themePreset",
-  );
-  renderSelect(
-    elements.uiStylePresetSelect,
-    uiStyleBundle.presets.map((entry) => ({
-      value: entry.id,
-      label: uiStylePresetName(state, entry),
-      note: uiStylePresetDescription(state, entry) || (
-        state.cachedUiStyleBundle?.presets?.some((preset) => preset.id === entry.id)
-          ? t(state, "theme_option_cached", {}, "Cached remote preset")
-          : t(state, "theme_option_builtin", {}, "Bundled preset")
-      ),
-    })),
-    uiStylePreset.id,
-    state.openSelect === "uiStylePreset",
   );
   renderSelect(
     elements.themeFontSelect,
@@ -1241,21 +1268,18 @@ function renderAll(elements, state) {
   elements.activeSource.textContent = activeSource;
   elements.lastSync.textContent = formatDateTime(state, cachedState?.fetchedAt);
   elements.themeCurrentPalette.textContent = themePresetName(state, themePreset) || themePreset.id;
-  elements.themeCurrentUiStyle.textContent = uiStylePresetName(state, uiStylePreset) || uiStylePreset.id;
-  elements.themeBuiltinVersion.textContent = [
-    state.builtinThemeBundle?.version || metadata.themeBundle?.builtinVersion,
-    state.builtinUiStyleBundle?.version || metadata.uiStyleBundle?.builtinVersion,
-  ].filter(Boolean).join(" / ") || t(state, "not_builtin", {}, "Not built-in");
-  elements.themeCachedVersion.textContent = [
-    state.cachedThemeBundle?.version,
-    state.cachedUiStyleBundle?.version,
-  ].filter(Boolean).join(" / ") || t(state, "not_cached", {}, "Not cached");
+  elements.themeBuiltinVersion.textContent = state.builtinThemeBundle?.version
+    || metadata.themeBundle?.builtinVersion
+    || t(state, "not_builtin", {}, "Not built-in");
+  elements.themeCachedVersion.textContent = state.cachedThemeBundle?.version
+    || state.cachedThemeState?.version
+    || t(state, "not_cached", {}, "Not cached");
   elements.themeActiveSource.textContent = state.cachedThemeState?.sourceLabel
-    || state.cachedUiStyleState?.sourceLabel
-    || (state.cachedThemeBundle || state.cachedUiStyleBundle
+    || state.cachedThemeState?.sourceId
+    || (state.cachedThemeBundle
       ? t(state, "locale_source_cached", {}, "Cached")
       : t(state, "locale_source_builtin", {}, "Built-in"));
-  elements.themeLastSync.textContent = formatDateTime(state, state.cachedThemeState?.fetchedAt || state.cachedUiStyleState?.fetchedAt);
+  elements.themeLastSync.textContent = formatDateTime(state, state.cachedThemeState?.fetchedAt);
 
   renderStatuses(elements, state);
 }
@@ -1432,15 +1456,20 @@ async function saveRuntimeSettings(elements, state) {
 
 async function saveThemeSettings(elements, state) {
   const fontOptions = FONT_OPTIONS.map((entry) => entry.value);
+  const themeBundle = effectiveThemeBundle(state);
   const uiStyleBundle = effectiveUiStyleBundle(state);
+  const selectedThemePreset = resolveThemePreset(
+    themeBundle,
+    state.draft.themePreset || state.settings.themePreset || DEFAULT_SETTINGS.themePreset,
+  );
   const nextSettings = {
     ...state.settings,
-    themePreset: typeof state.draft.themePreset === "string" && state.draft.themePreset.trim()
-      ? state.draft.themePreset.trim()
-      : DEFAULT_SETTINGS.themePreset,
-    uiStylePreset: typeof state.draft.uiStylePreset === "string" && state.draft.uiStylePreset.trim()
-      ? resolveUiStylePreset(uiStyleBundle, state.draft.uiStylePreset.trim())?.id || DEFAULT_SETTINGS.uiStylePreset
-      : DEFAULT_SETTINGS.uiStylePreset,
+    themePreset: selectedThemePreset?.id || DEFAULT_SETTINGS.themePreset,
+    uiStylePreset: resolveThemeLegacyUiStylePreset(
+      uiStyleBundle,
+      selectedThemePreset,
+      state.settings.uiStylePreset || DEFAULT_SETTINGS.uiStylePreset,
+    ),
     fontFamily: normalizeChoice(state.draft.fontFamily, fontOptions, DEFAULT_SETTINGS.fontFamily),
     fontScale: normalizeFontScale(state.draft.fontScale),
     styleOverride: state.draft.styleOverride !== false,
@@ -1699,20 +1728,14 @@ function bindSelects(elements, state) {
       control: elements.themePresetSelect,
       onPick: async (value) => {
         state.draft.themePreset = value;
+        state.draft.uiStylePreset = resolveThemeLegacyUiStylePreset(
+          effectiveUiStyleBundle(state),
+          resolveThemePreset(effectiveThemeBundle(state), value),
+          state.settings.uiStylePreset || DEFAULT_SETTINGS.uiStylePreset,
+        );
         state.openSelect = null;
         setStatus(state, "theme", "theme_status_selected", "info", {
           preset: themePresetName(state, resolveThemePreset(effectiveThemeBundle(state), value)) || value,
-        });
-        renderAll(elements, state);
-      },
-    },
-    uiStylePreset: {
-      control: elements.uiStylePresetSelect,
-      onPick: async (value) => {
-        state.draft.uiStylePreset = value;
-        state.openSelect = null;
-        setStatus(state, "theme", "theme_status_selected", "info", {
-          preset: uiStylePresetName(state, resolveUiStylePreset(effectiveUiStyleBundle(state), value)) || value,
         });
         renderAll(elements, state);
       },
@@ -1755,7 +1778,6 @@ function bindSelects(elements, state) {
       elements.panelSelect.root,
       elements.contentSelect.root,
       elements.themePresetSelect.root,
-      elements.uiStylePresetSelect.root,
       elements.themeFontSelect.root,
       elements.themeScaleSelect.root,
     ];

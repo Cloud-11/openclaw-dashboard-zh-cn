@@ -54,7 +54,18 @@
   border-radius: var(--radius-md) !important;
 }
 
-:where(.theme-orb__menu, .login-gate__card, .sidebar-version, .config-section-card, .settings-appearance__section, .settings-info-row, .cfg-array, .cfg-map, .cfg-object) {
+:where(.theme-orb__menu, .login-gate__card, .sidebar-version, .config-section-card, .settings-appearance__section, .settings-info-row, .settings-theme-card, .topbar-theme-mode, .cfg-array, .cfg-map, .cfg-object) {
   box-shadow: var(--ocdp-surface-shadow, var(--shadow-md)) !important;
   backdrop-filter: var(--ocdp-surface-backdrop-filter, none) !important;
+}
+
+:where(.settings-theme-card, .topbar-theme-mode__btn) {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+:where(.settings-theme-card:focus-visible, .settings-theme-card__check:focus-visible, .topbar-theme-mode:focus-within) {
+  outline: none !important;
+  box-shadow:
+    var(--ocdp-focus-ring, 0 0 0 3px var(--accent-subtle)),
+    var(--ocdp-surface-shadow, var(--shadow-md)) !important;
 }

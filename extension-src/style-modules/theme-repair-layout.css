@@ -6,6 +6,16 @@
   gap: var(--ocdp-section-gap, 12px) !important;
 }
 
+:where(.settings-theme-grid) {
+  grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)) !important;
+  gap: var(--ocdp-section-gap, 12px) !important;
+}
+
+:where(.settings-info-grid) {
+  display: grid !important;
+  gap: calc(var(--ocdp-section-gap, 12px) - 2px) !important;
+}
+
 :where(.chat-controls__session-row) {
   align-items: flex-start !important;
 }
@@ -20,4 +30,16 @@
 
 :where(.message-composer textarea, .chat-input textarea, .composer textarea) {
   line-height: 1.55 !important;
+}
+
+@media (max-width: 900px) {
+  :where(.settings-theme-grid) {
+    grid-template-columns: 1fr !important;
+  }
+
+  :where(.settings-info-row) {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
 }

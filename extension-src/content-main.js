@@ -343,144 +343,241 @@
   }
 
   const LEGACY_THEME_PRESET_ALIASES = Object.freeze({
-    "apple-light": "soft-light",
-    "google-light": "clear-light",
-    "microsoft-light": "mist-light",
+    "apple-light": "paper-blueprint",
+    "google-light": "material-workbench",
+    "microsoft-light": "paper-blueprint",
+    "plus-clean": "graphite-signal",
+    "plus-contrast": "graphite-signal",
+    "soft-light": "soft-neomorph",
+    "clear-light": "paper-blueprint",
+    "mist-light": "paper-blueprint",
   });
   const FALLBACK_THEME_PRESET_BUNDLE = Object.freeze({
-  "schemaVersion": 1,
-  "version": "builtin-0.3.0",
-  "defaultPreset": "openclaw-classic",
-  "presets": [
-    {
-      "id": "openclaw-classic",
-      "label": "OpenClaw Classic",
-      "nativeLabel": "OpenClaw 原版增强",
-      "description": "Keeps the original OpenClaw palette and only layers structural repairs on top.",
-      "nativeDescription": "保留 OpenClaw 原本配色，只在其上叠加结构性修补。",
-      "preserveNativeColors": true,
-      "variables": {
-        "page-bg": "var(--bg)",
-        "surface": "var(--bg-elevated)",
-        "surface-2": "var(--bg-hover)",
-        "text": "var(--text)",
-        "muted": "var(--muted)",
-        "border": "var(--border)",
-        "accent": "var(--accent)",
-        "accent-soft": "var(--accent-subtle)",
-        "control-bg": "var(--input)",
-        "control-text": "var(--text)",
-        "control-border": "var(--border-strong)",
-        "page-overlay": "transparent"
+    "schemaVersion": 1,
+    "version": "builtin-0.6.0",
+    "defaultPreset": "openclaw-classic",
+    "presets": [
+      {
+        "id": "openclaw-classic",
+        "label": "OpenClaw Classic",
+        "nativeLabel": "OpenClaw 原版增强",
+        "themeType": "palette",
+        "legacyUiStylePreset": "openclaw-default",
+        "description": "The familiar OpenClaw color system with repaired spacing, cards, and controls.",
+        "nativeDescription": "保留熟悉的 OpenClaw 颜色系统，同时统一卡片、间距和控件细节。",
+        "preserveNativeColors": true,
+        "variables": {
+          "page-bg": "var(--bg)",
+          "surface": "var(--bg-elevated)",
+          "surface-2": "var(--bg-hover)",
+          "text": "var(--text)",
+          "muted": "var(--muted)",
+          "border": "var(--border)",
+          "accent": "var(--accent)",
+          "accent-soft": "var(--accent-subtle)",
+          "control-bg": "var(--input)",
+          "control-text": "var(--text)",
+          "control-border": "var(--border-strong)",
+          "page-overlay": "transparent"
+        }
+      },
+      {
+        "id": "graphite-signal",
+        "label": "Graphite Signal",
+        "nativeLabel": "石墨信号",
+        "themeType": "palette",
+        "legacyUiStylePreset": "openclaw-default",
+        "description": "A pure dark console palette with graphite layers, mint signal accents, and clean OLED-friendly contrast.",
+        "nativeDescription": "纯粹的暗色控制台配色，石墨层次配合薄荷信号色，对比清晰且更适合长时间查看。",
+        "variables": {
+          "page-bg": "#061018",
+          "surface": "rgba(9, 19, 28, 0.96)",
+          "surface-2": "rgba(14, 28, 40, 0.98)",
+          "text": "#f3f8fb",
+          "muted": "#9bb2c4",
+          "border": "rgba(113, 136, 158, 0.24)",
+          "accent": "#37d39a",
+          "accent-soft": "rgba(55, 211, 154, 0.18)",
+          "control-bg": "#10202d",
+          "control-text": "#f3f8fb",
+          "control-border": "rgba(77, 168, 138, 0.36)",
+          "page-overlay": "rgba(55, 211, 154, 0.12)"
+        }
+      },
+      {
+        "id": "cinder-amber",
+        "label": "Cinder Amber",
+        "nativeLabel": "余烬琥珀",
+        "themeType": "palette",
+        "legacyUiStylePreset": "openclaw-default",
+        "description": "A pure dark palette built from cinder neutrals and amber highlights for a warmer command-room feel.",
+        "nativeDescription": "纯粹的暗色配色，以炉烬中性色和琥珀高亮构成，更像带温度的指挥台。",
+        "variables": {
+          "page-bg": "#120c08",
+          "surface": "rgba(24, 17, 13, 0.96)",
+          "surface-2": "rgba(34, 24, 18, 0.98)",
+          "text": "#fff7ef",
+          "muted": "#c8ad92",
+          "border": "rgba(161, 121, 82, 0.24)",
+          "accent": "#ffb24d",
+          "accent-soft": "rgba(255, 178, 77, 0.18)",
+          "control-bg": "#221811",
+          "control-text": "#fff7ef",
+          "control-border": "rgba(204, 150, 93, 0.36)",
+          "page-overlay": "rgba(255, 178, 77, 0.12)"
+        }
+      },
+      {
+        "id": "paper-blueprint",
+        "label": "Paper Blueprint",
+        "nativeLabel": "纸感蓝图",
+        "themeType": "palette",
+        "legacyUiStylePreset": "openclaw-default",
+        "description": "A clean light palette with paper-white surfaces, blueprint blues, and restrained contrast for daytime control work.",
+        "nativeDescription": "简洁的亮色配色，纸白表面搭配蓝图蓝点缀，适合白天环境下的控制台使用。",
+        "variables": {
+          "page-bg": "#f4f7fb",
+          "surface": "#ffffff",
+          "surface-2": "#edf3fb",
+          "text": "#1a2a3c",
+          "muted": "#647487",
+          "border": "#d7e2ee",
+          "accent": "#2f6fd6",
+          "accent-soft": "rgba(47, 111, 214, 0.14)",
+          "control-bg": "#f8fbff",
+          "control-text": "#1a2a3c",
+          "control-border": "#c8d9ea",
+          "page-overlay": "rgba(47, 111, 214, 0.08)"
+        }
+      },
+      {
+        "id": "material-workbench",
+        "label": "Material Workbench",
+        "nativeLabel": "Material 工作台",
+        "themeType": "system",
+        "legacyUiStylePreset": "material",
+        "description": "A full Material-inspired workbench with tonal surfaces, clear outlines, and stronger state feedback across the page.",
+        "nativeDescription": "完整的 Material 风格工作台，使用色调表面、清晰描边和更明确的状态反馈重构整个页面。",
+        "variables": {
+          "page-bg": "#eef3f9",
+          "surface": "#ffffff",
+          "surface-2": "#e8eef8",
+          "text": "#172534",
+          "muted": "#5c6d81",
+          "border": "#c8d3e1",
+          "accent": "#3662e3",
+          "accent-soft": "rgba(54, 98, 227, 0.16)",
+          "control-bg": "#f4f7fd",
+          "control-text": "#172534",
+          "control-border": "#c3cee0",
+          "page-overlay": "rgba(54, 98, 227, 0.08)",
+          "radius-sm": "8px",
+          "radius-md": "12px",
+          "radius-lg": "18px",
+          "radius-xl": "26px",
+          "shadow-sm": "0 3px 8px rgba(23, 37, 52, 0.08)",
+          "shadow-md": "0 16px 34px rgba(23, 37, 52, 0.12)",
+          "shadow-lg": "0 28px 52px rgba(23, 37, 52, 0.16)",
+          "shadow-xl": "0 40px 72px rgba(23, 37, 52, 0.18)",
+          "control-height": "48px",
+          "control-padding-x": "16px",
+          "button-padding-x": "20px",
+          "button-icon-size": "20px",
+          "card-padding": "20px",
+          "section-gap": "18px",
+          "surface-border-width": "1px",
+          "surface-bg": "linear-gradient(180deg, color-mix(in srgb, white 84%, var(--accent-soft) 16%) 0%, color-mix(in srgb, var(--bg-elevated) 94%, transparent) 100%)",
+          "surface-border": "color-mix(in srgb, var(--accent) 14%, var(--border) 86%)",
+          "surface-shadow": "0 20px 42px rgba(23, 37, 52, 0.12), 0 2px 6px rgba(23, 37, 52, 0.06)",
+          "surface-backdrop-filter": "none",
+          "control-hover-bg": "linear-gradient(180deg, color-mix(in srgb, white 68%, var(--accent-soft) 32%) 0%, color-mix(in srgb, var(--bg-hover) 92%, transparent) 100%)",
+          "control-shadow": "inset 0 1px 0 rgba(255, 255, 255, 0.48), 0 1px 2px rgba(23, 37, 52, 0.04)",
+          "control-backdrop-filter": "none",
+          "button-bg": "linear-gradient(180deg, white 0%, color-mix(in srgb, var(--bg-hover) 88%, transparent) 100%)",
+          "button-hover-bg": "linear-gradient(180deg, color-mix(in srgb, white 62%, var(--accent-soft) 38%) 0%, color-mix(in srgb, var(--bg-hover) 90%, transparent) 100%)",
+          "button-border": "color-mix(in srgb, var(--accent) 16%, var(--border) 84%)",
+          "button-shadow": "0 10px 22px rgba(23, 37, 52, 0.08)",
+          "button-text": "var(--text)",
+          "button-primary-bg": "linear-gradient(135deg, #4f7cf0 0%, #3662e3 100%)",
+          "button-primary-text": "#ffffff",
+          "button-primary-border": "color-mix(in srgb, #3662e3 48%, transparent)",
+          "button-primary-shadow": "0 16px 30px rgba(54, 98, 227, 0.22)",
+          "button-active-bg": "linear-gradient(180deg, color-mix(in srgb, var(--accent-soft) 72%, white 28%) 0%, color-mix(in srgb, var(--accent-soft) 52%, transparent) 100%)",
+          "button-active-text": "var(--text-strong)",
+          "button-active-border": "color-mix(in srgb, var(--accent) 32%, transparent)",
+          "button-active-shadow": "0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.22)",
+          "menu-bg": "linear-gradient(180deg, color-mix(in srgb, white 86%, var(--accent-soft) 14%) 0%, color-mix(in srgb, var(--bg-elevated) 94%, transparent) 100%)",
+          "menu-border": "color-mix(in srgb, var(--accent) 16%, var(--border) 84%)",
+          "menu-shadow": "0 30px 54px rgba(23, 37, 52, 0.16)",
+          "menu-backdrop-filter": "none",
+          "focus-ring": "0 0 0 4px color-mix(in srgb, var(--accent-soft) 82%, transparent)"
+        }
+      },
+      {
+        "id": "soft-neomorph",
+        "label": "Soft Neomorph",
+        "nativeLabel": "轻拟物风",
+        "themeType": "system",
+        "legacyUiStylePreset": "soft-neumorphism",
+        "description": "A full soft-neumorphic redesign with improved light-theme contrast, tactile surfaces, and gentle raised controls.",
+        "nativeDescription": "完整的轻拟物重设计，在亮色环境下保持更好的对比度，并通过柔和起伏表面与控件触感重塑整个页面。",
+        "variables": {
+          "page-bg": "#e8eef5",
+          "surface": "#edf3f9",
+          "surface-2": "#e3ebf4",
+          "text": "#1c2a3a",
+          "muted": "#647488",
+          "border": "#d8e1eb",
+          "accent": "#648cf6",
+          "accent-soft": "rgba(100, 140, 246, 0.16)",
+          "control-bg": "#ebf1f7",
+          "control-text": "#1c2a3a",
+          "control-border": "#dde5ef",
+          "page-overlay": "rgba(100, 140, 246, 0.08)",
+          "radius-sm": "16px",
+          "radius-md": "20px",
+          "radius-lg": "28px",
+          "radius-xl": "36px",
+          "shadow-sm": "-4px -4px 10px rgba(255, 255, 255, 0.9), 6px 6px 14px rgba(154, 169, 189, 0.28)",
+          "shadow-md": "-8px -8px 18px rgba(255, 255, 255, 0.92), 12px 12px 26px rgba(154, 169, 189, 0.3)",
+          "shadow-lg": "-12px -12px 24px rgba(255, 255, 255, 0.94), 18px 18px 36px rgba(154, 169, 189, 0.32)",
+          "shadow-xl": "-16px -16px 32px rgba(255, 255, 255, 0.96), 24px 24px 46px rgba(154, 169, 189, 0.34)",
+          "control-height": "46px",
+          "control-padding-x": "18px",
+          "button-padding-x": "20px",
+          "button-icon-size": "20px",
+          "card-padding": "20px",
+          "section-gap": "18px",
+          "surface-border-width": "1px",
+          "surface-bg": "linear-gradient(145deg, #f3f7fb 0%, #e6edf5 100%)",
+          "surface-border": "rgba(255, 255, 255, 0.74)",
+          "surface-shadow": "-12px -12px 24px rgba(255, 255, 255, 0.96), 18px 18px 36px rgba(154, 169, 189, 0.3)",
+          "surface-backdrop-filter": "none",
+          "control-hover-bg": "linear-gradient(145deg, color-mix(in srgb, #edf3f9 74%, var(--accent-soft) 26%) 0%, color-mix(in srgb, #dde7f3 90%, transparent) 100%)",
+          "control-shadow": "inset 4px 4px 10px rgba(166, 178, 196, 0.22), inset -4px -4px 10px rgba(255, 255, 255, 0.88)",
+          "control-backdrop-filter": "none",
+          "button-bg": "linear-gradient(145deg, #f2f6fb 0%, #e4ebf4 100%)",
+          "button-hover-bg": "linear-gradient(145deg, color-mix(in srgb, #eef3f9 72%, var(--accent-soft) 28%) 0%, color-mix(in srgb, #dfe8f3 90%, transparent) 100%)",
+          "button-border": "rgba(255, 255, 255, 0.78)",
+          "button-shadow": "-8px -8px 18px rgba(255, 255, 255, 0.94), 12px 12px 24px rgba(154, 169, 189, 0.26)",
+          "button-text": "var(--text)",
+          "button-primary-bg": "linear-gradient(145deg, #7ba0ff 0%, #648cf6 100%)",
+          "button-primary-text": "#ffffff",
+          "button-primary-border": "rgba(255, 255, 255, 0.34)",
+          "button-primary-shadow": "-6px -6px 14px rgba(255, 255, 255, 0.42), 14px 14px 28px rgba(100, 140, 246, 0.28)",
+          "button-active-bg": "linear-gradient(145deg, color-mix(in srgb, var(--accent-soft) 64%, #e7eef7 36%) 0%, color-mix(in srgb, var(--accent-soft) 42%, transparent) 100%)",
+          "button-active-text": "var(--text-strong)",
+          "button-active-border": "rgba(255, 255, 255, 0.64)",
+          "button-active-shadow": "inset 4px 4px 10px rgba(166, 178, 196, 0.22), inset -4px -4px 10px rgba(255, 255, 255, 0.88)",
+          "menu-bg": "linear-gradient(145deg, #f4f8fc 0%, #e6edf5 100%)",
+          "menu-border": "rgba(255, 255, 255, 0.8)",
+          "menu-shadow": "-14px -14px 28px rgba(255, 255, 255, 0.96), 20px 20px 40px rgba(154, 169, 189, 0.3)",
+          "menu-backdrop-filter": "none",
+          "focus-ring": "0 0 0 4px color-mix(in srgb, var(--accent-soft) 78%, transparent)"
+        }
       }
-    },
-    {
-      "id": "plus-clean",
-      "label": "Plus Clean",
-      "nativeLabel": "Plus 清爽版",
-      "description": "A restrained dark palette with cleaner neutrals and calmer contrast.",
-      "nativeDescription": "更克制的暗色配色，中性色更干净、对比更柔和。",
-      "variables": {
-        "page-bg": "#0c1422",
-        "surface": "rgba(13, 24, 39, 0.95)",
-        "surface-2": "rgba(19, 33, 52, 0.96)",
-        "text": "#edf5ff",
-        "muted": "#9db0c8",
-        "border": "rgba(127, 149, 182, 0.24)",
-        "accent": "#7dd3fc",
-        "accent-soft": "rgba(125, 211, 252, 0.16)",
-        "control-bg": "#152338",
-        "control-text": "#edf5ff",
-        "control-border": "rgba(125, 159, 211, 0.28)",
-        "page-overlay": "rgba(125, 211, 252, 0.14)"
-      }
-    },
-    {
-      "id": "plus-contrast",
-      "label": "Plus Contrast",
-      "nativeLabel": "Plus 高对比",
-      "description": "A darker, higher-contrast palette tuned for stronger separation and emphasis.",
-      "nativeDescription": "更深、更高对比的配色，强调层级分离和重点信息。",
-      "variables": {
-        "page-bg": "#060b16",
-        "surface": "rgba(10, 17, 31, 0.96)",
-        "surface-2": "rgba(17, 24, 39, 0.96)",
-        "text": "#f8fbff",
-        "muted": "#b7c4dc",
-        "border": "rgba(148, 163, 184, 0.28)",
-        "accent": "#38bdf8",
-        "accent-soft": "rgba(56, 189, 248, 0.18)",
-        "control-bg": "#101a2b",
-        "control-text": "#f8fbff",
-        "control-border": "rgba(103, 232, 249, 0.34)",
-        "page-overlay": "rgba(56, 189, 248, 0.18)"
-      }
-    },
-    {
-      "id": "soft-light",
-      "label": "Soft Light",
-      "nativeLabel": "柔光亮色",
-      "description": "A gentle light palette with warm neutrals and soft blue accents.",
-      "nativeDescription": "柔和的亮色配色，暖中性色搭配克制的蓝色强调。",
-      "variables": {
-        "page-bg": "#f6f3ee",
-        "surface": "rgba(255, 252, 248, 0.94)",
-        "surface-2": "#fffaf5",
-        "text": "#2d241f",
-        "muted": "#7e6f66",
-        "border": "rgba(67, 47, 34, 0.12)",
-        "accent": "#5a7be7",
-        "accent-soft": "rgba(90, 123, 231, 0.14)",
-        "control-bg": "rgba(255, 255, 255, 0.96)",
-        "control-text": "#2d241f",
-        "control-border": "rgba(67, 47, 34, 0.16)",
-        "page-overlay": "rgba(90, 123, 231, 0.10)"
-      }
-    },
-    {
-      "id": "clear-light",
-      "label": "Clear Light",
-      "nativeLabel": "清透亮色",
-      "description": "A cleaner light palette with crisp surfaces and brighter accents.",
-      "nativeDescription": "更清透的亮色配色，表面更清爽，强调色更明快。",
-      "variables": {
-        "page-bg": "#f7fbff",
-        "surface": "#ffffff",
-        "surface-2": "#f3f8ff",
-        "text": "#1f2937",
-        "muted": "#66758b",
-        "border": "#dbe5f1",
-        "accent": "#2d6cdf",
-        "accent-soft": "rgba(45, 108, 223, 0.14)",
-        "control-bg": "#f8fbff",
-        "control-text": "#1f2937",
-        "control-border": "#c9d8ea",
-        "page-overlay": "rgba(45, 108, 223, 0.10)"
-      }
-    },
-    {
-      "id": "mist-light",
-      "label": "Mist Light",
-      "nativeLabel": "雾感亮色",
-      "description": "A cool, calm light palette with softer contrast and muted surfaces.",
-      "nativeDescription": "偏冷静的亮色配色，对比更柔和，表面层次更安静。",
-      "variables": {
-        "page-bg": "#f2f5fb",
-        "surface": "rgba(255, 255, 255, 0.95)",
-        "surface-2": "#edf2f8",
-        "text": "#1d2430",
-        "muted": "#657182",
-        "border": "rgba(82, 94, 117, 0.16)",
-        "accent": "#2f6fb5",
-        "accent-soft": "rgba(47, 111, 181, 0.14)",
-        "control-bg": "#ffffff",
-        "control-text": "#1d2430",
-        "control-border": "rgba(47, 111, 181, 0.18)",
-        "page-overlay": "rgba(47, 111, 181, 0.09)"
-      }
-    }
-  ]
-});
+    ]
+  });
   const FALLBACK_UI_STYLE_BUNDLE = Object.freeze({
   "schemaVersion": 1,
   "version": "builtin-0.4.1",
@@ -978,6 +1075,16 @@
       id,
       label,
       nativeLabel,
+      themeType:
+        entry.themeType === "palette" || entry.themeType === "system"
+          ? entry.themeType
+          : entry.preserveNativeColors === true
+            ? "palette"
+            : "system",
+      legacyUiStylePreset:
+        typeof entry.legacyUiStylePreset === "string" && entry.legacyUiStylePreset.trim()
+          ? normalizeUiStylePresetId(entry.legacyUiStylePreset)
+          : "",
       preserveNativeColors: entry.preserveNativeColors === true,
       description:
         typeof entry.description === "string" && entry.description.trim()
@@ -1155,6 +1262,14 @@
     );
   }
 
+  function resolveThemeLegacyUiStylePreset(bundle, themePreset, fallbackId = DEFAULT_RUNTIME_SETTINGS.uiStylePreset) {
+    const requestedId =
+      themePreset && typeof themePreset.legacyUiStylePreset === "string" && themePreset.legacyUiStylePreset.trim()
+        ? normalizeUiStylePresetId(themePreset.legacyUiStylePreset)
+        : normalizeUiStylePresetId(fallbackId);
+    return resolveUiStylePreset(bundle, requestedId)?.id || normalizeUiStylePresetId(fallbackId);
+  }
+
   async function fetchJsonWithTimeout(url, timeoutMs = REMOTE_FETCH_TIMEOUT_MS) {
     const controller =
       typeof AbortController === "function" ? new AbortController() : null;
@@ -1281,7 +1396,7 @@
     const fontFamily = FONT_FAMILY_MAP[settings.fontFamily] || FONT_FAMILY_MAP.system;
     const fontScale = `${normalizeFontScale(settings.fontScale)}%`;
     const preserveNativeColors = palettePreset?.preserveNativeColors === true;
-    const paletteVariables = {
+    const basePaletteVariables = {
       ...(preserveNativeColors
         ? {
             "page-bg": "var(--bg)",
@@ -1311,9 +1426,8 @@
             "control-border": "rgba(125, 159, 211, 0.3)",
             "page-overlay": "rgba(96, 165, 250, 0.18)",
           }),
-      ...(palettePreset?.variables || {}),
     };
-    const uiVariables = {
+    const baseUiVariables = {
       "radius-sm": "10px",
       "radius-md": "12px",
       "radius-lg": "16px",
@@ -1356,31 +1470,32 @@
       "menu-shadow": "var(--shadow-lg)",
       "menu-backdrop-filter": "blur(18px)",
       "focus-ring": "0 0 0 3px var(--accent-subtle)",
-      ...(uiStylePreset?.variables || {}),
     };
     const variables = {
-      ...paletteVariables,
-      ...uiVariables,
+      ...basePaletteVariables,
+      ...baseUiVariables,
+      ...(uiStylePreset?.variables || {}),
+      ...(palettePreset?.variables || {}),
     };
-    const pageBg = escapeCssValue(paletteVariables["page-bg"]);
-    const surface = escapeCssValue(paletteVariables.surface);
-    const surface2 = escapeCssValue(paletteVariables["surface-2"]);
-    const text = escapeCssValue(paletteVariables.text);
-    const muted = escapeCssValue(paletteVariables.muted);
-    const border = escapeCssValue(paletteVariables.border);
-    const accent = escapeCssValue(paletteVariables.accent);
-    const accentSoft = escapeCssValue(paletteVariables["accent-soft"]);
-    const controlBg = escapeCssValue(paletteVariables["control-bg"]);
-    const controlText = escapeCssValue(paletteVariables["control-text"]);
-    const controlBorder = escapeCssValue(paletteVariables["control-border"]);
-    const radiusSm = escapeCssValue(uiVariables["radius-sm"]);
-    const radiusMd = escapeCssValue(uiVariables["radius-md"]);
-    const radiusLg = escapeCssValue(uiVariables["radius-lg"]);
-    const radiusXl = escapeCssValue(uiVariables["radius-xl"]);
-    const shadowSm = escapeCssValue(uiVariables["shadow-sm"]);
-    const shadowMd = escapeCssValue(uiVariables["shadow-md"]);
-    const shadowLg = escapeCssValue(uiVariables["shadow-lg"]);
-    const shadowXl = escapeCssValue(uiVariables["shadow-xl"]);
+    const pageBg = escapeCssValue(variables["page-bg"]);
+    const surface = escapeCssValue(variables.surface);
+    const surface2 = escapeCssValue(variables["surface-2"]);
+    const text = escapeCssValue(variables.text);
+    const muted = escapeCssValue(variables.muted);
+    const border = escapeCssValue(variables.border);
+    const accent = escapeCssValue(variables.accent);
+    const accentSoft = escapeCssValue(variables["accent-soft"]);
+    const controlBg = escapeCssValue(variables["control-bg"]);
+    const controlText = escapeCssValue(variables["control-text"]);
+    const controlBorder = escapeCssValue(variables["control-border"]);
+    const radiusSm = escapeCssValue(variables["radius-sm"]);
+    const radiusMd = escapeCssValue(variables["radius-md"]);
+    const radiusLg = escapeCssValue(variables["radius-lg"]);
+    const radiusXl = escapeCssValue(variables["radius-xl"]);
+    const shadowSm = escapeCssValue(variables["shadow-sm"]);
+    const shadowMd = escapeCssValue(variables["shadow-md"]);
+    const shadowLg = escapeCssValue(variables["shadow-lg"]);
+    const shadowXl = escapeCssValue(variables["shadow-xl"]);
     const variableLines = Object.entries(variables)
       .map(([key, value]) => `--ocdp-${key}: ${escapeCssValue(value)};`)
       .join("\n");
@@ -1725,17 +1840,27 @@
     const { themeBundle: builtinBundle, uiStyleBundle: builtinUiStyleBundle } = await ensureBuiltinThemeResources();
     let mergedBundle = builtinBundle;
     let mergedUiStyleBundle = builtinUiStyleBundle;
+    const builtinThemePreset = resolveThemePreset(builtinBundle, nextPresetId);
+    const builtinThemeUiStylePresetId = resolveThemeLegacyUiStylePreset(
+      builtinUiStyleBundle,
+      builtinThemePreset,
+      nextUiStylePresetId,
+    );
+    const builtinThemeUiStylePreset = resolveUiStylePreset(
+      builtinUiStyleBundle,
+      builtinThemeUiStylePresetId,
+    );
     let nextState = {
-      presetId: nextPresetId,
+      presetId: builtinThemePreset?.id || nextPresetId,
       presetLabel:
-        resolveThemePreset(builtinBundle, nextPresetId)?.nativeLabel ||
-        resolveThemePreset(builtinBundle, nextPresetId)?.label ||
+        builtinThemePreset?.nativeLabel ||
+        builtinThemePreset?.label ||
         nextPresetId,
-      uiStylePresetId: nextUiStylePresetId,
+      uiStylePresetId: builtinThemeUiStylePreset?.id || builtinThemeUiStylePresetId,
       uiStylePresetLabel:
-        resolveUiStylePreset(builtinUiStyleBundle, nextUiStylePresetId)?.nativeLabel ||
-        resolveUiStylePreset(builtinUiStyleBundle, nextUiStylePresetId)?.label ||
-        nextUiStylePresetId,
+        builtinThemeUiStylePreset?.nativeLabel ||
+        builtinThemeUiStylePreset?.label ||
+        builtinThemeUiStylePresetId,
       activeSource: "builtin",
       bundleVersion: builtinBundle.version,
       uiStyleBundleVersion: builtinUiStyleBundle.version,
@@ -1758,17 +1883,27 @@
       mergedUiStyleBundle = mergeUiStyleBundles(builtinUiStyleBundle, storedUiStyle.bundle);
     }
     if (storedTheme?.bundle || storedUiStyle?.bundle) {
+      const mergedThemePreset = resolveThemePreset(mergedBundle, nextPresetId);
+      const mergedThemeUiStylePresetId = resolveThemeLegacyUiStylePreset(
+        mergedUiStyleBundle,
+        mergedThemePreset,
+        nextUiStylePresetId,
+      );
+      const mergedThemeUiStylePreset = resolveUiStylePreset(
+        mergedUiStyleBundle,
+        mergedThemeUiStylePresetId,
+      );
       nextState = {
-        presetId: nextPresetId,
+        presetId: mergedThemePreset?.id || nextPresetId,
         presetLabel:
-          resolveThemePreset(mergedBundle, nextPresetId)?.nativeLabel ||
-          resolveThemePreset(mergedBundle, nextPresetId)?.label ||
+          mergedThemePreset?.nativeLabel ||
+          mergedThemePreset?.label ||
           nextPresetId,
-        uiStylePresetId: nextUiStylePresetId,
+        uiStylePresetId: mergedThemeUiStylePreset?.id || mergedThemeUiStylePresetId,
         uiStylePresetLabel:
-          resolveUiStylePreset(mergedUiStyleBundle, nextUiStylePresetId)?.nativeLabel ||
-          resolveUiStylePreset(mergedUiStyleBundle, nextUiStylePresetId)?.label ||
-          nextUiStylePresetId,
+          mergedThemeUiStylePreset?.nativeLabel ||
+          mergedThemeUiStylePreset?.label ||
+          mergedThemeUiStylePresetId,
         activeSource:
           storedTheme?.state?.sourceLabel ||
           storedUiStyle?.state?.sourceLabel ||
@@ -1786,7 +1921,10 @@
     activeThemeBundle = mergedBundle;
     activeThemePreset = resolveThemePreset(mergedBundle, nextPresetId);
     activeUiStyleBundle = mergedUiStyleBundle;
-    activeUiStylePreset = resolveUiStylePreset(mergedUiStyleBundle, nextUiStylePresetId);
+    activeUiStylePreset = resolveUiStylePreset(
+      mergedUiStyleBundle,
+      resolveThemeLegacyUiStylePreset(mergedUiStyleBundle, activeThemePreset, nextUiStylePresetId),
+    );
     remoteThemeState = {
       ...nextState,
       presetId: activeThemePreset?.id || nextPresetId,

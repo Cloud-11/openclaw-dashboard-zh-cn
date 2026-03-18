@@ -2,7 +2,7 @@
   color: var(--text) !important;
 }
 
-:where(.login-gate__card, .theme-orb__menu, .config-section-card, .settings-appearance__section, .settings-info-row, .cfg-array, .cfg-map, .cfg-object, .sidebar-version) {
+:where(.login-gate__card, .theme-orb__menu, .config-section-card, .settings-appearance__section, .settings-info-row, .settings-theme-card, .topbar-theme-mode, .cfg-array, .cfg-map, .cfg-object, .sidebar-version) {
   border-style: solid !important;
   border-width: var(--ocdp-surface-border-width, 1px) !important;
   border-color: var(--ocdp-surface-border, var(--border)) !important;
@@ -13,7 +13,7 @@
   backdrop-filter: var(--ocdp-surface-backdrop-filter, none) !important;
 }
 
-:where(.login-gate__card, .theme-orb__menu, .config-section-card, .settings-appearance__section, .settings-info-row, .sidebar-version) {
+:where(.login-gate__card, .theme-orb__menu, .config-section-card, .settings-appearance__section, .settings-info-row, .settings-theme-card, .sidebar-version) {
   padding: var(--ocdp-card-padding, 16px) !important;
 }
 
@@ -72,6 +72,85 @@
   color: var(--ocdp-button-active-text, var(--accent)) !important;
   border-color: var(--ocdp-button-active-border, var(--accent)) !important;
   box-shadow: var(--ocdp-button-active-shadow, inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent)) !important;
+}
+
+:where(.settings-theme-grid, .settings-info-grid) {
+  gap: var(--ocdp-section-gap, 12px) !important;
+}
+
+:where(.settings-theme-card) {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 72px !important;
+  text-align: left !important;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease !important;
+}
+
+:where(.settings-theme-card:hover:not(.settings-theme-card--active)) {
+  border-color: color-mix(in srgb, var(--ocdp-surface-border, var(--border)) 66%, var(--accent) 34%) !important;
+  background: linear-gradient(180deg, var(--ocdp-button-hover-bg, var(--bg-hover)) 0%, var(--ocdp-surface-bg, var(--bg-elevated)) 100%) !important;
+  transform: translateY(-2px) !important;
+}
+
+:where(.settings-theme-card--active) {
+  border-color: var(--ocdp-button-active-border, var(--accent)) !important;
+  background: linear-gradient(180deg, var(--ocdp-button-active-bg, var(--accent-subtle)) 0%, color-mix(in srgb, var(--ocdp-surface-bg, var(--bg-elevated)) 78%, transparent) 100%) !important;
+  box-shadow:
+    var(--ocdp-button-active-shadow, inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent)),
+    var(--ocdp-surface-shadow, var(--shadow-md)) !important;
+}
+
+:where(.settings-theme-card__icon, .settings-theme-card__check) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 22px !important;
+  height: 22px !important;
+  color: var(--accent) !important;
+}
+
+:where(.settings-theme-card__icon svg, .settings-theme-card__check svg) {
+  width: 20px !important;
+  height: 20px !important;
+  color: currentColor !important;
+  stroke: currentColor !important;
+  fill: none !important;
+}
+
+:where(.settings-theme-card__label) {
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+}
+
+:where(.settings-status-dot) {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--muted) 88%, transparent) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--muted) 16%, transparent) !important;
+}
+
+:where(.settings-status-dot--ok) {
+  background: var(--ok, var(--accent)) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok, var(--accent)) 18%, transparent) !important;
+}
+
+:where(.topbar-theme-mode) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 4px !important;
+  border-radius: 999px !important;
+  background: var(--ocdp-surface-bg, var(--bg-elevated)) !important;
+  box-shadow: var(--ocdp-surface-shadow, var(--shadow-md)) !important;
 }
 
 :where(input:not([type="checkbox"]):not([type="radio"]), textarea, select, .cfg-input, .cfg-textarea, .cfg-select, .cfg-number) {

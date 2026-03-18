@@ -92,21 +92,21 @@
       "code": "vi",
       "label": "Vietnamese",
       "nativeLabel": "Tiếng Việt",
-      "builtin": true,
+      "builtin": false,
       "default": false
     },
     {
       "code": "fil",
       "label": "Filipino",
       "nativeLabel": "Filipino",
-      "builtin": true,
+      "builtin": false,
       "default": false
     },
     {
       "code": "ar",
       "label": "Arabic",
       "nativeLabel": "العربية",
-      "builtin": true,
+      "builtin": false,
       "default": false
     }
   ],
@@ -202,27 +202,27 @@
       "zh-CN": "builtin-0.2.3",
       "en": "builtin-0.2.3",
       "zh-TW": "builtin-0.2.3",
-      "ja": "builtin-0.2.3",
-      "ko": "builtin-0.2.3",
-      "fr": "builtin-0.2.3",
-      "es": "builtin-0.2.3",
-      "ru": "builtin-0.2.3",
-      "de": "builtin-0.2.3",
-      "vi": "builtin-0.2.3",
-      "fil": "builtin-0.2.3",
-      "ar": "builtin-0.2.3"
+      "ja": "0.0.1",
+      "ko": "0.0.1",
+      "fr": "0.0.1",
+      "es": "0.0.1",
+      "ru": "0.0.1",
+      "de": "0.0.1",
+      "vi": "0.0.1",
+      "fil": "0.0.1",
+      "ar": "0.0.1"
     }
   },
   "themeBundle": {
     "defaultPreset": "openclaw-classic",
-    "builtinVersion": "builtin-0.3.0"
+    "builtinVersion": "builtin-0.6.0"
   },
   "uiStyleBundle": {
     "defaultPreset": "openclaw-default",
     "builtinVersion": "builtin-0.4.1"
   },
   "styleBundle": {
-    "builtinVersion": "builtin-0.4.1"
+    "builtinVersion": "builtin-0.5.0"
   },
   "updateSources": [
     {
