@@ -158,7 +158,7 @@
     "peekaboo_permissions_status_hint": "macOS måste ge de här rättigheterna manuellt. Den här hjälpen hoppar bara till rätt inställningsruta.",
     "peekaboo_permissions_status_opened": "Öppnade macOS integritetsruta. Ge rättigheten där och starta sedan om den berörda appen om macOS ber om det.",
     "peekaboo_permissions_status_help": "Öppnade Peekaboos installationsguide i en ny flik.",
-    "meta_status_checking": "Visar paketerade metadata och kontrollerar fjärrkällan ...", 
+    "meta_status_checking": "Visar paketerade metadata och kontrollerar fjärrkällan ...",
     "meta_status_no_sources": "Ingen fjärrkälla för metadata är konfigurerad. Visar endast paketerade data.",
     "meta_status_loading": "Hämtar de senaste metadata från GitHub / Gitee...",
     "meta_status_success": "Metadata synkroniserade från {source}.",
