@@ -14,6 +14,7 @@ const DEFAULT_SETTINGS = {
   styleRepair: true,
   selectStyleFix: true,
   codeBlockStyleFix: true,
+  mediaAssist: true,
 };
 const STORAGE_KEYS = {
   bundles: "remoteLanguageBundles",
@@ -224,6 +225,7 @@ function getElements() {
     styleRepair: $("style-repair"),
     selectStyleFix: $("select-style-fix"),
     codeBlockStyleFix: $("code-block-style-fix"),
+    mediaAssist: $("media-assist"),
     saveTheme: $("save-theme"),
     downloadTheme: $("download-theme"),
     clearTheme: $("clear-theme"),
@@ -251,6 +253,10 @@ function getElements() {
     lastSync: $("last-sync"),
     refreshMeta: $("refresh-meta"),
     metaStatus: $("meta-status"),
+    openScreenRecording: $("open-screen-recording"),
+    openAccessibility: $("open-accessibility"),
+    openPeekabooHelp: $("open-peekaboo-help"),
+    peekabooStatus: $("peekaboo-status"),
     tabButtons: [...document.querySelectorAll("[data-tab]")],
     panels: [...document.querySelectorAll("[data-panel]")],
     i18nText: [...document.querySelectorAll("[data-i18n]")],
@@ -1093,7 +1099,7 @@ function applyUiTexts(elements, state) {
 }
 
 function renderStatuses(elements, state) {
-  for (const [slot, element] of [["save", elements.saveStatus], ["theme", elements.themeStatus], ["content", elements.localeStatus], ["meta", elements.metaStatus]]) {
+  for (const [slot, element] of [["save", elements.saveStatus], ["theme", elements.themeStatus], ["content", elements.localeStatus], ["meta", elements.metaStatus], ["peekaboo", elements.peekabooStatus]]) {
     const message = state.messages[slot];
     element.textContent = message ? t(state, message.key, message.params, element.textContent) : "";
     element.dataset.tone = message?.tone || "info";
@@ -1106,6 +1112,9 @@ function ensureMessages(state, metadata) {
   }
   if (!state.messages.meta) {
     setStatus(state, "meta", "meta_status_checking");
+  }
+  if (!state.messages.peekaboo) {
+    setStatus(state, "peekaboo", "peekaboo_permissions_status_hint");
   }
   if (!state.messages.theme) {
     setStatus(
@@ -1227,6 +1236,7 @@ function renderAll(elements, state) {
   elements.styleRepair.checked = state.draft.styleRepair !== false;
   elements.selectStyleFix.checked = state.draft.selectStyleFix !== false;
   elements.codeBlockStyleFix.checked = state.draft.codeBlockStyleFix !== false;
+  elements.mediaAssist.checked = state.draft.mediaAssist !== false;
   elements.refreshMeta.disabled = state.busy.meta;
   elements.refreshMeta.textContent = state.busy.meta
     ? t(state, "refresh_meta_busy", {}, "Refreshing...")
@@ -1355,6 +1365,7 @@ async function loadSettings(defaultLocale) {
       styleRepair: settings.styleRepair !== false,
       selectStyleFix: settings.selectStyleFix !== false,
       codeBlockStyleFix: settings.codeBlockStyleFix !== false,
+      mediaAssist: settings.mediaAssist !== false,
     };
   } catch {
     return { ...DEFAULT_SETTINGS, locale: defaultLocale || DEFAULT_SETTINGS.locale };
@@ -1480,6 +1491,7 @@ async function saveThemeSettings(elements, state) {
     styleRepair: state.draft.styleRepair !== false,
     selectStyleFix: state.draft.selectStyleFix !== false,
     codeBlockStyleFix: state.draft.codeBlockStyleFix !== false,
+    mediaAssist: state.draft.mediaAssist !== false,
   };
   try {
     await storageSet("sync", nextSettings);
@@ -1720,6 +1732,21 @@ async function clearThemeBundle(elements, state) {
   renderAll(elements, state);
 }
 
+function openExternalUrl(url) {
+  if (!url) {
+    return;
+  }
+  try {
+    if (chrome?.tabs?.create) {
+      chrome.tabs.create({ url });
+      return;
+    }
+  } catch {
+    // Fall through to window.open.
+  }
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 function bindSelects(elements, state) {
   const selects = {
     panel: {
@@ -1845,6 +1872,7 @@ async function initializePopup() {
 
   setStatus(state, "save", "save_status_loaded");
   setStatus(state, "meta", "meta_status_checking");
+  setStatus(state, "peekaboo", "peekaboo_permissions_status_hint");
   bindSelects(elements, state);
   renderAll(elements, state);
   void refreshGitHubRepoStats(elements, state);
@@ -1888,6 +1916,11 @@ async function initializePopup() {
     setStatus(state, "theme", "theme_status_selected");
     renderAll(elements, state);
   });
+  elements.mediaAssist.addEventListener("change", () => {
+    state.draft.mediaAssist = elements.mediaAssist.checked;
+    setStatus(state, "theme", "theme_status_selected");
+    renderAll(elements, state);
+  });
   elements.save.addEventListener("click", () => saveRuntimeSettings(elements, state));
   elements.saveTheme.addEventListener("click", () => saveThemeSettings(elements, state));
   elements.applyLocale.addEventListener("click", () => applyContentLocale(elements, state));
@@ -1896,6 +1929,21 @@ async function initializePopup() {
   elements.downloadTheme.addEventListener("click", () => downloadThemeBundle(elements, state));
   elements.clearTheme.addEventListener("click", () => clearThemeBundle(elements, state));
   elements.refreshMeta.addEventListener("click", () => refreshRemoteMetadata(elements, state));
+  elements.openScreenRecording.addEventListener("click", () => {
+    openExternalUrl("x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture");
+    setStatus(state, "peekaboo", "peekaboo_permissions_status_opened", "success");
+    renderAll(elements, state);
+  });
+  elements.openAccessibility.addEventListener("click", () => {
+    openExternalUrl("x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility");
+    setStatus(state, "peekaboo", "peekaboo_permissions_status_opened", "success");
+    renderAll(elements, state);
+  });
+  elements.openPeekabooHelp.addEventListener("click", () => {
+    openExternalUrl("https://peekaboo.boo");
+    setStatus(state, "peekaboo", "peekaboo_permissions_status_help", "info");
+    renderAll(elements, state);
+  });
 
   await refreshRemoteMetadata(elements, state);
 }

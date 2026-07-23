@@ -220,6 +220,15 @@
                   >
                 </span>
               </label>
+              <label class="feature-toggle">
+                <input id="media-assist" type="checkbox" />
+                <span class="feature-toggle__copy">
+                  <strong data-i18n="theme_media_assist_label">媒体预览修补</strong>
+                  <small data-i18n="theme_media_assist_help"
+                    >为聊天图片和附件补上预览、查看器和明确状态</small
+                  >
+                </span>
+              </label>
             </div>
 
             <div class="action-row triple">
@@ -418,6 +427,25 @@
               <span data-i18n="gitee_button">Gitee 镜像</span>
             </a>
           </div>
+
+          <section class="sub-card">
+            <h3 data-i18n="peekaboo_permissions_title">Peekaboo permissions</h3>
+            <p class="repo-note" data-i18n="peekaboo_permissions_help">
+              Screen Recording and Accessibility must be granted by macOS before Peekaboo can drive Chrome or capture windows.
+            </p>
+            <div class="action-row triple">
+              <button id="open-screen-recording" type="button" class="secondary" data-i18n="peekaboo_open_screen_recording">
+                Open Screen Recording
+              </button>
+              <button id="open-accessibility" type="button" class="secondary" data-i18n="peekaboo_open_accessibility">
+                Open Accessibility
+              </button>
+              <button id="open-peekaboo-help" type="button" class="ghost" data-i18n="peekaboo_open_help">
+                Open setup guide
+              </button>
+            </div>
+            <p id="peekaboo-status" class="status" data-tone="info"></p>
+          </section>
 
           <p class="repo-note" data-i18n="repo_note">欢迎给仓库点个 Star，谢谢喵。</p>
           <p id="meta-status" class="status" data-tone="info"></p>
